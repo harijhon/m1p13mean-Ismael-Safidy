@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router'; // Added RouterLink here
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrls: []
+  styles: []
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
@@ -30,7 +30,6 @@ export class LoginComponent {
       return;
     }
 
-    // Use safer access with fallback to empty string to satisfy TypeScript strict checks
     const credentials = {
       email: this.loginForm.get('email')?.value || '',
       password: this.loginForm.get('password')?.value || ''

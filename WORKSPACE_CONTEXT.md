@@ -4,7 +4,7 @@ This document provides a comprehensive analysis of the MEAN stack monorepo, deta
 
 ## High-Level Overview
 
-This is a MEAN stack application featuring a modern **Angular 20+** frontend based on the **Sakai Ng** template (PrimeFaces) and a **Node.js/Express/Mongoose** backend. The project is structured as a monorepo with separate `client` and `server` directories. It implements basic CRUD (Create, Read, Update, Delete) functionality for main features like Customers, Products, and Orders.
+This is a MEAN stack application featuring a modern **Angular 20+** frontend based on the **Sakai Ng** template (PrimeFaces) and a **Node.js/Express/Mongoose** backend. The project is structured as a monorepo with separate `client` and `server` directories. It implements CRUD functionality for Users (Admin only), Customers, Products, and Orders.
 
 ## Backend (`server/`)
 
@@ -12,127 +12,117 @@ The backend is a Node.js application using Express.js and Mongoose. It exposes a
 
 -   **Framework**: Express.js 5.x
 -   **Database**: MongoDB with Mongoose 9.x for object data modeling.
--   **API Style**: RESTful API with standard HTTP methods.
--   **Authentication**: None (currently).
+-   **Authentication**: **Implemented (JWT)**.
+    -   RBAC (Role-Based Access Control): 'user', 'manager', 'admin'.
 -   **Modules/Features**:
+    -   **Auth**: Login, Register, Create Manager (Admin).
+    -   **Users**: Full CRUD for User management (Admin only).
     -   **Customers**: Manages customer data.
     -   **Products**: Manages product inventory.
-    -   **Orders**: Manages customer orders, linking customers and products.
+    -   **Orders**: Manages customer orders.
 -   **Entry Point**: `app.js`
--   **Configuration**: Environment variables are loaded from a `.env` file (e.g., `PORT`, `MONGODB_URI`).
 
 ### API Endpoints (Prefix: `/api`)
--   **Customers**: `GET/POST /api/customers`, `GET/PUT/DELETE /api/customers/:id`
--   **Products**: `GET/POST /api/products`, `GET/PUT/DELETE /api/products/:id`
--   **Orders**: `GET/POST /api/orders`, `GET/PUT/DELETE /api/orders/:id`
+-   **Auth**: `/api/auth/login`, `/api/auth/register`, `/api/auth/create-manager`
+-   **Users**: `/api/users` (Protected: Admin only)
+-   **Customers**: `/api/customers`
+-   **Products**: `/api/products`
+-   **Orders**: `/api/orders`
 
 ### Data Models
--   **Customer**: Name, Email (unique), Phone, Address.
--   **Product**: Name, Description, Price, Quantity.
--   **Order**: Customer (Ref), Products (Array of Refs + Quantity), Total, Status (Pending/Shipped/etc.), CreatedAt.
+-   **User**: Email, Password, Name, Role (Enum: 'user', 'manager', 'admin').
+-   **Customer**, **Product**, **Order**: Standard business entities.
 
 ## Frontend (`client/`) - Sakai Ng Template
 
 The frontend is a single-page application (SPA) built with **Angular 20+** using the **Sakai Ng** template by PrimeFaces.
 
 -   **Framework**: Angular 20+ (Standalone Components).
--   **UI Library**: **PrimeNG** (v20+) with **Tailwind CSS** for utility styling.
--   **Template**: Sakai Ng (Tag v20.0.0).
--   **Language**: TypeScript.
--   **HTTP Client**: `@angular/common/http`.
+-   **State Management**: Angular Signals.
+-   **UI Library**: **PrimeNG** (v20+) with **Tailwind CSS**.
+-   **Design Standard**: **Sakai "Raw" CRUD**.
+    -   New pages must follow the `UsersComponent` design pattern strictly.
 
 ### Application Structure (`client/src/app/`)
 
--   **`layout/`**: Contains the core application layout components.
-    -   `component/app.layout.ts`: Main layout wrapper.
-    -   `component/app.topbar.ts`: Top navigation bar.
-    -   `component/app.sidebar.ts`: Sidebar navigation.
-    -   `component/app.menu.ts`: Main menu configuration.
-    -   `component/app.footer.ts`: Application footer.
--   **`pages/`**: Contains the main application views/pages.
-    -   `dashboard/`: Dashboard view.
-    -   `crud/`: Example CRUD implementation (good reference).
-    -   `auth/`: Authentication pages (Login, Error, Access Denied).
-    -   *(New features should be added here, e.g., `pages/customers/`)*.
--   **`demo/`**: Contains demo components and services provided by Sakai (Reference only).
--   **`assets/`**: Static assets and **Sakai Styles**.
-    -   `layout/styles/`: Core SCSS files for the theme (`_variables.scss`, etc.).
+-   **`layout/`**: `AppLayoutComponent` (Standalone Shell) with `Toast` and `ConfirmDialog` integrated.
+-   **`pages/`**:
+    -   `dashboard/`: Admin Dashboard.
+    -   `admin/users/`: **Reference CRUD implementation**.
+    -   `auth/`: Login/Register.
+-   **`core/`**:
+    -   `services/`: `AuthService`, `UserService`.
+    -   `guards/`: `authGuard`, `roleGuard`.
+    -   `directives/`: `HasRoleDirective`.
 
 ### Routing
 
--   **`app.routes.ts`**: Main routing configuration.
--   Uses lazy loading for feature modules/components.
--   Routes are typically children of the `AppLayout` component to inherit the main structure.
+-   **`app.routes.ts`**:
+    -   `login`: Public.
+    -   `admin`: Protected Shell (`AppLayoutComponent`).
+        -   `dashboard`: Admin Dashboard.
+        -   `users`: User Management (Admin only).
 
-## Page Generation Guidelines (Sakai UI)
+## UI & UX Guidelines (NEW STANDARD)
 
-When creating new pages or features, strictly follow the **Sakai Ng** and **PrimeNG** patterns to ensure UI consistency.
+**All new CRUD pages must mimic the `UsersComponent` design:**
 
-### 1. Component Structure
--   Create components in `client/src/app/pages/<feature-name>/`.
--   Use **Standalone Components** (`standalone: true`).
--   Import necessary PrimeNG modules directly in the `imports` array (e.g., `TableModule`, `ButtonModule`, `InputTextModule`).
+1.  **Layout**: No outer `card` wrapper. Start with `p-toolbar`.
+2.  **Toolbar**: `mb-4`. Success button for "New", Outlined/Secondary for "Delete".
+3.  **Table**: `p-iconfield` for Search. `p-tag` for statuses. `responsiveLayout="scroll"`.
+4.  **Forms**: `p-inputtext-fluid` on inputs. Bold labels.
 
-### 2. General Page Template
-Wrap your page content in a standard grid layout with a card.
+### Services & API
+-   **Providers**: `MessageService` and `ConfirmationService` are provided in `AppLayoutComponent` for scoping.
+-   **Chart.js**: Registered globally in `app.config.ts`.
 
-```html
-<div class="grid">
-    <div class="col-12">
-        <div class="card">
-            <h5>Page Title</h5>
-            <p>Page description or content goes here.</p>
-            
-            <!-- PrimeNG Components -->
-            <p-table [value]="data" ...>
-                ...
-            </p-table>
-        </div>
-    </div>
-</div>
-```
+## CRUD Development Process
 
-### 3. CRUD Page Pattern
-For list/detail views (like Customers/Products), refer to `client/src/app/pages/crud/crud.ts` as the gold standard.
+### Étapes de création d'un CRUD complet
 
--   **Toolbar**: Use `<p-toolbar>` for actions like "New" (Left) and "Export" (Right).
--   **Table**: Use `<p-table>` with:
-    -   `[value]`, `[paginator]="true"`, `[rows]="10"`.
-    -   `styleClass="p-datatable-gridlines"` (optional).
-    -   Global search input in the caption.
--   **Dialogs**: Use `<p-dialog>` for Create/Edit forms to keep context.
--   **Toast**: Use `<p-toast>` for success/error notifications.
--   **Confirmations**: Use `<p-confirmDialog>` for delete actions.
+#### Étape 1 : Création du Service
+1. Créer un service standalone avec `providedIn: 'root'`
+2. Définir l'endpoint API (ex: `/api/ressources`)
+3. Implémenter les méthodes CRUD : `getRessources()`, `createRessource()`, `updateRessource()`, `deleteRessource()`
+4. Définir le modèle TypeScript correspondant
 
-### 4. Form Design
--   Use `p-fluid` class on the form container for responsive, 100% width inputs.
--   **Inputs**: Standard PrimeNG inputs (`input[pInputText]`, `p-inputNumber`, `p-dropdown`).
--   **Validation**: Display validation errors below inputs using `<small class="p-error">`.
+#### Étape 2 : Création du Composant
+1. Utiliser `ViewEncapsulation.None` pour éviter les conflits Tailwind/PrimeNG
+2. Importer tous les modules PrimeNG nécessaires
+3. Implémenter la logique CRUD complète (signals ou variables classiques)
+4. Gérer l'état de chargement avec `isLoading`
+5. Utiliser `MessageService` pour les notifications
 
-### 5. Services & API
--   Create services in `client/src/app/service/` or feature-specific folders.
--   Extend the backend API interaction pattern.
--   Use `environment` variables for API base URLs.
+#### Étape 3 : Création du Template HTML
+1. Suivre la structure "Raw" sans wrapper
+2. Utiliser `p-toolbar` avec les boutons standard
+3. Configurer `p-table` avec pagination, recherche et sélection multiple
+4. Ajouter le template de chargement avec `p-skeleton`
+5. Créer les dialogues pour les formulaires
 
-### 6. Menu Update
--   To make the page accessible, add it to the sidebar menu in **`client/src/app/layout/component/app.menu.ts`**.
+#### Étape 4 : Gestion des Styles
+1. Réorganiser l'ordre des imports CSS pour que PrimeNG précède Tailwind
+2. Éventuellement utiliser `::ng-deep` pour les corrections locales si nécessaire
 
-```typescript
-// app.menu.ts
-this.model = [
-    {
-        label: 'Home',
-        items: [
-            { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dashboard'] }
-        ]
-    },
-    {
-        label: 'Business',
-        items: [
-            { label: 'Customers', icon: 'pi pi-fw pi-users', routerLink: ['/customers'] },
-            // Add new items here
-        ]
-    },
-    // ...
-];
-```
+#### Étape 5 : Configuration du Proxy API
+1. Créer un fichier `proxy.conf.json` pour rediriger les requêtes `/api` vers le backend
+2. Mettre à jour `angular.json` pour utiliser le proxy en développement
+3. Tester que les requêtes API atteignent bien le serveur backend
+
+### Common Issues & Solutions
+
+#### Problème de conflits de styles Tailwind/PrimeNG
+- **Symptôme**: Les styles Tailwind écrasent les styles PrimeNG
+- **Solution**: Réorganiser l'ordre des imports CSS dans `src/assets/styles.scss`
+
+#### Problème de requêtes API interceptées par le serveur Angular
+- **Symptôme**: Les requêtes API retournent du HTML au lieu de JSON
+- **Solution**: Configurer le proxy API pour rediriger vers le backend
+
+#### Problème d'import TypeScript
+- **Symptôme**: Erreurs "Cannot find module" pendant la compilation
+- **Solution**: Vérifier les chemins d'import et utiliser les alias `@/*` définis dans tsconfig.json
+
+#### Problème de compatibilité PrimeNG v20+
+- **Symptôme**: Composants PrimeNG introuvables
+- **Solution**: Vérifier les nouveaux noms de modules (ex: `primeng/select` au lieu de `primeng/dropdown`)
