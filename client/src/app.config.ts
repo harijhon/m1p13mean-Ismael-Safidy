@@ -1,16 +1,36 @@
-import { provideHttpClient, withFetch } from '@angular/common/http';
 import { ApplicationConfig } from '@angular/core';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
-import Aura from '@primeuix/themes/aura';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { Chart, registerables } from 'chart.js';
 import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeuix/themes/aura';
+
 import { appRoutes } from './app.routes';
+import { authInterceptor } from './app/core/interceptors/auth.interceptor';
+
+// Register Chart.js components globally
+Chart.register(...registerables);
 
 export const appConfig: ApplicationConfig = {
-    providers: [
-        provideRouter(appRoutes, withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }), withEnabledBlockingInitialNavigation()),
-        provideHttpClient(withFetch()),
-        provideAnimationsAsync(),
-        providePrimeNG({ theme: { preset: Aura, options: { darkModeSelector: '.app-dark' } } })
-    ]
+  providers: [
+    provideRouter(appRoutes),
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideAnimations(),
+    MessageService,
+    ConfirmationService,
+    providePrimeNG({ 
+        theme: { 
+            preset: Aura, 
+            options: { 
+                darkModeSelector: '.app-dark',
+                // cssLayer: {
+                //     name: 'primeng',
+                //     order: 'tailwind-base, primeng, tailwind-utilities'
+                // }
+            } 
+        } 
+    })
+  ]
 };

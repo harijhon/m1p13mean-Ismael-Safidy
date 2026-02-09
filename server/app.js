@@ -8,7 +8,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Import routes
-import { router as authRoutes } from './routes/auth.js';
+import authRoutes from './routes/auth.routes.js';
+import userRoutes from './routes/user.routes.js';
 
 // Initialize express app
 const app = express();
@@ -20,6 +21,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

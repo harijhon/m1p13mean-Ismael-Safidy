@@ -20,6 +20,7 @@ export class AuthService {
   private currentUserSig = signal<User | null>(null);
   readonly currentUser = this.currentUserSig.asReadonly();
   isLoggedIn = computed(() => !!this.currentUserSig());
+  isAdmin = computed(() => this.currentUserSig()?.role === 'admin');
 
   constructor() {
     this.restoreSession();
