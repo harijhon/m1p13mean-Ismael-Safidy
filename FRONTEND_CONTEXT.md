@@ -53,32 +53,6 @@ Ne pas envelopper le contenu dans des divs `grid` ou `card`. Commencer directeme
 <p-table>...</p-table>
 ```
 
-### Étapes de création d'un CRUD complet
-
-#### Étape 1 : Création du Service
-1. Créer un service standalone avec `providedIn: 'root'`
-2. Définir l'endpoint API (ex: `/api/ressources`)
-3. Implémenter les méthodes CRUD : `getRessources()`, `createRessource()`, `updateRessource()`, `deleteRessource()`
-4. Définir le modèle TypeScript correspondant
-
-#### Étape 2 : Création du Composant
-1. Utiliser `ViewEncapsulation.None` pour éviter les conflits Tailwind/PrimeNG
-2. Importer tous les modules PrimeNG nécessaires
-3. Implémenter la logique CRUD complète (signals ou variables classiques)
-4. Gérer l'état de chargement avec `isLoading`
-5. Utiliser `MessageService` pour les notifications
-
-#### Étape 3 : Création du Template HTML
-1. Suivre la structure "Raw" sans wrapper
-2. Utiliser `p-toolbar` avec les boutons standard
-3. Configurer `p-table` avec pagination, recherche et sélection multiple
-4. Ajouter le template de chargement avec `p-skeleton`
-5. Créer les dialogues pour les formulaires
-
-#### Étape 4 : Gestion des Styles
-1. Réorganiser l'ordre des imports CSS pour que PrimeNG précède Tailwind
-2. Éventuellement utiliser `::ng-deep` pour les corrections locales si nécessaire
-
 ### Toolbar (Actions)
 - **Style** : `styleClass="mb-4"`
 - **Gauche** :
@@ -147,7 +121,7 @@ Tailwind peut avoir une priorité plus élevée que PrimeNG, écrasant les style
    - PrimeNG styles d'abord
    - Tailwind ensuite
 2. Utiliser `ViewEncapsulation.None` dans les composants critiques
-3. Éventuellement utiliser `::ng-deep` pour les corrections locales
+3. Éventuellement utiliser `::ng-deep` pour les corrections locales si nécessaire
 
 ## 7. Configuration du proxy API
 
@@ -158,3 +132,35 @@ Les requêtes API sont interceptées par le serveur de développement Angular au
 1. Créer un fichier `proxy.conf.json`
 2. Configurer le proxy vers le serveur backend (ex: `http://localhost:3000`)
 3. Mettre à jour `angular.json` pour utiliser le proxy en développement
+
+## 8. CRUD Products Component
+
+### Structure
+Le composant Products suit exactement le même patron que le composant Users :
+- Service standalone : `ProductService`
+- Composant standalone avec `ViewEncapsulation.None`
+- Template respectant le design Sakai "Raw CRUD"
+- Modèle : `Product` interface
+
+### Fonctionnalités
+- CRUD complet (Create, Read, Update, Delete)
+- Pagination et recherche
+- Bulk delete
+- Formulaire de dialogue pour create/update
+- Gestion des états de chargement
+- Affichage des images produits
+- Indicateurs de stock (badges avec sévérité)
+- Statut actif/inactif (tags)
+
+### Modèle Product
+```typescript
+interface Product {
+  _id?: string;
+  name: string;
+  price: number;
+  costPrice: number;
+  currentStock: number;
+  type: 'PRODUCT' | 'SERVICE';
+  isActive: boolean;
+  images?: string[];
+}
