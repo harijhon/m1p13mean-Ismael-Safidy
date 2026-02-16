@@ -1,5 +1,21 @@
 import mongoose from 'mongoose';
 
+const variantSchema = new mongoose.Schema({
+    sku: {
+        type: String
+    },
+    attributes: {
+        type: Map,
+        of: String
+    },
+    price: {
+        type: Number
+    },
+    stock: {
+        type: Number
+    }
+});
+
 const productSchema = new mongoose.Schema({
     store: {
         type: mongoose.Schema.Types.ObjectId,
@@ -22,6 +38,11 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    hasVariants: {
+        type: Boolean,
+        default: false
+    },
+    variants: [variantSchema],
     images: [{
         type: String
     }],

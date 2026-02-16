@@ -27,7 +27,10 @@ export class AppMenu {
                 label: 'Menu Principal',
                 items: [
                     { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin/dashboard'] },
-                    ...(isAdmin ? [{ label: 'Utilisateurs', icon: 'pi pi-fw pi-users', routerLink: ['/admin/users'] }] : [])
+                    ...(isAdmin ? [
+                        { label: 'Utilisateurs', icon: 'pi pi-fw pi-users', routerLink: ['/admin/users'] },
+                        { label: 'Produits', icon: 'pi pi-fw pi-box', routerLink: ['/admin/products'] }
+                    ] : [])
                 ]
             },
             {

@@ -6,6 +6,7 @@ import { RecentSalesWidget } from './components/recentsaleswidget';
 import { BestSellingWidget } from './components/bestsellingwidget';
 import { RevenueStreamWidget } from './components/revenuestreamwidget';
 import { AuthService } from '../../core/services/auth.service';
+import { DashboardService } from '../../core/services/dashboard.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -33,4 +34,5 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class DashboardComponent {
     protected authService = inject(AuthService);
+    protected dashboardService = inject(DashboardService);
 }

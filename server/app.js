@@ -10,6 +10,8 @@ dotenv.config();
 // Import routes
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
+import productRoutes from './routes/product.routes.js';
+import dashboardRoutes from './routes/dashboard.routes.js';
 
 // Initialize express app
 const app = express();
@@ -22,6 +24,8 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
