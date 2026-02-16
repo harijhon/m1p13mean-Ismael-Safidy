@@ -1,11 +1,13 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { Product } from '../../models/product.model';
+import { Injectable, signal, computed, effect } from '@angular/core';
+import { Product, Variant } from '../../models/product.model';
+import { CartItem } from '../../models/cart.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  cartItems = signal<any[]>([]);
+  private storageKey = 'shopping_cart';
+  cartItems = signal<CartItem[]>([]);
 
   count = computed(() => {
     return this.cartItems().reduce((total, item) => total + item.quantity, 0);
@@ -15,7 +17,24 @@ export class CartService {
     return this.cartItems().reduce((total, item) => total + (item.price * item.quantity), 0);
   });
 
-  addToCart(product: Product, variant: any, quantity: number = 1) {
+  constructor() {
+    // Load initial cart from localStorage
+    if (typeof window !== 'undefined') {
+      const savedCart = localStorage.getItem(this.storageKey);
+      if (savedCart) {
+        this.cartItems.set(JSON.parse(savedCart));
+      }
+    }
+
+    // Effect to save cart to localStorage whenever it changes
+    effect(() => {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.cartItems()));
+      }
+    });
+  }
+
+  addToCart(product: Product, variant: Variant, quantity: number = 1) {
     const existingItemIndex = this.cartItems().findIndex(
       item => item.productId === product._id && item.variantId === variant._id
     );
@@ -25,33 +44,34 @@ export class CartService {
       updatedItems[existingItemIndex].quantity += quantity;
       this.cartItems.set(updatedItems);
     } else {
-      const newItem = {
-        productId: product._id,
-        variantId: variant._id,
+      const newItem: CartItem = {
+        productId: product._id!,
+        variantId: variant._id!,
         name: product.name,
         price: variant.price,
         quantity: quantity,
-        image: product.images[0]
+        image: product.images && product.images.length > 0 ? product.images[0] : 'https://www.primefaces.org/cdn/primeng/images/demo/product-placeholder.svg',
+        attributes: variant.attributes
       };
       this.cartItems.update(items => [...items, newItem]);
     }
   }
 
-  removeFromCart(productId: string, variantId: string) {
+  removeFromCart(variantId: string) {
     this.cartItems.update(items => 
-      items.filter(item => !(item.productId === productId && item.variantId === variantId))
+      items.filter(item => item.variantId !== variantId)
     );
   }
 
-  updateQuantity(productId: string, variantId: string, quantity: number) {
+  updateQuantity(variantId: string, quantity: number) {
     if (quantity <= 0) {
-      this.removeFromCart(productId, variantId);
+      this.removeFromCart(variantId);
       return;
     }
 
     const updatedItems = [...this.cartItems()];
     const itemIndex = updatedItems.findIndex(
-      item => item.productId === productId && item.variantId === variantId
+      item => item.variantId === variantId
     );
 
     if (itemIndex !== -1) {

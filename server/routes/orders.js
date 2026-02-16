@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import * as orderController from '../controllers/orderController.js';
+import { verifyToken } from '../middlewares/auth.middleware.js';
 
 // Get all orders
 router.get('/', orderController.getAllOrders);
@@ -9,7 +10,7 @@ router.get('/', orderController.getAllOrders);
 router.get('/:id', orderController.getOrderById);
 
 // Create a new order
-router.post('/', orderController.createOrder);
+router.post('/', verifyToken, orderController.createOrder);
 
 // Update an order
 router.put('/:id', orderController.updateOrder);

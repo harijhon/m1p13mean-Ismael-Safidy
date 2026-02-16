@@ -14,7 +14,7 @@ export interface Product {
 export interface Variant {
   _id?: string;
   sku: string;
-  attributes: Map<string, string>;
+  attributes: { [key: string]: string };
   price: number;
   stock: number;
 }

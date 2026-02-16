@@ -212,7 +212,7 @@ export class ProductDetailComponent implements OnInit {
     if (!this.product()?.hasVariants || !this.product()?.variants) return [];
     const colors = new Set<string>();
     this.product()?.variants?.forEach(variant => {
-      const color = variant.attributes.get('Couleur') || variant.attributes.get('Color');
+      const color = variant.attributes['Couleur'] || variant.attributes['Color'];
       if (color) colors.add(color);
     });
     return Array.from(colors);
@@ -222,7 +222,7 @@ export class ProductDetailComponent implements OnInit {
     if (!this.product()?.hasVariants || !this.product()?.variants) return [];
     const sizes = new Set<string>();
     this.product()?.variants?.forEach(variant => {
-      const size = variant.attributes.get('Taille') || variant.attributes.get('Size');
+      const size = variant.attributes['Taille'] || variant.attributes['Size'];
       if (size) sizes.add(size);
     });
     return Array.from(sizes);
@@ -234,8 +234,8 @@ export class ProductDetailComponent implements OnInit {
     }
 
     return this.product()?.variants?.find(variant => {
-      const variantColor = variant.attributes.get('Couleur') || variant.attributes.get('Color');
-      const variantSize = variant.attributes.get('Taille') || variant.attributes.get('Size');
+      const variantColor = variant.attributes['Couleur'] || variant.attributes['Color'];
+      const variantSize = variant.attributes['Taille'] || variant.attributes['Size'];
       
       // Vérifier si les attributs sélectionnés correspondent à la variante
       const colorMatch = !this.selectedAttributes().has('color') || this.selectedAttributes().get('color') === variantColor;
@@ -313,8 +313,8 @@ export class ProductDetailComponent implements OnInit {
     
     // Vérifier si une combinaison avec cet attribut existe et est en stock
     return this.product()?.variants?.some(variant => {
-      const variantColor = variant.attributes.get('Couleur') || variant.attributes.get('Color');
-      const variantSize = variant.attributes.get('Taille') || variant.attributes.get('Size');
+      const variantColor = variant.attributes['Couleur'] || variant.attributes['Color'];
+      const variantSize = variant.attributes['Taille'] || variant.attributes['Size'];
       
       // Construire les conditions de correspondance
       let colorMatch = true;

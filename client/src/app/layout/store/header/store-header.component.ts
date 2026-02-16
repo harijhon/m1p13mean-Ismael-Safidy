@@ -57,7 +57,6 @@ export class StoreHeaderComponent {
   private router = inject(Router);
 
   goToCart() {
-    // Placeholder pour la navigation vers le panier
-    console.log('Navigation vers le panier');
+    this.router.navigate(['/store/cart']);
   }
 }

@@ -31,6 +31,10 @@ export const appRoutes: Routes = [
             {
                 path: 'product/:id',
                 loadComponent: () => import('./app/features/store/product-detail/product-detail.component').then(m => m.ProductDetailComponent)
+            },
+            {
+                path: 'cart',
+                loadComponent: () => import('./app/features/store/cart/cart.component').then(m => m.CartComponent)
             }
         ]
     },

@@ -1,4 +1,5 @@
 import Order from '../models/Order.js';
+import Store from '../models/Store.js';
 
 // Get all orders
 export const getAllOrders = async (req, res) => {
@@ -25,14 +26,33 @@ export const getOrderById = async (req, res) => {
 
 // Create a new order
 export const createOrder = async (req, res) => {
-  const order = new Order({
-    customer: req.body.customer,
-    products: req.body.products,
-    total: req.body.total,
-    status: req.body.status,
-  });
+  const { items } = req.body;
+
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ message: 'Order must contain at least one item.' });
+  }
 
   try {
+    // Calculate total amount on the backend for security
+    const totalAmount = items.reduce((sum, item) => {
+      return sum + (item.priceAtMoment * item.quantity);
+    }, 0);
+
+    // For this demo, we'll just find the first store to associate the order with.
+    // In a real multi-tenant app, this would come from the user's session or the specific store's domain.
+    const store = await Store.findOne();
+    if (!store) {
+      return res.status(500).json({ message: 'Cannot create order: No store found.' });
+    }
+
+    const order = new Order({
+      customer: req.user._id, // User ID from verifyToken middleware
+      items: items,
+      totalAmount: totalAmount,
+      store: store._id,
+      status: 'PENDING', // Default status
+    });
+
     const newOrder = await order.save();
     res.status(201).json(newOrder);
   } catch (err) {

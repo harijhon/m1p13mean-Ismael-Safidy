@@ -29,7 +29,7 @@ import { Product } from '../../../models/product.model';
         <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
           @for (product of products; track product._id) {
             <a 
-              [routerLink]="['/product', product._id]" 
+              [routerLink]="['/store/product', product._id]" 
               class="bg-white rounded-lg shadow-xs overflow-hidden transition-transform duration-300 hover:shadow-md hover:-translate-y-1 block"
             >
               <!-- Product Image -->
