@@ -36,7 +36,14 @@ export class LoginComponent {
     };
 
     this.authService.login(credentials).subscribe({
-      next: () => this.router.navigate(['/admin/dashboard']),
+      next: () => {
+        const userRole = this.authService.currentUser()?.role;
+        if (userRole === 'admin' || userRole === 'manager') {
+          this.router.navigate(['/admin/dashboard']);
+        } else {
+          this.router.navigate(['/store']);
+        }
+      },
       error: (err) => {
         this.error = err?.error?.message || 'Échec de la connexion.';
       }

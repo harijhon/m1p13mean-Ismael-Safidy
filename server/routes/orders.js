@@ -1,15 +1,19 @@
 import express from 'express';
 const router = express.Router();
 import * as orderController from '../controllers/orderController.js';
+import { verifyToken } from '../middlewares/auth.middleware.js';
 
 // Get all orders
 router.get('/', orderController.getAllOrders);
+
+// Get orders for the authenticated user
+router.get('/my-orders', verifyToken, orderController.getMyOrders);
 
 // Get a single order
 router.get('/:id', orderController.getOrderById);
 
 // Create a new order
-router.post('/', orderController.createOrder);
+router.post('/', verifyToken, orderController.createOrder);
 
 // Update an order
 router.put('/:id', orderController.updateOrder);

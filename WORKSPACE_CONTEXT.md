@@ -126,3 +126,60 @@ The frontend is a single-page application (SPA) built with **Angular 20+** using
 #### Problème de compatibilité PrimeNG v20+
 - **Symptôme**: Composants PrimeNG introuvables
 - **Solution**: Vérifier les nouveaux noms de modules (ex: `primeng/select` au lieu de `primeng/dropdown`)
+
+## Backend Details
+
+### Directory Structure
+```
+server/
+├── app.js                 # Main entry point
+├── config/
+│   └── db.js             # MongoDB configuration
+├── controllers/          # Business logic
+├── middlewares/           # Custom middlewares (auth, error handling)
+├── models/               # Mongoose schemas
+├── routes/               # Route definitions
+└── services/             # Reusable services
+```
+
+### Authentication & Authorization
+
+- **JWT (JSON Web Token)**
+    - **Algorithm**: HS256
+    - **Lifetime**: 24 hours
+    - **Payload**: `_id`, `email`, `role`
+- **Middlewares**
+    - `auth.middleware.js`: Validates the JWT (`verifyToken`).
+    - `role.middleware.js`: Verifies user roles against required roles (`authorize(roles)`).
+
+### Detailed API Endpoints
+
+- **Auth (`/api/auth`)**
+  - `POST /login`: User login.
+  - `POST /register`: User registration.
+
+- **Users (`/api/users`)** - *Admin protected*
+  - `GET /`: Get all users.
+  - `GET /:id`: Get a single user by ID.
+  - `POST /`: Create a new user.
+  - `PUT /:id`: Update a user.
+  - `DELETE /:id`: Delete a user.
+
+- **Products (`/api/products`)**
+  - `GET /`: Get all products.
+  - `GET /:id`: Get a single product by ID.
+  - `POST /`: Create a new product (*Admin protected*).
+  - `PUT /:id`: Update a product (*Admin protected*).
+  - `DELETE /:id`: Delete a product (*Admin protected*).
+
+- **Orders (`/api/orders`)**
+  - `GET /`: Get all orders (*Admin protected*).
+  - `GET /:id`: Get a single order.
+  - `POST /`: Create a new order.
+
+- **Dashboard (`/api/dashboard`)** - *Admin protected*
+    - `GET /stats`: Retrieves aggregated data for the admin dashboard (revenue, order counts, etc.).
+
+### Controller & Service Pattern
+- **Controllers**: Handle HTTP requests and responses (`req`, `res`). Use `async/await` and centralized error handling.
+- **Services**: Abstract reusable business logic, called by controllers.

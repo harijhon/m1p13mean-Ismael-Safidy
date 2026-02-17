@@ -88,6 +88,13 @@
              [ngClass]="{'ng-invalid': submitted && !user.email}" />
       <small *ngIf="submitted && !user.email" class="p-error">L'email est requis.</small>
     </div>
+
+    <div class="field" *ngIf="!user._id">
+        <label for="password" class="block font-bold mb-3">Mot de passe</label>
+        <input pInputText id="password" type="password" [(ngModel)]="user.password" class="p-inputtext-fluid"
+                [ngClass]="{'ng-invalid': submitted && !user.password}" />
+        <small *ngIf="submitted && !user.password" class="p-error">Le mot de passe est requis.</small>
+    </div>
     
     <div class="field">
       <label for="role" class="block font-bold mb-3">Rôle</label>
