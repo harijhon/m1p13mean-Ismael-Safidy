@@ -39,6 +39,21 @@ export const appRoutes: Routes = [
         ]
     },
     {
+        path: 'profile',
+        component: StoreLayoutComponent,
+        canActivate: [authGuard],
+        children: [
+            { 
+                path: '', 
+                loadComponent: () => import('./app/features/store/profile/profile.component').then(m => m.ProfileComponent)
+            },
+            { 
+                path: 'orders', 
+                loadComponent: () => import('./app/features/store/profile/order-history/order-history.component').then(m => m.OrderHistoryComponent)
+            }
+        ]
+    },
+    {
         path: 'admin',
         component: AppLayoutComponent,
         canActivate: [authGuard],
@@ -56,6 +71,18 @@ export const appRoutes: Routes = [
             {
                 path: 'products',
                 loadComponent: () => import('./app/pages/admin/products/products.component').then(m => m.ProductsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['admin', 'manager'] }
+            },
+            {
+                path: 'store-settings',
+                loadComponent: () => import('./app/pages/admin/store-settings/store-settings.component').then(m => m.StoreSettingsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['admin', 'manager'] }
+            },
+            {
+                path: 'stores',
+                loadComponent: () => import('./app/pages/admin/stores/stores.component').then(m => m.StoresComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['admin'] }
             }

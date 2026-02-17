@@ -164,3 +164,28 @@ interface Product {
   isActive: boolean;
   images?: string[];
 }
+
+## 9. CRUD Stores Component
+
+### Structure
+Le composant Stores suit strictement le modèle "Raw CRUD" défini dans la section 3, assurant une cohérence visuelle avec Users et Products :
+- Service standalone : `StoreService`
+- Composant standalone : `StoresComponent` (`client/src/app/pages/admin/stores/stores.component.ts`)
+- Template HTML : `client/src/app/pages/admin/stores/stores.component.html`
+
+### UI Standards Respectés
+- **Toolbar** :
+  - Bouton "Nouveau" : `p-button-success`
+  - Bouton "Supprimer" (Bulk) : `p-button-outlined p-button-secondary` (et non `p-button-danger`)
+- **Tableau** :
+  - Actions (Edit) : `p-button-rounded p-button-outlined p-button-success`
+  - Actions (Delete) : `p-button-rounded p-button-outlined p-button-danger`
+  - Titre : "Gestion des Magasins"
+- **Dialog** :
+  - Formulaire simple avec validation
+  - Footer avec boutons "Annuler" et "Sauvegarder"
+
+### Fonctionnalités
+- **Admin Only** : Accessible uniquement via la route `/admin/stores`
+- **Gestion Complète** : Création, Lecture, Mise à jour, Suppression (CRUD)
+- **Assignation Propriétaire** : Actuellement, la création assigne automatiquement l'utilisateur connecté comme propriétaire (Backend constraint).

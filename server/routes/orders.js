@@ -6,6 +6,9 @@ import { verifyToken } from '../middlewares/auth.middleware.js';
 // Get all orders
 router.get('/', orderController.getAllOrders);
 
+// Get orders for the authenticated user
+router.get('/my-orders', verifyToken, orderController.getMyOrders);
+
 // Get a single order
 router.get('/:id', orderController.getOrderById);
 

@@ -9,6 +9,7 @@ export interface Product {
   hasVariants: boolean;
   variants?: Variant[];
   images: string[];
+  store?: any;
 }
 
 export interface Variant {

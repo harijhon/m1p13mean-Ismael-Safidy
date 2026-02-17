@@ -91,7 +91,7 @@ export class UsersComponent implements OnInit {
   }
 
   openNew(): void {
-    this.user = { name: '', email: '', role: 'user' };
+    this.user = { name: '', email: '', role: 'user', password: '' };
     this.submitted = false;
     this.userDialog = true;
   }
@@ -181,36 +181,41 @@ export class UsersComponent implements OnInit {
   saveUser(): void {
     this.submitted = true;
 
-    if (this.user.name?.trim() && this.user.email?.trim()) {
-      if (this.user._id) {
-        // Update existing user
-        this.userService.updateUser(this.user).subscribe({
-          next: (response: User) => {
-            this.loadUsers();
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'User Updated', life: 3000 });
-            this.userDialog = false;
-            this.user = { name: '', email: '', role: 'user' };
-          },
-          error: (error: any) => {
-            console.error('Error updating user:', error);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update user', life: 3000 });
-          }
-        });
-      } else {
-        // Create new user
-        this.userService.createUser(this.user).subscribe({
-          next: (response: User) => {
-            this.loadUsers();
-            this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'User Created', life: 3000 });
-            this.userDialog = false;
-            this.user = { name: '', email: '', role: 'user' };
-          },
-          error: (error: any) => {
-            console.error('Error creating user:', error);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to create user', life: 3000 });
-          }
-        });
-      }
+    // Basic validation
+    if (!this.user.name?.trim() || !this.user.email?.trim()) {
+        return;
+    }
+    // For new users, password is also required
+    if (!this.user._id && !this.user.password) {
+        return;
+    }
+
+    if (this.user._id) {
+      // Update existing user
+      this.userService.updateUser(this.user).subscribe({
+        next: (response: User) => {
+          this.loadUsers();
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'User Updated', life: 3000 });
+          this.userDialog = false;
+        },
+        error: (error: any) => {
+          console.error('Error updating user:', error);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update user', life: 3000 });
+        }
+      });
+    } else {
+      // Create new user (this.user now contains the password from the form)
+      this.userService.createUser(this.user).subscribe({
+        next: (response: User) => {
+          this.loadUsers();
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'User Created', life: 3000 });
+          this.userDialog = false;
+        },
+        error: (error: any) => {
+          console.error('Error creating user:', error);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: error.error?.message || 'Failed to create user', life: 3000 });
+        }
+      });
     }
   }
 

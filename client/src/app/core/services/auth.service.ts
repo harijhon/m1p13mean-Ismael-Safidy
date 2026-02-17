@@ -5,10 +5,11 @@ import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 export interface User {
-  id: string;
+  _id: string;
   email: string;
   role: string;
   name: string;
+  storeId?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,6 +24,7 @@ export class AuthService {
   readonly currentUser = this.currentUserSig.asReadonly();
   isLoggedIn = computed(() => !!this.currentUserSig());
   isAdmin = computed(() => this.currentUserSig()?.role === 'admin');
+  isManager = computed(() => this.currentUserSig()?.role === 'manager');
 
   constructor() {
     this.restoreSession();

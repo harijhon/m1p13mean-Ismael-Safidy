@@ -1,0 +1,116 @@
+<p-toast></p-toast>
+
+<p-toolbar styleClass="mb-4">
+    <div class="flex flex-wrap items-center justify-between gap-4" pToolbarLeft>
+        <div class="flex gap-2">
+            <button pButton label="Nouveau" icon="pi pi-plus" class="p-button-success mr-2"
+                (click)="openNew()"></button>
+            <button pButton label="Supprimer" icon="pi pi-trash" class="p-button-outlined p-button-secondary"
+                [disabled]="!selectedStores || !selectedStores.length" (click)="deleteSelectedStores()"></button>
+        </div>
+    </div>
+    <div class="flex gap-2" pToolbarRight>
+        <!-- Export button placeholder to match User CRUD layout if needed, or remove if strictly not needed but good for visual balance -->
+        <!-- <button pButton label="Export" icon="pi pi-upload" class="p-button-secondary"></button> -->
+    </div>
+</p-toolbar>
+
+<p-table #dt [value]="stores" [loading]="isLoading" responsiveLayout="scroll" [rows]="10" [paginator]="true"
+    [globalFilterFields]="['name','description','owner.name','owner.email']" selectionMode="multiple"
+    [(selection)]="selectedStores" styleClass="p-datatable-gridlines" dataKey="_id">
+    <ng-template pTemplate="caption">
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Gestion des Magasins</h5>
+            <p-iconfield class="p-iconfield p-iconfield-left">
+                <p-inputicon styleClass="pi pi-search" />
+                <input pInputText placeholder="Rechercher..." class="p-component p-inputtext"
+                    (input)="onGlobalFilter(dt, $event)" />
+            </p-iconfield>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width: 4rem">
+                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th>Logo</th>
+            <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="owner.name">Propriétaire <p-sortIcon field="owner.name"></p-sortIcon></th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-store>
+        <tr>
+            <td>
+                <p-tableCheckbox [value]="store"></p-tableCheckbox>
+            </td>
+            <td>
+                @if (store.logo) {
+                <img [src]="store.logo" [alt]="store.name" width="50" class="shadow-4 rounded-md" />
+                }
+            </td>
+            <td>{{ store.name }}</td>
+            <td>
+                {{ store.owner?.name }}
+                <div class="text-sm text-500">{{ store.owner?.email }}</div>
+            </td>
+            <td>{{ store.description }}</td>
+            <td>
+                <div class="flex gap-2">
+                    <button pButton pRipple icon="pi pi-pencil"
+                        class="p-button-rounded p-button-outlined p-button-success mr-2"
+                        (click)="editStore(store)"></button>
+                    <button pButton pRipple icon="pi pi-trash"
+                        class="p-button-rounded p-button-outlined p-button-danger"
+                        (click)="deleteStore(store)"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="loadingbody" let-rowIndex>
+        <tr>
+            <td><p-skeleton size="2rem" shape="circle"></p-skeleton></td>
+            <td><p-skeleton size="3rem" shape="square"></p-skeleton></td>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td class="text-center"><p-skeleton size="2rem" shape="circle"></p-skeleton></td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<!-- Store Dialog -->
+<p-dialog [(visible)]="storeDialog" [style]="{width: '450px'}" header="Détails Magasin" [modal]="true" class="p-fluid"
+    [closable]="false">
+    <ng-template pTemplate="content">
+        <div class="field">
+            <form [formGroup]="storeForm">
+                <label for="name" class="block font-bold mb-3">Nom</label>
+                <input pInputText id="name" type="text" formControlName="name" class="p-inputtext-fluid"
+                    [ngClass]="{'ng-invalid': submitted && storeForm.controls['name'].invalid}" />
+                <small *ngIf="submitted && storeForm.controls['name'].invalid" class="p-error">Le nom est
+                    requis.</small>
+
+                <label for="logo" class="block font-bold mb-3 mt-3">URL Logo</label>
+                <input pInputText id="logo" type="text" formControlName="logo" class="p-inputtext-fluid" />
+
+                <label for="description" class="block font-bold mb-3 mt-3">Description</label>
+                <textarea pInputTextarea id="description" formControlName="description" rows="3"
+                    class="p-inputtext-fluid"></textarea>
+            </form>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialog()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-text"
+            (click)="saveStore()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

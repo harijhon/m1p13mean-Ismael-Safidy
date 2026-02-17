@@ -5,15 +5,13 @@ import { authorize } from '../middlewares/role.middleware.js';
 
 const router = express.Router();
 
-// Middleware de sécurité appliqué à toutes les routes product
-// Seuls les admins peuvent gérer les produits
-router.use(verifyToken, authorize(['admin']));
-
-// Routes CRUD
+// Public routes for viewing products
 router.get('/', getAllProducts);
 router.get('/:id', getProductById);
-router.post('/', createProduct);
-router.put('/:id', updateProduct);
-router.delete('/:id', deleteProduct);
+
+// Protected routes for managing products (Admin or Manager)
+router.post('/', [verifyToken, authorize(['admin', 'manager'])], createProduct);
+router.put('/:id', [verifyToken, authorize(['admin', 'manager'])], updateProduct);
+router.delete('/:id', [verifyToken, authorize(['admin', 'manager'])], deleteProduct);
 
 export default router;

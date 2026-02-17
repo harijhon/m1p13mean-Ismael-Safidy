@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router'; // Import RouterLink
 import { CartService } from '../../../core/services/cart.service';
+import { AuthService } from '../../../core/services/auth.service'; // Import AuthService
 
 @Component({
   selector: 'app-store-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink], // Add RouterLink to imports
   template: `
     <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm h-16 flex items-center px-4">
       <div class="flex items-center flex-1">
@@ -30,19 +31,32 @@ import { CartService } from '../../../core/services/cart.service';
         </div>
       </div>
       
-      <!-- Bouton Panier -->
-      <div class="relative ml-4">
-        <button 
-          class="p-2 rounded-full hover:bg-gray-100 transition-colors"
-          (click)="goToCart()"
-        >
-          <i class="pi pi-shopping-cart text-xl text-gray-700"></i>
-          @if (cartService.count() > 0) {
-            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              {{ cartService.count() }}
-            </span>
-          }
-        </button>
+      <!-- Boutons d'actions (Panier et Profil) -->
+      <div class="flex items-center ml-4 gap-2">
+        <!-- Bouton Profil -->
+        @if (authService.isLoggedIn()) {
+          <a 
+            routerLink="/profile" 
+            class="p-2 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <i class="pi pi-user text-xl text-gray-700"></i>
+          </a>
+        }
+
+        <!-- Bouton Panier -->
+        <div class="relative">
+          <button 
+            class="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            (click)="goToCart()"
+          >
+            <i class="pi pi-shopping-cart text-xl text-gray-700"></i>
+            @if (cartService.count() > 0) {
+              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {{ cartService.count() }}
+              </span>
+            }
+          </button>
+        </div>
       </div>
     </header>
   `,
@@ -54,6 +68,7 @@ import { CartService } from '../../../core/services/cart.service';
 })
 export class StoreHeaderComponent {
   protected cartService = inject(CartService);
+  protected authService = inject(AuthService); // Inject AuthService
   private router = inject(Router);
 
   goToCart() {

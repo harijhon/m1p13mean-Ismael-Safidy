@@ -19,7 +19,9 @@ const variantSchema = new mongoose.Schema({
 const productSchema = new mongoose.Schema({
     store: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Store'
+        ref: 'Store',
+        required: true,
+        index: true
     },
     name: {
         type: String

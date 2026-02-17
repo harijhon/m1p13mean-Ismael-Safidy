@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { DashboardService } from '../../../core/services/dashboard.service';
 
 @Component({
@@ -26,7 +27,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
                 <div class="flex justify-between mb-4">
                     <div>
                         <span class="block text-muted-color font-medium mb-4">Revenue</span>
-                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ stats.revenue | currency:'USD':'symbol':'1.0-0' }}</div>
+                        <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ stats.revenue | currency:'EUR':'symbol':'1.0-0' }}</div>
                     </div>
                     <div class="flex items-center justify-center bg-orange-100 dark:bg-orange-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-dollar text-orange-500 text-xl!"></i>
@@ -67,7 +68,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
             </div>
         </div>`
 })
-export class StatsWidget implements OnInit {
+export class StatsWidget implements OnInit, OnDestroy {
     stats: any = {};
     isLoading = true;
     newOrders = 24;
@@ -75,17 +76,31 @@ export class StatsWidget implements OnInit {
     newCustomers = 520;
     activeProducts = 85;
 
+    private refreshSubscription!: Subscription;
+
     constructor(private dashboardService: DashboardService) {}
 
     ngOnInit() {
+        this.loadStats();
+        this.refreshSubscription = this.dashboardService.refresh$.subscribe(() => this.loadStats());
+    }
+
+    ngOnDestroy() {
+        if (this.refreshSubscription) {
+            this.refreshSubscription.unsubscribe();
+        }
+    }
+
+    private loadStats(): void {
+        this.isLoading = true;
         this.dashboardService.getStats().subscribe({
             next: (data) => {
                 this.stats = data;
-                this.isLoading = false;
                 // Calculate derived values if needed
                 this.newOrders = Math.floor(data.orders * 0.15); // Example calculation
                 this.newCustomers = Math.floor(data.customers * 0.02); // Example calculation
                 this.activeProducts = Math.floor(data.products * 0.85); // Example calculation
+                this.isLoading = false;
             },
             error: (error) => {
                 console.error('Error loading dashboard stats:', error);

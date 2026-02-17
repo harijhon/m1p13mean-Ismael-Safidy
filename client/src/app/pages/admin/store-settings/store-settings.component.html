@@ -1,0 +1,234 @@
+<div class="grid grid-cols-12 gap-8">
+
+    <!-- Title Section -->
+    <div class="col-span-12">
+        <div class="card mb-0">
+            <div class="flex justify-between items-start">
+                <div>
+                    <span class="block text-500 font-medium mb-3">Mon Magasin</span>
+                    <div class="text-900 font-medium text-xl">{{ store()?.name }}</div>
+                </div>
+                <div>
+                    <button pButton pRipple icon="pi pi-pencil" label="Modifier" (click)="openDialog()"
+                        class="p-button-text"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row (Directly mimicking Dashboard Widgets) -->
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+        <div class="card mb-0">
+            <div class="flex justify-between mb-4">
+                <div>
+                    <span class="block text-muted-color font-medium mb-4">Produits</span>
+                    <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ productCount() }}</div>
+                </div>
+                <!-- Box Icon (Purple) -->
+                <div class="flex items-center justify-center bg-purple-100 dark:bg-purple-400/10 rounded-border"
+                    style="width: 2.5rem; height: 2.5rem">
+                    <i class="pi pi-box text-purple-500 text-xl!"></i>
+                </div>
+            </div>
+            <span class="text-primary font-medium">{{ productCount() }} </span>
+            <span class="text-muted-color">actifs</span>
+        </div>
+    </div>
+
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+        <div class="card mb-0">
+            <div class="flex justify-between mb-4">
+                <div>
+                    <span class="block text-muted-color font-medium mb-4">Commandes</span>
+                    <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ orderCount() }}</div>
+                </div>
+                <!-- Cart Icon (Blue) -->
+                <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border"
+                    style="width: 2.5rem; height: 2.5rem">
+                    <i class="pi pi-shopping-cart text-blue-500 text-xl!"></i>
+                </div>
+            </div>
+            <span class="text-primary font-medium">-- </span>
+            <span class="text-muted-color">nouvelles</span>
+        </div>
+    </div>
+
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+        <div class="card mb-0">
+            <div class="flex justify-between mb-4">
+                <div>
+                    <span class="block text-muted-color font-medium mb-4">Revenu</span>
+                    <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ revenue() |
+                        currency:'EUR':'symbol':'1.0-0' }}</div>
+                </div>
+                <!-- Dollar Icon (Orange) -->
+                <div class="flex items-center justify-center bg-orange-100 dark:bg-orange-400/10 rounded-border"
+                    style="width: 2.5rem; height: 2.5rem">
+                    <i class="pi pi-dollar text-orange-500 text-xl!"></i>
+                </div>
+            </div>
+            <span class="text-primary font-medium">-- </span>
+            <span class="text-muted-color">ce mois-ci</span>
+        </div>
+    </div>
+
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+        <div class="card mb-0">
+            <div class="flex justify-between mb-4">
+                <div>
+                    <span class="block text-muted-color font-medium mb-4">Clients</span>
+                    <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">--</div>
+                </div>
+                <!-- Users Icon (Cyan) -->
+                <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border"
+                    style="width: 2.5rem; height: 2.5rem">
+                    <i class="pi pi-users text-cyan-500 text-xl!"></i>
+                </div>
+            </div>
+            <span class="text-muted-color">Données clients</span>
+        </div>
+    </div>
+
+    <!-- Store Details Column -->
+    <div class="col-span-12 xl:col-span-6">
+        <div class="card h-full">
+            <div class="flex justify-between items-center mb-5">
+                <span class="text-xl font-semibold text-900">Détails du Magasin</span>
+            </div>
+
+            <div class="flex items-center mb-6">
+                <div class="mr-4 flex-shrink-0">
+                    @if (store()?.logo) {
+                    <img [src]="store()?.logo" [alt]="store()?.name"
+                        class="w-16 h-16 rounded-full object-cover shadow-sm bg-gray-50" />
+                    } @else {
+                    <p-avatar [label]="getInitials(store()?.name || '')" size="large" shape="circle"
+                        styleClass="w-16 h-16 text-2xl bg-primary-50 text-primary-600 font-bold"></p-avatar>
+                    }
+                </div>
+                <div>
+                    <div class="text-2xl font-bold text-900 mb-1">{{ store()?.name }}</div>
+                    <div class="text-500">{{ store()?.owner?.email }}</div>
+                </div>
+            </div>
+
+            <div class="border-t surface-border py-4">
+                <span class="block text-900 font-semibold mb-2">Description</span>
+                <p class="text-600 m-0 leading-relaxed">{{ store()?.description || 'Aucune description disponible.' }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration Column -->
+    <div class="col-span-12 xl:col-span-6">
+        <div class="card h-full">
+            <span class="text-xl font-semibold text-900 block mb-5">Produits & Configuration</span>
+
+            <p-tabs value="0">
+                <p-tablist>
+                    <p-tab value="0">
+                        <i class="pi pi-list mr-2"></i>
+                        Produits
+                    </p-tab>
+                    <p-tab value="1">
+                        <i class="pi pi-cog mr-2"></i>
+                        Paramètres
+                    </p-tab>
+                </p-tablist>
+                <p-tabpanels>
+                    <p-tabpanel value="0">
+                        <p-table [value]="products()" [rows]="5" [paginator]="true" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Image</th>
+                                    <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
+                                    <th pSortableColumn="price">Prix <p-sortIcon field="price"></p-sortIcon></th>
+                                    <th>Status</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-product>
+                                <tr>
+                                    <td style="width: 15%; min-width: 5rem;">
+                                        <img [src]="product.images?.[0] || 'assets/images/placeholder.png'"
+                                            [alt]="product.name" class="shadow-4" width="50">
+                                    </td>
+                                    <td style="width: 35%; min-width: 7rem;">{{product.name}}</td>
+                                    <td style="width: 20%; min-width: 8rem;">{{product.price | currency:'EUR'}}</td>
+                                    <td style="width: 15%;">
+                                        <p-tag [value]="product.isActive ? 'Actif' : 'Inactif'"
+                                            [severity]="product.isActive ? 'success' : 'danger'"></p-tag>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="emptymessage">
+                                <tr>
+                                    <td colspan="4">Aucun produit trouvé.</td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-tabpanel>
+                    <p-tabpanel value="1">
+                        <ul class="list-none p-0 m-0 mt-3">
+                            <li class="flex items-center justify-between py-3 border-b surface-border">
+                                <div class="flex items-center">
+                                    <i class="pi pi-eye text-xl mr-3 text-500"></i>
+                                    <span class="text-900 font-medium">Visibilité Publique</span>
+                                </div>
+                                <span class="p-badge p-badge-success">Visible</span>
+                            </li>
+                            <li class="flex items-center justify-between py-3 border-b surface-border">
+                                <div class="flex items-center">
+                                    <i class="pi pi-bell text-xl mr-3 text-500"></i>
+                                    <span class="text-900 font-medium">Notifications</span>
+                                </div>
+                                <i class="pi pi-check text-green-500"></i>
+                            </li>
+                            <li class="flex items-center justify-between py-3">
+                                <div class="flex items-center">
+                                    <i class="pi pi-lock text-xl mr-3 text-500"></i>
+                                    <span class="text-900 font-medium">Sécurité</span>
+                                </div>
+                                <span class="text-500 text-sm">2FA Inactif</span>
+                            </li>
+                        </ul>
+                    </p-tabpanel>
+                </p-tabpanels>
+            </p-tabs>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Dialog -->
+<p-dialog [(visible)]="isDialogVisible" [style]="{width: '450px'}" header="Modifier le Magasin" [modal]="true"
+    class="p-fluid" [closable]="true" (onHide)="hideDialog()">
+    <ng-template pTemplate="content">
+        <form [formGroup]="storeForm" id="store-edit-form" (ngSubmit)="onSubmit()">
+            <div class="flex flex-col gap-4 mt-2">
+                <div class="field">
+                    <label for="name" class="block font-bold mb-2">Nom du magasin</label>
+                    <input id="name" class="w-full" type="text" pInputText formControlName="name" />
+                    <small *ngIf="storeForm.get('name')?.invalid && storeForm.get('name')?.touched"
+                        class="text-red-500 mt-1 block">Le nom est requis.</small>
+                </div>
+                <div class="field">
+                    <label for="logo" class="block font-bold mb-2">URL du logo</label>
+                    <input id="logo" type="text" class="w-full" pInputText formControlName="logo">
+                </div>
+                <div class="field">
+                    <label for="description" class="block font-bold mb-2">Description</label>
+                    <textarea id="description" rows="5" class="w-full" pInputTextarea
+                        formControlName="description"></textarea>
+                </div>
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialog()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" type="submit" form="store-edit-form"
+            [loading]="isSubmitting"></button>
+    </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>

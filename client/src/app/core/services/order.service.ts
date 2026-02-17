@@ -15,6 +15,7 @@ export class OrderService {
     const orderPayload = {
       items: items.map(item => ({
         product: item.productId,
+        variantId: item.variantId, // Include the variantId
         quantity: item.quantity,
         priceAtMoment: item.price
       })),

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RippleModule } from 'primeng/ripple';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { DashboardService } from '../../../core/services/dashboard.service';
 
 @Component({
@@ -24,7 +25,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
                 <tr>
                     <td style="width: 25%; min-width: 7rem;">{{ sale.customer?.name || 'Guest' }}</td>
                     <td style="width: 25%; min-width: 7rem;">{{ sale.createdAt | date:'short' }}</td>
-                    <td style="width: 25%; min-width: 8rem;">{{ sale.totalAmount | currency:'USD':'symbol':'1.0-0' }}</td>
+                    <td style="width: 25%; min-width: 8rem;">{{ sale.totalAmount | currency:'EUR':'symbol':'1.0-0' }}</td>
                     <td style="width: 25%;">
                         <span class="font-medium" [class.text-green-500]="sale.status === 'COMPLETED'" 
                               [class.text-yellow-500]="sale.status === 'PENDING'"
@@ -37,13 +38,26 @@ import { DashboardService } from '../../../core/services/dashboard.service';
         </p-table>
     </div>`
 })
-export class RecentSalesWidget implements OnInit {
+export class RecentSalesWidget implements OnInit, OnDestroy {
     recentSales: any[] = [];
     isLoading = true;
+    private refreshSubscription!: Subscription;
 
     constructor(private dashboardService: DashboardService) {}
 
     ngOnInit() {
+        this.loadRecentSales();
+        this.refreshSubscription = this.dashboardService.refresh$.subscribe(() => this.loadRecentSales());
+    }
+
+    ngOnDestroy() {
+        if (this.refreshSubscription) {
+            this.refreshSubscription.unsubscribe();
+        }
+    }
+
+    private loadRecentSales(): void {
+        this.isLoading = true;
         this.dashboardService.getStats().subscribe({
             next: (data) => {
                 this.recentSales = data.recentSales || [];

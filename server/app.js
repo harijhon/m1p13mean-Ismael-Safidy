@@ -13,6 +13,7 @@ import userRoutes from './routes/user.routes.js';
 import productRoutes from './routes/product.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import orderRoutes from './routes/orders.js';
+import storeRoutes from './routes/stores.js';
 
 // Initialize express app
 const app = express();
@@ -28,6 +29,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/stores', storeRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

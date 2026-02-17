@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Store from '../models/Store.js'; // Import Store model
 import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
@@ -39,7 +40,20 @@ export const login = async (req, res) => {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const payload = { id: user._id, email: user.email, role: user.role, name: user.name };
+    // Prepare JWT payload
+    const payload = { 
+      _id: user._id, 
+      email: user.email, 
+      role: user.role, 
+      name: user.name 
+    };
+
+    // Check if the user owns a store and add it to the payload
+    const store = await Store.findOne({ owner: user._id });
+    if (store) {
+      payload.storeId = store._id;
+    }
+
     // Expiration réglée à 12h
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '12h' });
 
