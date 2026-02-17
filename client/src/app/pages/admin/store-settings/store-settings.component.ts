@@ -6,6 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { StoreService } from '../../../core/services/store.service';
 import { ProductService } from '../../../core/services/product.service';
+import { DashboardService } from '../../../core/services/dashboard.service'; // Import DashboardService
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { DialogModule } from 'primeng/dialog';
@@ -16,6 +17,7 @@ import { BadgeModule } from 'primeng/badge';
 import { TextareaModule } from 'primeng/textarea';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { ChartModule } from 'primeng/chart'; // Import ChartModule
 import { Product } from '../../../models/product.model';
 import { Store } from '../../../models/store.model';
 
@@ -37,15 +39,17 @@ import { Store } from '../../../models/store.model';
     AvatarModule,
     BadgeModule,
     TableModule,
-    TagModule
+    TagModule,
+    ChartModule // Add ChartModule
   ],
   providers: [MessageService],
   templateUrl: 'store-settings.component.html',
-  styleUrls: ['./store-settings.component.scss'] // Assuming scss file exists or will be created/used
+  styleUrls: ['./store-settings.component.scss']
 })
 export class StoreSettingsComponent implements OnInit {
   private storeService = inject(StoreService);
   private productService = inject(ProductService);
+  private dashboardService = inject(DashboardService); // Inject
   private fb = inject(FormBuilder);
   private messageService = inject(MessageService);
 
@@ -60,9 +64,14 @@ export class StoreSettingsComponent implements OnInit {
   productCount = signal<number>(0);
   products = signal<Product[]>([]);
 
-  // Mocks
+  // Stats & Dashboard Data
   orderCount = signal<number>(0);
   revenue = signal<number>(0);
+  recentSales = signal<any[]>([]); // For History Table
+
+  // Charts
+  chartData: any;
+  chartOptions: any;
 
   constructor() {
     this.storeForm = this.fb.group({
@@ -70,6 +79,7 @@ export class StoreSettingsComponent implements OnInit {
       logo: [''],
       description: ['']
     });
+    this.initChart();
   }
 
   ngOnInit(): void {
@@ -106,6 +116,8 @@ export class StoreSettingsComponent implements OnInit {
     });
     // Load products for this store
     this.loadProducts(store._id);
+    // Load stats for this store
+    this.loadStoreStats(store._id);
   }
 
   onStoreTabChange(event: any): void {
@@ -114,6 +126,23 @@ export class StoreSettingsComponent implements OnInit {
     if (index < this.stores().length) {
       this.selectStore(this.stores()[index]);
     }
+  }
+
+  loadStoreStats(storeId: string | undefined): void {
+    if (!storeId) return;
+
+    this.dashboardService.getStats(storeId).subscribe({
+      next: (stats) => {
+        this.revenue.set(stats.revenue);
+        this.orderCount.set(stats.orders);
+        this.productCount.set(stats.products); // Update product count from stats (faster)
+        this.recentSales.set(stats.recentSales);
+
+        // Update Chart with Top Products data
+        this.updateChartData(stats.topProducts);
+      },
+      error: (err) => console.error('Failed to load store stats', err)
+    });
   }
 
   loadProducts(storeId: string | undefined): void {
@@ -127,10 +156,75 @@ export class StoreSettingsComponent implements OnInit {
         });
 
         this.products.set(storeProducts);
-        this.productCount.set(storeProducts.length);
+        // this.productCount.set(storeProducts.length); // Use stats count instead
       },
       error: (err) => console.error('Failed to load products count', err)
     });
+  }
+
+  initChart() {
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--text-color');
+    const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+    const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
+
+    this.chartOptions = {
+      maintainAspectRatio: false,
+      aspectRatio: 0.6,
+      plugins: {
+        legend: {
+          labels: {
+            color: textColor
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: textColorSecondary
+          },
+          grid: {
+            color: surfaceBorder,
+            drawBorder: false
+          }
+        },
+        y: {
+          ticks: {
+            color: textColorSecondary
+          },
+          grid: {
+            color: surfaceBorder,
+            drawBorder: false
+          }
+        }
+      }
+    };
+  }
+
+  updateChartData(topProducts: any[]) {
+    const documentStyle = getComputedStyle(document.documentElement);
+
+    this.chartData = {
+      labels: topProducts.map(p => p.productDetails?.[0]?.name || 'Produit Inconnu'),
+      datasets: [
+        {
+          label: 'Ventes (Quantité)',
+          backgroundColor: documentStyle.getPropertyValue('--blue-500'),
+          borderColor: documentStyle.getPropertyValue('--blue-500'),
+          data: topProducts.map(p => p.totalQuantity)
+        }
+      ]
+    };
+  }
+
+  getSeverity(status: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" | undefined {
+    switch (status) {
+      case 'COMPLETED': return 'success';
+      case 'PENDING': return 'warn';
+      case 'CANCELLED': return 'danger';
+      case 'REFUNDED': return 'danger';
+      default: return 'info';
+    }
   }
 
   openDialog(): void {

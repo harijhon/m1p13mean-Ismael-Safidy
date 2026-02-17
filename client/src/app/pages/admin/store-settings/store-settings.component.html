@@ -122,23 +122,69 @@
 
     <!-- Configuration Column -->
     <div class="col-span-12 xl:col-span-6">
-        <div class="card h-full">
-            <span class="text-xl font-semibold text-900 block mb-5">Produits & Configuration</span>
-
+        <div class="card h-full shadow-sm">
             <p-tabs value="0">
                 <p-tablist>
                     <p-tab value="0">
+                        <i class="pi pi-chart-bar mr-2"></i>
+                        Aperçu
+                    </p-tab>
+                    <p-tab value="1">
                         <i class="pi pi-list mr-2"></i>
                         Produits
                     </p-tab>
-                    <p-tab value="1">
+                    <p-tab value="2">
                         <i class="pi pi-cog mr-2"></i>
                         Paramètres
                     </p-tab>
                 </p-tablist>
                 <p-tabpanels>
+                    <!-- Overview / Stats Tab -->
                     <p-tabpanel value="0">
-                        <p-table [value]="products()" [rows]="5" [paginator]="true" responsiveLayout="scroll">
+                        <div class="flex flex-col gap-6">
+                            <!-- Sales Chart -->
+                            <div>
+                                <span class="text-900 font-semibold block mb-4">Top Produits (Ventes)</span>
+                                <p-chart type="bar" [data]="chartData" [options]="chartOptions"
+                                    height="250px"></p-chart>
+                            </div>
+
+                            <!-- Sales History -->
+                            <div>
+                                <span class="text-900 font-semibold block mb-4">Commandes Récentes</span>
+                                <p-table [value]="recentSales()" [rows]="5" responsiveLayout="scroll"
+                                    styleClass="p-datatable-sm">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Client</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-sale>
+                                        <tr>
+                                            <td>{{ sale.customer?.name || 'Invité' }}</td>
+                                            <td class="font-medium">{{ sale.totalAmount | currency:'EUR' }}</td>
+                                            <td>
+                                                <p-tag [value]="sale.status" [severity]="getSeverity(sale.status)"
+                                                    styleClass="text-xs"></p-tag>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="emptymessage">
+                                        <tr>
+                                            <td colspan="3" class="text-center text-sm p-4">Aucune vente récente.</td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </p-tabpanel>
+
+                    <!-- Products Tab -->
+                    <p-tabpanel value="1">
+                        <p-table [value]="products()" [rows]="5" [paginator]="true" responsiveLayout="scroll"
+                            styleClass="p-datatable-sm">
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Image</th>
@@ -149,40 +195,31 @@
                             </ng-template>
                             <ng-template pTemplate="body" let-product>
                                 <tr>
-                                    <td style="width: 15%; min-width: 5rem;">
+                                    <td style="width: 15%; min-width: 4rem;">
                                         <img [src]="product.images?.[0] || 'assets/images/placeholder.png'"
-                                            [alt]="product.name" class="shadow-4" width="50">
+                                            [alt]="product.name" class="shadow-2 rounded" width="40">
                                     </td>
-                                    <td style="width: 35%; min-width: 7rem;">{{product.name}}</td>
-                                    <td style="width: 20%; min-width: 8rem;">{{product.price | currency:'EUR'}}</td>
-                                    <td style="width: 15%;">
-                                        <p-tag [value]="product.isActive ? 'Actif' : 'Inactif'"
-                                            [severity]="product.isActive ? 'success' : 'danger'"></p-tag>
-                                    </td>
+                                    <td class="text-sm font-medium">{{product.name}}</td>
+                                    <td class="text-sm">{{product.price | currency:'EUR'}}</td>
+                                    <td><p-tag [value]="product.isActive ? 'Actif' : 'Inactif'"
+                                            [severity]="product.isActive ? 'success' : 'danger'"
+                                            styleClass="text-xs"></p-tag></td>
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="emptymessage">
                                 <tr>
-                                    <td colspan="4">Aucun produit trouvé.</td>
+                                    <td colspan="4" class="text-center text-sm p-4">Aucun produit.</td>
                                 </tr>
                             </ng-template>
                         </p-table>
                     </p-tabpanel>
-                    <p-tabpanel value="1">
-                        <ul class="list-none p-0 m-0 mt-3">
-                            <li class="flex items-center justify-between py-3 border-b surface-border">
-                                <div class="flex items-center">
-                                    <i class="pi pi-eye text-xl mr-3 text-500"></i>
-                                    <span class="text-900 font-medium">Visibilité Publique</span>
-                                </div>
+
+                    <!-- Settings Tab -->
+                    <p-tabpanel value="2">
+                        <ul class="list-none p-0 m-0">
+                            <li class="flex items-center justify-between py-2 border-b surface-border">
+                                <span class="text-900 text-sm">Visibilité</span>
                                 <span class="p-badge p-badge-success">Visible</span>
-                            </li>
-                            <li class="flex items-center justify-between py-3 border-b surface-border">
-                                <div class="flex items-center">
-                                    <i class="pi pi-bell text-xl mr-3 text-500"></i>
-                                    <span class="text-900 font-medium">Notifications</span>
-                                </div>
-                                <i class="pi pi-check text-green-500"></i>
                             </li>
                             <li class="flex items-center justify-between py-3">
                                 <div class="flex items-center">

@@ -15,8 +15,9 @@ export class DashboardService {
 
   constructor(private http: HttpClient) { }
 
-  getStats(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+  getStats(storeId?: string): Observable<any> {
+    const options = storeId ? { params: { storeId } } : {};
+    return this.http.get<any>(this.apiUrl, options);
   }
 
   /**

@@ -1,13 +1,21 @@
+import mongoose from 'mongoose';
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import User from '../models/User.js';
 
 export const getStats = async (req, res) => {
     try {
+        const { storeId } = req.query;
+        const matchStage = storeId ? { store: new mongoose.Types.ObjectId(storeId) } : {};
+        const queryFilter = storeId ? { store: storeId } : {};
+
         // Calcul des statistiques
         const revenuePromise = Order.aggregate([
             {
-                $match: { status: 'COMPLETED' }
+                $match: {
+                    status: 'COMPLETED',
+                    ...matchStage
+                }
             },
             {
                 $group: {
@@ -17,13 +25,20 @@ export const getStats = async (req, res) => {
             }
         ]);
 
-        const ordersCountPromise = Order.countDocuments();
+        const ordersCountPromise = Order.countDocuments(queryFilter);
 
-        const productsCountPromise = Product.countDocuments({ isActive: true });
+        const productsCountPromise = Product.countDocuments({ isActive: true, ...queryFilter });
 
-        const customersCountPromise = User.countDocuments({ role: 'user' });
+        // For specific store: count unique customers who ordered. detailed filtering might be needed.
+        // For global: User.countDocuments({ role: 'user' })
+        let customersCountPromise;
+        if (storeId) {
+            customersCountPromise = Order.distinct('customer', queryFilter).then(ids => ids.length);
+        } else {
+            customersCountPromise = User.countDocuments({ role: 'user' });
+        }
 
-        const recentSalesPromise = Order.find({ status: 'COMPLETED' })
+        const recentSalesPromise = Order.find({ status: 'COMPLETED', ...queryFilter })
             .populate('items.product')
             .populate('customer')
             .sort({ createdAt: -1 })
@@ -31,7 +46,10 @@ export const getStats = async (req, res) => {
 
         const topProductsPromise = Order.aggregate([
             {
-                $match: { status: 'COMPLETED' }
+                $match: {
+                    status: 'COMPLETED',
+                    ...matchStage
+                }
             },
             {
                 $unwind: '$items'
