@@ -73,7 +73,7 @@ export class ProductsComponent implements OnInit {
   ) {
     this.productForm = this.createProductForm();
   }
-  
+
   createProductForm(): FormGroup {
     return this.fb.group({
       name: ['', Validators.required],
@@ -97,7 +97,8 @@ export class ProductsComponent implements OnInit {
       couleur: [''],
       taille: [''],
       price: [0, Validators.min(0)],
-      stock: [0, Validators.min(0)]
+      stock: [0, Validators.min(0)],
+      image: ['']
     });
     this.variants.push(variantGroup);
   }
@@ -110,13 +111,13 @@ export class ProductsComponent implements OnInit {
     // Pour l'instant, on va juste simuler l'URL de l'image téléchargée
     // Dans une implémentation réelle, vous devriez envoyer le fichier au serveur
     // et recevoir l'URL de l'image stockée
-    
+
     // Pour la démo, on va juste créer une URL blob temporaire ou utiliser une URL simulée
     if (event.files && event.files.length > 0) {
       // Dans une implémentation réelle, vous enverriez le fichier au serveur
       // et récupéreriez l'URL de l'image stockée
       const uploadedFile = event.files[0];
-      
+
       // Pour l'instant, on va juste stocker le nom du fichier ou une URL temporaire
       // dans une implémentation réelle, vous devriez envoyer le fichier au serveur
       // et stocker l'URL retournée
@@ -128,6 +129,17 @@ export class ProductsComponent implements OnInit {
       // Pour l'instant, on va juste simuler une URL
       images[0] = URL.createObjectURL(uploadedFile);
       this.productForm.patchValue({ images });
+    }
+  }
+
+  onVariantImageUpload(event: any, index: number) {
+    if (event.files && event.files.length > 0) {
+      const uploadedFile = event.files[0];
+      const imageUrl = URL.createObjectURL(uploadedFile);
+
+      const variantArray = this.productForm.get('variants') as FormArray;
+      const variantGroup = variantArray.at(index) as FormGroup;
+      variantGroup.patchValue({ image: imageUrl });
     }
   }
 
@@ -193,20 +205,20 @@ export class ProductsComponent implements OnInit {
 
     Promise.all(deletePromises).then(() => {
       this.loadProducts();
-      this.messageService.add({ 
-        severity: 'success', 
-        summary: 'Successful', 
-        detail: `${this.selectedProducts.length} products deleted`, 
-        life: 3000 
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Successful',
+        detail: `${this.selectedProducts.length} products deleted`,
+        life: 3000
       });
       this.selectedProducts = []; // Clear selection
     }).catch(error => {
       console.error('Error deleting products:', error);
-      this.messageService.add({ 
-        severity: 'error', 
-        summary: 'Error', 
-        detail: 'Failed to delete some products', 
-        life: 3000 
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to delete some products',
+        life: 3000
       });
     });
   }
@@ -224,7 +236,7 @@ export class ProductsComponent implements OnInit {
 
     // Réinitialiser le tableau des variantes
     this.variants.clear();
-    
+
     // Ajouter les variantes existantes
     if (product.variants && product.variants.length > 0) {
       product.variants.forEach(variant => {
@@ -233,7 +245,8 @@ export class ProductsComponent implements OnInit {
           couleur: [variant.attributes ? (variant.attributes as any)['Couleur'] || '' : ''],
           taille: [variant.attributes ? (variant.attributes as any)['Taille'] || '' : ''],
           price: [variant.price, Validators.min(0)],
-          stock: [variant.stock, Validators.min(0)]
+          stock: [variant.stock, Validators.min(0)],
+          image: [variant.image || '']
         });
         this.variants.push(variantGroup);
       });
@@ -290,7 +303,8 @@ export class ProductsComponent implements OnInit {
           sku: variant.sku,
           attributes: new Map([['Couleur', variant.couleur], ['Taille', variant.taille]]),
           price: variant.price,
-          stock: variant.stock
+          stock: variant.stock,
+          image: variant.image
         })) : [],
         images: formData.images || ['']
       };

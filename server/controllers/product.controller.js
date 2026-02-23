@@ -25,7 +25,7 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
     try {
-        const { storeId } = req.user; // storeId from JWT
+        const storeId = req.user?.storeId || req.body?.storeId; // storeId from JWT or body
         if (!storeId) {
             return res.status(403).json({ message: 'Forbidden: You must have a store to create a product.' });
         }
@@ -63,7 +63,7 @@ export const updateProduct = async (req, res) => {
         // Update fields and save
         Object.assign(product, req.body);
         const updatedProduct = await product.save();
-        
+
         res.status(200).json(updatedProduct);
     } catch (error) {
         console.error('Error updating product:', error);
@@ -82,7 +82,7 @@ export const deleteProduct = async (req, res) => {
         if (req.user.role === 'manager' && product.store.toString() !== req.user.storeId) {
             return res.status(403).json({ message: 'Forbidden: You can only delete products from your own store.' });
         }
-        
+
         await product.deleteOne();
         res.status(200).json({ message: 'Product deleted successfully' });
     } catch (error) {

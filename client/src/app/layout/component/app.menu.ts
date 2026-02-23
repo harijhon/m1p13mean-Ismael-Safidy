@@ -35,6 +35,7 @@ export class AppMenu {
             mainMenuItems.push({ label: 'Magasins', icon: 'pi pi-fw pi-building', routerLink: ['/admin/stores'] });
             mainMenuItems.push({ label: 'Mes Magasins', icon: 'pi pi-fw pi-shop', routerLink: ['/admin/store-settings'] });
             mainMenuItems.push({ label: 'Produits', icon: 'pi pi-fw pi-box', routerLink: ['/admin/products'] });
+            mainMenuItems.push({ label: 'Promotions', icon: 'pi pi-fw pi-tags', routerLink: ['/admin/promotions'] });
         }
 
         this.model = [

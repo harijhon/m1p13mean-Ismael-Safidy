@@ -50,9 +50,9 @@ import { AuthService } from '../../../core/services/auth.service'; // Import Aut
             (click)="goToCart()"
           >
             <i class="pi pi-shopping-cart text-xl text-gray-700"></i>
-            @if (cartService.count() > 0) {
+            @if (cartService.totalItems() > 0) {
               <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {{ cartService.count() }}
+                {{ cartService.totalItems() }}
               </span>
             }
           </button>

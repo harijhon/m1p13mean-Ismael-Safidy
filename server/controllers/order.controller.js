@@ -12,7 +12,7 @@ export const createOrder = async (req, res) => {
         if (order.status === 'COMPLETED') {
             const updateOperations = order.items.map(async (item) => {
                 const product = await Product.findById(item.product);
-                
+
                 // Ne traiter que les produits physiques, pas les services
                 if (product && product.type === 'PRODUCT') {
                     if (product.hasVariants) {
@@ -51,6 +51,40 @@ export const createOrder = async (req, res) => {
                         // Décrémenter le stock global
                         product.currentStock -= item.quantity;
                     }
+
+                    // --- PROMOTION LOGIC START ---
+                    let applySalePrice = false;
+
+                    if (product.sale && product.sale.isActive && product.sale.promoId) {
+                        try {
+                            const PromotionObj = (await import('../models/Promotion.js')).default;
+                            const activePromo = await PromotionObj.findById(product.sale.promoId);
+
+                            if (activePromo && activePromo.isActive) {
+                                const now = new Date();
+                                const isValidDate = now >= activePromo.startDate && now <= activePromo.endDate;
+                                const isUnderLimit = (activePromo.usageLimit === null) || (activePromo.usageCount + item.quantity <= activePromo.usageLimit);
+
+                                if (isValidDate && isUnderLimit) {
+                                    applySalePrice = true;
+                                    activePromo.usageCount += item.quantity;
+                                    await activePromo.save();
+                                } else if (!isValidDate || !isUnderLimit) {
+                                    // Optionally stop the promotion if limit is fully reached
+                                    if (activePromo.usageLimit !== null && (activePromo.usageCount >= activePromo.usageLimit)) {
+                                        // Auto-disable promotion
+                                        activePromo.isActive = false;
+                                        await activePromo.save();
+
+                                        product.sale.isActive = false;
+                                    }
+                                }
+                            }
+                        } catch (err) {
+                            console.error('Error processing promotion during order:', err);
+                        }
+                    }
+                    // --- PROMOTION LOGIC END ---
 
                     await product.save();
 

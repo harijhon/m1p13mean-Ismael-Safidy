@@ -43,12 +43,12 @@ export const appRoutes: Routes = [
         component: StoreLayoutComponent,
         canActivate: [authGuard],
         children: [
-            { 
-                path: '', 
+            {
+                path: '',
                 loadComponent: () => import('./app/features/store/profile/profile.component').then(m => m.ProfileComponent)
             },
-            { 
-                path: 'orders', 
+            {
+                path: 'orders',
                 loadComponent: () => import('./app/features/store/profile/order-history/order-history.component').then(m => m.OrderHistoryComponent)
             }
         ]
@@ -79,6 +79,12 @@ export const appRoutes: Routes = [
                 loadComponent: () => import('./app/pages/admin/store-settings/store-settings.component').then(m => m.StoreSettingsComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['admin', 'manager'] }
+            },
+            {
+                path: 'promotions',
+                loadComponent: () => import('./app/pages/admin/promotions/promotions.component').then(m => m.PromotionsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['manager'] }
             },
             {
                 path: 'stores',

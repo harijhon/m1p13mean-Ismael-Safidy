@@ -33,7 +33,12 @@ import { Product } from '../../../models/product.model';
               class="bg-white rounded-lg shadow-xs overflow-hidden transition-transform duration-300 hover:shadow-md hover:-translate-y-1 block"
             >
               <!-- Product Image -->
-              <div class="aspect-[3/4] bg-gray-100 flex items-center justify-center">
+              <div class="aspect-[3/4] bg-gray-100 flex items-center justify-center relative">
+                @if (product.sale?.isActive) {
+                  <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                    -{{ product.sale!.discountPercent }}%
+                  </span>
+                }
                 <img 
                   [src]="product.images && product.images.length > 0 ? product.images[0] : 'https://primefaces.org/cdn/primeng/images/demo/product-placeholder.svg'" 
                   [alt]="product.name"
@@ -48,12 +53,22 @@ import { Product } from '../../../models/product.model';
                 <!-- Pricing -->
                 @if (product.hasVariants) {
                   <div class="mt-1">
-                    <span class="text-red-500 font-bold">Dès {{ getMinVariantPrice(product) | currency:'EUR':'symbol':'1.0-0' }}</span>
+                    @if (product.sale?.isActive) {
+                      <span class="text-gray-400 line-through text-sm mr-2">{{ getMinVariantPrice(product) | currency:'EUR':'symbol':'1.0-0' }}</span>
+                      <span class="text-red-500 font-bold">Dès {{ product.sale!.salePrice | currency:'EUR':'symbol':'1.0-0' }}</span>
+                    } @else {
+                      <span class="font-bold">Dès {{ getMinVariantPrice(product) | currency:'EUR':'symbol':'1.0-0' }}</span>
+                    }
                     <span class="ml-2 inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Options</span>
                   </div>
                 } @else {
-                  <div class="mt-1">
-                    <span class="text-red-500 font-bold">{{ product.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                  <div class="mt-1 flex items-center gap-2">
+                    @if (product.sale?.isActive) {
+                      <span class="text-gray-400 line-through text-sm">{{ product.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                      <span class="text-red-500 font-bold text-lg">{{ product.sale!.salePrice | currency:'EUR':'symbol':'1.0-0' }}</span>
+                    } @else {
+                      <span class="font-bold text-gray-900">{{ product.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                    }
                   </div>
                 }
               </div>
@@ -80,7 +95,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadProducts();

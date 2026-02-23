@@ -1,0 +1,125 @@
+<p-toast></p-toast>
+
+<p-toolbar styleClass="mb-4">
+    <div class="flex flex-wrap items-center justify-between gap-4" pToolbarLeft>
+        <div class="flex gap-2">
+            <button pButton label="Nouvelle Promo" icon="pi pi-plus" class="p-button-success mr-2"
+                (click)="openNew()"></button>
+        </div>
+    </div>
+</p-toolbar>
+
+<p-table #dt [value]="promotions" [loading]="isLoading" responsiveLayout="scroll" [rows]="10" [paginator]="true"
+    styleClass="p-datatable-gridlines" [rowHover]="true">
+    <ng-template pTemplate="caption">
+        <div class="flex items-center justify-between">
+            <h5 class="m-0">Suivi des Promotions</h5>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Produit Affecté</th>
+            <th>Réduction</th>
+            <th>Début</th>
+            <th>Fin</th>
+            <th>Usages</th>
+            <th>Limite</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-promo>
+        <tr>
+            <td class="font-bold">{{ promo.product?.name || 'Produit Inconnu' }}</td>
+            <td><p-tag severity="danger" value="-{{ promo.discountPercent }}%"></p-tag></td>
+            <td>{{ promo.startDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ promo.endDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ promo.usageCount }}</td>
+            <td>{{ getLimitDisplay(promo.usageLimit) }}</td>
+            <td>
+                <p-tag [value]="promo.isActive ? 'Active' : 'Terminée'"
+                    [severity]="getStatusSeverity(promo.isActive)"></p-tag>
+            </td>
+            <td>
+                <button *ngIf="promo.isActive" pButton pRipple icon="pi pi-pause"
+                    class="p-button-rounded p-button-outlined p-button-warning" pTooltip="Arrêter la promotion"
+                    (click)="stopPromotion(promo)"></button>
+            </td>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="loadingbody" let-rowIndex>
+        <tr>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td><p-skeleton size="2rem" shape="circle"></p-skeleton></td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<!-- Promotion Dialog -->
+<p-dialog [(visible)]="promoDialog" [style]="{width: '600px'}" header="Lancer une Promotion" [modal]="true"
+    class="p-fluid" [closable]="false">
+    <ng-template pTemplate="content">
+        <form [formGroup]="promoForm">
+
+            <div class="field mb-4">
+                <label for="product" class="block font-bold mb-2">Produit Cible</label>
+                <p-select id="product" [options]="products" optionLabel="name" optionValue="_id"
+                    formControlName="product" placeholder="Sélectionnez un produit cible" class="p-inputtext-fluid">
+                </p-select>
+                <small *ngIf="submitted && promoForm.get('product')?.invalid" class="p-error text-red-500">Un produit
+                    est requis.</small>
+            </div>
+
+            <div class="field mb-4">
+                <label for="discountPercent" class="block font-bold mb-2">Pourcentage de réduction (%)</label>
+                <p-inputNumber id="discountPercent" formControlName="discountPercent" mode="decimal" suffix=" %"
+                    [min]="1" [max]="100" class="p-inputtext-fluid"></p-inputNumber>
+                <small *ngIf="submitted && promoForm.get('discountPercent')?.invalid" class="p-error text-red-500">Un
+                    pourcentage entre 1 et 100 est requis.</small>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="field">
+                    <label for="startDate" class="block font-bold mb-2">Date de début</label>
+                    <input pInputText id="startDate" type="date" formControlName="startDate"
+                        class="p-inputtext-fluid border p-2 w-full rounded" />
+                    <small *ngIf="submitted && promoForm.get('startDate')?.invalid" class="p-error text-red-500">Date
+                        requise.</small>
+                </div>
+                <div class="field">
+                    <label for="endDate" class="block font-bold mb-2">Date de fin</label>
+                    <input pInputText id="endDate" type="date" formControlName="endDate"
+                        class="p-inputtext-fluid border p-2 w-full rounded" />
+                    <small *ngIf="submitted && promoForm.get('endDate')?.invalid" class="p-error text-red-500">Date
+                        requise.</small>
+                </div>
+            </div>
+
+            <div class="field mb-4">
+                <label for="usageLimit" class="block font-bold mb-2">Limite d'utilisation (Optionnel)</label>
+                <p-inputNumber id="usageLimit" formControlName="usageLimit" mode="decimal" [min]="1"
+                    placeholder="Laissez vide pour Illimité" class="p-inputtext-fluid"></p-inputNumber>
+                <small class="text-gray-500 block mt-1">Exemple: Les 50 premiers clients uniquement.</small>
+            </div>
+
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text p-button-secondary"
+            (click)="hideDialog()"></button>
+        <button pButton pRipple label="Lancer l'offre !" icon="pi pi-check" class="p-button-success"
+            (click)="savePromotion()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}" [closable]="false" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
