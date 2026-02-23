@@ -21,6 +21,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { StoreService } from '@/core/services/store.service';
+import { AuthService } from '@/core/services/auth.service';
 import { Store } from '@/models/store.model';
 
 @Component({
@@ -66,7 +67,8 @@ export class StoresComponent implements OnInit {
     private fb: FormBuilder,
     private storeService: StoreService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private authService: AuthService
   ) {
     this.storeForm = this.fb.group({
       _id: [''],
@@ -81,7 +83,12 @@ export class StoresComponent implements OnInit {
   }
 
   loadStores(): void {
-    this.storeService.getStores().subscribe({
+    const user = this.authService.currentUser();
+    const fetchObservable = user?.role === 'admin'
+      ? this.storeService.getStores()
+      : this.storeService.getMyStores();
+
+    fetchObservable.subscribe({
       next: (data: Store[]) => {
         this.stores = data;
         this.isLoading = false;
@@ -174,7 +181,7 @@ export class StoresComponent implements OnInit {
           });
         }
       },
-      reject: () => {}
+      reject: () => { }
     });
   }
 

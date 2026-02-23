@@ -90,7 +90,7 @@ export const appRoutes: Routes = [
                 path: 'stores',
                 loadComponent: () => import('./app/pages/admin/stores/stores.component').then(m => m.StoresComponent),
                 canActivate: [roleGuard],
-                data: { roles: ['admin'] }
+                data: { roles: ['admin', 'manager'] }
             }
         ]
     }
