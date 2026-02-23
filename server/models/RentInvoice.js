@@ -6,8 +6,8 @@ const rentInvoiceSchema = new mongoose.Schema({
         ref: 'Store',
         required: true
     },
-    period: {
-        type: String,
+    month: {
+        type: Date,
         required: true
     },
     amountDue: {
@@ -28,11 +28,17 @@ const rentInvoiceSchema = new mongoose.Schema({
         note: String
     }]
 }, {
-    timestamps: true
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
+rentInvoiceSchema.virtual('balance').get(function () {
+    return (this.amountDue || 0) - (this.amountPaid || 0);
 });
 
 // CRITIQUE (Idempotence) : Index composé unique
-rentInvoiceSchema.index({ store: 1, period: 1 }, { unique: true });
+rentInvoiceSchema.index({ store: 1, month: 1 }, { unique: true });
 
 const RentInvoice = mongoose.model('RentInvoice', rentInvoiceSchema);
 

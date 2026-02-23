@@ -87,6 +87,12 @@ export const appRoutes: Routes = [
                 data: { roles: ['manager'] }
             },
             {
+                path: 'rent',
+                loadComponent: () => import('./app/pages/admin/rent-manager/rent-manager.component').then(m => m.RentManagerComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['admin'] }
+            },
+            {
                 path: 'stores',
                 loadComponent: () => import('./app/pages/admin/stores/stores.component').then(m => m.StoresComponent),
                 canActivate: [roleGuard],

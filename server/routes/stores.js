@@ -1,5 +1,5 @@
 import express from 'express';
-import { getStores, getStoreById, createStore, updateStore, deleteStore, getMyStores, updateMyStore } from '../controllers/store.controller.js';
+import { getStores, getStoreById, createStore, updateStore, deleteStore, getMyStores, updateMyStore, sendEvictionNotice } from '../controllers/store.controller.js';
 import { verifyToken } from '../middlewares/auth.middleware.js';
 import { authorize } from '../middlewares/role.middleware.js';
 
@@ -16,6 +16,7 @@ router.put('/my-store', [verifyToken, authorize(['admin', 'manager'])], updateMy
 router.get('/', [verifyToken, authorize(['admin'])], getStores);
 router.get('/:id', [verifyToken, authorize(['admin'])], getStoreById);
 router.put('/:id', [verifyToken, authorize(['admin'])], updateStore);
+router.put('/:id/evict', [verifyToken, authorize(['admin'])], sendEvictionNotice);
 router.delete('/:id', [verifyToken, authorize(['admin'])], deleteStore);
 
 export default router;

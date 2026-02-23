@@ -135,3 +135,31 @@ export const deleteStore = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+// @desc    Send an eviction notice to a store
+// @route   PUT /api/stores/:id/evict
+// @access  Admin
+export const sendEvictionNotice = async (req, res) => {
+    try {
+        const { reason } = req.body;
+        const storeId = req.params.id || req.body.storeId;
+
+        if (!storeId || !reason) {
+            return res.status(400).json({ message: 'storeId and reason are required' });
+        }
+
+        const store = await Store.findById(storeId);
+        if (!store) {
+            return res.status(404).json({ message: 'Store not found' });
+        }
+
+        store.status = 'EVICTION_NOTICE';
+        store.evictionReason = reason;
+
+        const updatedStore = await store.save();
+        res.status(200).json({ message: 'Eviction notice sent successfully', store: updatedStore });
+    } catch (error) {
+        console.error('Error sending eviction notice:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};

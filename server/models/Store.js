@@ -27,7 +27,7 @@ const storeSchema = new mongoose.Schema({
   rentContract: {
     boxNumber: String,
     monthlyAmount: Number,
-    paymentDay: { type: Number, default: 5 }
+    paymentDueDate: { type: Number, default: 5 }
   }
 }, {
   timestamps: true,
