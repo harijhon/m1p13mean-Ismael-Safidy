@@ -10,6 +10,12 @@ export interface Product {
   variants?: Variant[];
   images: string[];
   store?: any;
+  sale?: {
+    isActive: boolean;
+    discountPercent: number;
+    salePrice: number;
+    promoId?: string;
+  };
 }
 
 export interface Variant {
@@ -18,4 +24,5 @@ export interface Variant {
   attributes: { [key: string]: string };
   price: number;
   stock: number;
+  image?: string;
 }

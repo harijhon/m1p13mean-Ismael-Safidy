@@ -13,6 +13,9 @@ const variantSchema = new mongoose.Schema({
     },
     stock: {
         type: Number
+    },
+    image: {
+        type: String
     }
 });
 
@@ -50,6 +53,12 @@ const productSchema = new mongoose.Schema({
     }],
     isActive: {
         type: Boolean
+    },
+    sale: {
+        isActive: { type: Boolean, default: false },
+        discountPercent: Number,
+        salePrice: Number,
+        promoId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' }
     }
 }, {
     timestamps: true

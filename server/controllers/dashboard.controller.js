@@ -4,10 +4,15 @@ import User from '../models/User.js';
 
 export const getStats = async (req, res) => {
     try {
+        const storeId = req.storeContext;
+        const baseOrderMatch = storeId ? { store: storeId } : {};
+        const completedOrderMatch = storeId ? { status: 'COMPLETED', store: storeId } : { status: 'COMPLETED' };
+        const productMatch = storeId ? { isActive: true, store: storeId } : { isActive: true };
+
         // Calcul des statistiques
         const revenuePromise = Order.aggregate([
             {
-                $match: { status: 'COMPLETED' }
+                $match: completedOrderMatch
             },
             {
                 $group: {
@@ -17,13 +22,13 @@ export const getStats = async (req, res) => {
             }
         ]);
 
-        const ordersCountPromise = Order.countDocuments();
+        const ordersCountPromise = Order.countDocuments(baseOrderMatch);
 
-        const productsCountPromise = Product.countDocuments({ isActive: true });
+        const productsCountPromise = Product.countDocuments(productMatch);
 
         const customersCountPromise = User.countDocuments({ role: 'user' });
 
-        const recentSalesPromise = Order.find({ status: 'COMPLETED' })
+        const recentSalesPromise = Order.find(completedOrderMatch)
             .populate('items.product')
             .populate('customer')
             .sort({ createdAt: -1 })
@@ -31,7 +36,7 @@ export const getStats = async (req, res) => {
 
         const topProductsPromise = Order.aggregate([
             {
-                $match: { status: 'COMPLETED' }
+                $match: completedOrderMatch
             },
             {
                 $unwind: '$items'

@@ -9,6 +9,7 @@ import Aura from '@primeuix/themes/aura';
 
 import { appRoutes } from './app.routes';
 import { authInterceptor } from './app/core/interceptors/auth.interceptor';
+import { storeInterceptor } from './app/core/interceptors/store.interceptor';
 
 // Register Chart.js components globally
 Chart.register(...registerables);
@@ -16,21 +17,21 @@ Chart.register(...registerables);
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, storeInterceptor])),
     provideAnimations(),
     MessageService,
     ConfirmationService,
-    providePrimeNG({ 
-        theme: { 
-            preset: Aura, 
-            options: { 
-                darkModeSelector: '.app-dark',
-                // cssLayer: {
-                //     name: 'primeng',
-                //     order: 'tailwind-base, primeng, tailwind-utilities'
-                // }
-            } 
-        } 
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+        options: {
+          darkModeSelector: '.app-dark',
+          // cssLayer: {
+          //     name: 'primeng',
+          //     order: 'tailwind-base, primeng, tailwind-utilities'
+          // }
+        }
+      }
     })
   ]
 };

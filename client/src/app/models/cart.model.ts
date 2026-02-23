@@ -1,9 +1,8 @@
 export interface CartItem {
   productId: string;
-  variantId: string;
+  variantSku: string | null;
   name: string;
-  image: string;
   price: number;
   quantity: number;
-  attributes?: { [key: string]: string };
+  image: string;
 }

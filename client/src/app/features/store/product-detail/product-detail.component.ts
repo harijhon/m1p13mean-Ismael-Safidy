@@ -14,7 +14,14 @@ import { Product, Variant } from '../../../models/product.model';
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Galerie d'images -->
         <div class="space-y-4">
-          <div class="aspect-square bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
+          <div class="aspect-square bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center relative">
+            @if (product()?.sale?.isActive) {
+              <div class="absolute top-4 left-4 flex flex-col gap-2">
+                <span class="bg-red-500 text-white text-sm font-bold px-3 py-1 rounded-full shadow-md">
+                  Offre Limitée -{{ product()?.sale?.discountPercent }}%
+                </span>
+              </div>
+            }
             <img 
               [src]="selectedImage()" 
               [alt]="product()?.name"
@@ -43,14 +50,29 @@ import { Product, Variant } from '../../../models/product.model';
           <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ product()?.name }}</h1>
           
           <!-- Prix -->
-          <div class="text-3xl font-bold text-red-500 mb-4">
+          <div class="mb-4">
             @if (currentVariant()) {
-              {{ currentVariant()?.price | currency:'EUR':'symbol':'1.0-0' }}
+              @if (product()?.sale?.isActive) {
+                <span class="text-3xl font-bold text-red-500">{{ product()?.sale?.salePrice | currency:'EUR':'symbol':'1.0-0' }}</span>
+                <span class="text-gray-400 line-through text-lg ml-3">{{ currentVariant()?.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+              } @else {
+                <span class="text-3xl font-bold text-gray-900">{{ currentVariant()?.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+              }
             } @else {
               @if (product()?.hasVariants) {
-                <span>Dès {{ minPrice() | currency:'EUR':'symbol':'1.0-0' }} à {{ maxPrice() | currency:'EUR':'symbol':'1.0-0' }}</span>
+                @if (product()?.sale?.isActive) {
+                  <span class="text-3xl font-bold text-red-500">Dès {{ product()?.sale?.salePrice | currency:'EUR':'symbol':'1.0-0' }}</span>
+                  <span class="text-gray-400 line-through text-lg ml-3">{{ minPrice() | currency:'EUR':'symbol':'1.0-0' }}</span>
+                } @else {
+                  <span class="text-3xl font-bold text-gray-900">Dès {{ minPrice() | currency:'EUR':'symbol':'1.0-0' }} à {{ maxPrice() | currency:'EUR':'symbol':'1.0-0' }}</span>
+                }
               } @else {
-                {{ product()?.price | currency:'EUR':'symbol':'1.0-0' }}
+                @if (product()?.sale?.isActive) {
+                  <span class="text-3xl font-bold text-red-500">{{ product()?.sale?.salePrice | currency:'EUR':'symbol':'1.0-0' }}</span>
+                  <span class="text-gray-400 line-through text-lg ml-3">{{ product()?.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                } @else {
+                  <span class="text-3xl font-bold text-gray-900">{{ product()?.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                }
               }
             }
           </div>
@@ -164,7 +186,7 @@ import { Product, Variant } from '../../../models/product.model';
         @if (!currentVariant() || (currentVariant()?.stock && currentVariant()?.stock === 0)) {
           <span>Indisponible</span>
         } @else {
-          <span>Ajouter au panier - {{ currentVariant()?.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+          <span>Ajouter au panier - {{ (product()?.sale?.isActive ? product()?.sale?.salePrice : currentVariant()?.price) | currency:'EUR':'symbol':'1.0-0' }}</span>
         }
       </button>
     </div>
@@ -179,7 +201,7 @@ import { Product, Variant } from '../../../models/product.model';
         @if (!currentVariant() || (currentVariant()?.stock && currentVariant()?.stock === 0)) {
           <span>Indisponible</span>
         } @else {
-          <span>Ajouter au panier - {{ currentVariant()?.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+          <span>Ajouter au panier - {{ (product()?.sale?.isActive ? product()?.sale?.salePrice : currentVariant()?.price) | currency:'EUR':'symbol':'1.0-0' }}</span>
         }
       </button>
     </div>
@@ -236,11 +258,11 @@ export class ProductDetailComponent implements OnInit {
     return this.product()?.variants?.find(variant => {
       const variantColor = variant.attributes['Couleur'] || variant.attributes['Color'];
       const variantSize = variant.attributes['Taille'] || variant.attributes['Size'];
-      
+
       // Vérifier si les attributs sélectionnés correspondent à la variante
       const colorMatch = !this.selectedAttributes().has('color') || this.selectedAttributes().get('color') === variantColor;
       const sizeMatch = !this.selectedAttributes().has('size') || this.selectedAttributes().get('size') === variantSize;
-      
+
       return colorMatch && sizeMatch;
     }) || null;
   });
@@ -310,16 +332,16 @@ export class ProductDetailComponent implements OnInit {
 
   isAttributeAvailable(attribute: string, value: string): boolean {
     if (!this.product()?.hasVariants || !this.product()?.variants) return true;
-    
+
     // Vérifier si une combinaison avec cet attribut existe et est en stock
     return this.product()?.variants?.some(variant => {
       const variantColor = variant.attributes['Couleur'] || variant.attributes['Color'];
       const variantSize = variant.attributes['Taille'] || variant.attributes['Size'];
-      
+
       // Construire les conditions de correspondance
       let colorMatch = true;
       let sizeMatch = true;
-      
+
       if (attribute === 'color') {
         colorMatch = variantColor === value;
         sizeMatch = !this.selectedAttributes().has('size') || this.selectedAttributes().get('size') === variantSize;
@@ -327,7 +349,7 @@ export class ProductDetailComponent implements OnInit {
         sizeMatch = variantSize === value;
         colorMatch = !this.selectedAttributes().has('color') || this.selectedAttributes().get('color') === variantColor;
       }
-      
+
       return colorMatch && sizeMatch && variant.stock > 0;
     }) || false;
   }
@@ -335,7 +357,7 @@ export class ProductDetailComponent implements OnInit {
   addToCart(): void {
     const prod = this.product();
     const variant = this.currentVariant();
-    
+
     if (!prod || !variant) {
       console.warn('Impossible d\'ajouter au panier: produit ou variante non disponible');
       return;

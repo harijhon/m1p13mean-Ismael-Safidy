@@ -27,21 +27,17 @@ import { CartItem } from '../../../models/cart.model';
           <div class="lg:col-span-2">
             <div class="bg-white rounded-lg shadow-sm">
               <ul>
-                @for (item of cartService.cartItems(); track item.variantId) {
+                @for (item of cartService.cartItems(); track item.variantSku) {
                   <li class="flex items-center p-4 border-b">
                     <img [src]="item.image || 'https://www.primefaces.org/cdn/primeng/images/demo/product-placeholder.svg'" [alt]="item.name" class="w-20 h-20 object-cover rounded-md mr-4">
                     <div class="flex-grow">
                       <h2 class="font-semibold text-gray-800">{{ item.name }}</h2>
-                      @if (item.attributes) {
-                        <p class="text-sm text-gray-500">
-                          {{ formatAttributes(item.attributes) }}
-                        </p>
-                      }
+
                       <p class="text-sm text-red-500 font-bold">{{ item.price | currency:'EUR' }}</p>
                     </div>
                     <div class="flex items-center gap-4">
                       <span class="font-semibold">x {{ item.quantity }}</span>
-                      <button (click)="cartService.removeFromCart(item.variantId)" class="text-gray-400 hover:text-red-500">
+                      <button (click)="cartService.removeFromCart(item.productId, item.variantSku)" class="text-gray-400 hover:text-red-500">
                         <i class="pi pi-trash"></i>
                       </button>
                     </div>
@@ -62,7 +58,7 @@ import { CartItem } from '../../../models/cart.model';
               <h2 class="text-xl font-bold border-b pb-4 mb-4">Résumé</h2>
               <div class="flex justify-between mb-2">
                 <span>Sous-total</span>
-                <span>{{ cartService.total() | currency:'EUR' }}</span>
+                <span>{{ cartService.totalAmount() | currency:'EUR' }}</span>
               </div>
               <div class="flex justify-between mb-2">
                 <span>Livraison</span>
@@ -70,7 +66,7 @@ import { CartItem } from '../../../models/cart.model';
               </div>
               <div class="border-t pt-4 mt-4 flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span>{{ cartService.total() | currency:'EUR' }}</span>
+                <span>{{ cartService.totalAmount() | currency:'EUR' }}</span>
               </div>
               <button 
                 (click)="checkout()" 
@@ -101,23 +97,19 @@ export class CartComponent {
   private router = inject(Router);
   isCheckingOut = signal(false);
 
-  formatAttributes(attributes: { [key: string]: string }): string {
-    return Object.entries(attributes)
-      .map(([key, value]) => `${value}`)
-      .join(' / ');
-  }
+
 
   checkout(): void {
     this.isCheckingOut.set(true);
     const items = this.cartService.cartItems();
-    
+
     this.orderService.createOrder(items).subscribe({
       next: (response) => {
         console.log('Commande créée avec succès', response);
         this.cartService.clearCart();
         this.isCheckingOut.set(false);
         // Optionnel: Rediriger vers une page de confirmation
-        this.router.navigate(['/store']); 
+        this.router.navigate(['/store']);
         // Idéalement, naviguer vers une page /order-success/{orderId}
       },
       error: (error) => {
