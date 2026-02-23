@@ -6,7 +6,9 @@ import Product from '../models/Product.js'; // Import Product model
 // Get all orders
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate('customer').populate('products.product');
+    const storeId = req.storeContext;
+    const filter = storeId ? { store: storeId } : {};
+    const orders = await Order.find(filter).populate('customer').populate('products.product');
     res.json(orders);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -55,7 +57,7 @@ export const createOrder = async (req, res) => {
   const session = await mongoose.startSession();
   try {
     // session.startTransaction(); // Uncomment if you have a replica set
-    
+
     // --- Step 1: Verify stock availability first ---
     for (const item of items) {
       const product = await Product.findById(item.product).session(session);
@@ -69,7 +71,7 @@ export const createOrder = async (req, res) => {
         if (product.currentStock < item.quantity) throw new Error(`Not enough stock for ${product.name}.`);
       }
     }
-    
+
     // --- Step 2: Calculate total and create order ---
     const totalAmount = items.reduce((sum, item) => sum + (item.priceAtMoment * item.quantity), 0);
     const store = await Store.findOne().session(session);
@@ -82,7 +84,7 @@ export const createOrder = async (req, res) => {
       store: store._id,
       status: 'COMPLETED', // Set to completed since payment is not integrated yet
     });
-    
+
     const newOrder = await order.save({ session });
 
     // --- Step 3: Decrement stock ---
@@ -90,7 +92,7 @@ export const createOrder = async (req, res) => {
       const product = await Product.findById(item.product).session(session);
       if (product.hasVariants) {
         const variant = product.variants.id(item.variantId);
-        if(variant) variant.stock -= item.quantity;
+        if (variant) variant.stock -= item.quantity;
       } else {
         product.currentStock -= item.quantity;
       }

@@ -4,7 +4,12 @@ import InventoryLog from '../models/InventoryLog.js';
 
 export const createOrder = async (req, res) => {
     try {
-        const orderData = req.body;
+        const storeId = req.storeContext;
+        if (!storeId) {
+            return res.status(400).json({ message: 'Store context required for this order.' });
+        }
+
+        const orderData = { ...req.body, store: storeId };
         const order = new Order(orderData);
         await order.save();
 

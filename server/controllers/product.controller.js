@@ -2,7 +2,8 @@ import Product from '../models/Product.js';
 
 export const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find();
+        const filter = req.storeContext ? { store: req.storeContext } : {};
+        const products = await Product.find(filter);
         res.status(200).json(products);
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -25,14 +26,14 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
     try {
-        const storeId = req.user?.storeId || req.body?.storeId; // storeId from JWT or body
+        const storeId = req.storeContext;
         if (!storeId) {
-            return res.status(403).json({ message: 'Forbidden: You must have a store to create a product.' });
+            return res.status(400).json({ message: 'Store context is required to create a product.' });
         }
 
         const productData = {
             ...req.body,
-            store: storeId // Automatically assign the store
+            store: storeId // Automatically assign the store from verified context
         };
 
         const product = new Product(productData);
