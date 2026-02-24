@@ -39,16 +39,20 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!', error: err.message });
 });
 
-// Connect to MongoDB and start server
+// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mean_app')
   .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+    // Only listen if NOT  on Vercel
+    if (process.env.VERCEL !== '1') {
+      app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+      });
+    }
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('Database connection error:', err);
   });
 
+// Export the app for Vercel Serverless Functions
 export default app;
