@@ -40,19 +40,30 @@ app.use((err, req, res, next) => {
 });
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mean_app')
-  .then(() => {
-    console.log('Connected to MongoDB');
-    // Only listen if NOT  on Vercel
-    if (process.env.VERCEL !== '1') {
-      app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-      });
-    }
-  })
-  .catch((err) => {
-    console.error('Database connection error:', err);
-  });
+let cached = global.mongoose;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mean_app';
+
+if (!cached.promise) {
+  cached.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false })
+    .then((mongoose) => {
+      console.log('Connected to MongoDB');
+      // Only listen if NOT on Vercel
+      if (process.env.VERCEL !== '1') {
+        app.listen(PORT, () => {
+          console.log(`Server is running on port ${PORT}`);
+        });
+      }
+      return mongoose;
+    })
+    .catch((err) => {
+      console.error('Database connection error:', err);
+      cached.promise = null;
+    });
+}
 
 // Export the app for Vercel Serverless Functions
 export default app;

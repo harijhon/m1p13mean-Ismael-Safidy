@@ -19,12 +19,11 @@
       "dest": "/server/app.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "/client/dist/sakai-ng/browser/$1"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/client/dist/sakai-ng/browser/index.html"
+      "dest": "/index.html"
     }
   ]
 }
