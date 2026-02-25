@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService, ConfirmationService } from 'primeng/api';
@@ -33,6 +33,8 @@ import { StockService, MouvementStock } from '../../../core/services/stock.servi
     DialogModule
   ],
   templateUrl: './stock.html',
+  styleUrl: './stock.scss',
+  encapsulation: ViewEncapsulation.None,
   providers: [MessageService, ConfirmationService]
 })
 export class Stock implements OnInit {
