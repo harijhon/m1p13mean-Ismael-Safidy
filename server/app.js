@@ -15,6 +15,7 @@ import promotionRoutes from './routes/promotion.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import orderRoutes from './routes/orders.js';
 import storeRoutes from './routes/stores.js';
+import mouvementStockRoutes from './routes/mouvementStock.routes.js';
 
 // Initialize express app
 const app = express();
@@ -32,6 +33,7 @@ app.use('/api/promotions', promotionRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/stores', storeRoutes);
+app.use('/api/stock', mouvementStockRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
