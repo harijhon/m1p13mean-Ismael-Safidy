@@ -1,6 +1,6 @@
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
-import InventoryLog from '../models/InventoryLog.js';
+import MouvementStock from '../models/MouvementStock.js';
 
 export const createOrder = async (req, res) => {
     try {
@@ -93,15 +93,26 @@ export const createOrder = async (req, res) => {
 
                     await product.save();
 
-                    // Créer un log d'inventaire
-                    const inventoryLog = new InventoryLog({
-                        product: item.product,
-                        type: 'OUT',
-                        quantity: item.quantity,
-                        reason: `Sale #${order._id}`
+                    const lastMouvement = await MouvementStock.findOne({ product_id: item.product }).sort({ date: -1 });
+                    const previousReste = lastMouvement ? lastMouvement.reste : (product.currentStock + item.quantity);
+                    const newReste = previousReste - item.quantity;
+
+                    const prixUnitaire = applySalePrice && product.sale.salePrice
+                        ? product.sale.salePrice
+                        : (product.hasVariants && variant ? variant.price : product.price);
+
+                    const mouvementLog = new MouvementStock({
+                        product_id: item.product,
+                        type: 'sortie',
+                        quantite: item.quantity,
+                        pu: prixUnitaire || 0,
+                        date: new Date(),
+                        reste: newReste
                     });
-                    await inventoryLog.save();
+
+                    await mouvementLog.save();
                 }
+
             });
 
             await Promise.all(updateOperations);

@@ -1,0 +1,176 @@
+.stock-container {
+    padding: 1rem;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.glass-card {
+    background: rgba(var(--p-surface-0-rgb), 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--p-surface-200);
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    }
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--p-primary-color) 0%, var(--p-primary-900) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+:host ::ng-deep .premium-table {
+    .p-datatable-header {
+        background: transparent;
+        border: none;
+        padding-bottom: 1.5rem;
+    }
+
+    .p-datatable-thead>tr>th {
+        background-color: rgba(var(--p-surface-100), 0.5);
+        color: var(--p-text-color-secondary);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.85rem;
+        border-bottom: 2px solid var(--p-surface-200);
+        padding: 1.25rem 1rem;
+    }
+
+    .p-datatable-tbody>tr {
+        transition: all 0.2s ease;
+
+        >td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--p-surface-100);
+        }
+
+        &:hover {
+            background-color: rgba(var(--p-text-color-rgb), 0.04);
+            transform: scale(1.002);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            z-index: 10;
+            border-radius: 0.5rem;
+
+            >td {
+                border-bottom-color: transparent;
+            }
+        }
+    }
+}
+
+:host ::ng-deep .premium-dialog {
+    .p-dialog {
+        border-radius: 1.5rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        border: none;
+        overflow: hidden;
+    }
+
+    .p-dialog-header {
+        background: linear-gradient(to right, var(--p-surface-0), var(--p-surface-50));
+        padding: 1.75rem 2rem;
+        border-bottom: 1px solid var(--p-surface-100);
+
+        .p-dialog-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--p-text-color);
+        }
+    }
+
+    .p-dialog-content {
+        padding: 2rem;
+        background: var(--p-surface-0);
+    }
+
+    .p-dialog-footer {
+        padding: 1.5rem 2rem;
+        border-top: 1px solid var(--p-surface-100);
+        background: var(--p-surface-50);
+    }
+}
+
+.premium-field {
+    label {
+        font-weight: 600;
+        color: var(--p-text-color-secondary);
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 0.9rem;
+    }
+
+    .p-inputtext,
+    .p-inputnumber-input,
+    .p-select {
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        border-color: var(--p-surface-300);
+
+        &:enabled:hover {
+            border-color: var(--p-primary-color);
+        }
+
+        &:enabled:focus {
+            box-shadow: 0 0 0 4px rgba(var(--p-primary-color-rgb), 0.1);
+        }
+    }
+}
+
+.float-btn {
+    border-radius: 2rem !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 14px rgba(var(--p-primary-color-rgb), 0.4) !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(var(--p-primary-color-rgb), 0.6) !important;
+    }
+
+    &:active {
+        transform: translateY(1px);
+    }
+}
+
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    border-radius: 1rem;
+    background: dashed 2px var(--p-surface-200);
+    margin: 2rem 0;
+
+    i {
+        font-size: 3rem;
+        color: var(--p-text-color-secondary);
+        opacity: 0.5;
+        margin-bottom: 1rem;
+    }
+
+    p {
+        color: var(--p-text-color-secondary);
+        font-size: 1.1rem;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
