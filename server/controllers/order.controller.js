@@ -13,20 +13,16 @@ export const createOrder = async (req, res) => {
         const order = new Order(orderData);
         await order.save();
 
-        // Si la commande est complétée, mettre à jour le stock
         if (order.status === 'COMPLETED') {
             const updateOperations = order.items.map(async (item) => {
                 const product = await Product.findById(item.product);
 
-                // Ne traiter que les produits physiques, pas les services
                 if (product && product.type === 'PRODUCT') {
                     if (product.hasVariants) {
-                        // Gestion des produits avec variantes
                         if (!item.variantId && !item.variantSku) {
                             throw new Error('Variant information is required for products with variants');
                         }
 
-                        // Trouver la variante spécifique
                         let variantIndex = -1;
                         if (item.variantId) {
                             variantIndex = product.variants.findIndex(v => v._id.equals(item.variantId));
@@ -40,24 +36,19 @@ export const createOrder = async (req, res) => {
 
                         const variant = product.variants[variantIndex];
 
-                        // Vérifier le stock de la variante
                         if (variant.stock < item.quantity) {
                             throw new Error(`Insufficient stock for variant ${variant.sku}. Available: ${variant.stock}, Requested: ${item.quantity}`);
                         }
 
-                        // Décrémenter le stock de la variante
                         variant.stock -= item.quantity;
                     } else {
-                        // Gestion des produits simples
                         if (product.currentStock < item.quantity) {
                             throw new Error(`Insufficient stock for product ${product.name}. Available: ${product.currentStock}, Requested: ${item.quantity}`);
                         }
 
-                        // Décrémenter le stock global
                         product.currentStock -= item.quantity;
                     }
 
-                    // --- PROMOTION LOGIC START ---
                     let applySalePrice = false;
 
                     if (product.sale && product.sale.isActive && product.sale.promoId) {
@@ -75,9 +66,7 @@ export const createOrder = async (req, res) => {
                                     activePromo.usageCount += item.quantity;
                                     await activePromo.save();
                                 } else if (!isValidDate || !isUnderLimit) {
-                                    // Optionally stop the promotion if limit is fully reached
                                     if (activePromo.usageLimit !== null && (activePromo.usageCount >= activePromo.usageLimit)) {
-                                        // Auto-disable promotion
                                         activePromo.isActive = false;
                                         await activePromo.save();
 
@@ -89,7 +78,6 @@ export const createOrder = async (req, res) => {
                             console.error('Error processing promotion during order:', err);
                         }
                     }
-                    // --- PROMOTION LOGIC END ---
 
                     await product.save();
 

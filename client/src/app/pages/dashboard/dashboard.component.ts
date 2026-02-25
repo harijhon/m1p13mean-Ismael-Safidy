@@ -8,24 +8,24 @@ import { BestSellingWidget } from './components/bestsellingwidget';
 import { RevenueStreamWidget } from './components/revenuestreamwidget';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardService } from '../../core/services/dashboard.service';
-import { CreateStoreComponent } from '../admin/create-store/create-store.component'; // Import the new component
+import { CreateStoreComponent } from '../admin/create-store/create-store.component';
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
     imports: [
-        CommonModule, 
-        ButtonModule, 
-        StatsWidget, 
-        RecentSalesWidget, 
-        BestSellingWidget, 
-        RevenueStreamWidget, 
+        CommonModule,
+        ButtonModule,
+        StatsWidget,
+        RecentSalesWidget,
+        BestSellingWidget,
+        RevenueStreamWidget,
         NotificationsWidget,
-        CreateStoreComponent // Add to imports
+        CreateStoreComponent
     ],
     template: `
         @if (authService.currentUser()?.storeId) {
-            <!-- Main Dashboard View -->
+
             <div class="grid grid-cols-12 gap-8">
                 <div class="col-span-12">
                     <div class="card mb-0">
@@ -51,7 +51,7 @@ import { CreateStoreComponent } from '../admin/create-store/create-store.compone
                 </div>
             </div>
         } @else {
-            <!-- Create Store Onboarding View -->
+
             <div>
                 <div class="col-12">
                     <app-create-store />

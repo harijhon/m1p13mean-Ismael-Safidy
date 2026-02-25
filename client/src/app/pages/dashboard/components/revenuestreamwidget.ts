@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { debounceTime, Subscription } from 'rxjs';
 import { LayoutService } from '../../../layout/service/layout.service';
+import { DashboardService } from '../../../core/services/dashboard.service';
 
 @Component({
     standalone: true,
@@ -18,6 +19,7 @@ export class RevenueStreamWidget {
     chartOptions: any;
 
     subscription!: Subscription;
+    private dashboardService = inject(DashboardService);
 
     constructor(public layoutService: LayoutService) {
         this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
@@ -40,34 +42,39 @@ export class RevenueStreamWidget {
             datasets: [
                 {
                     type: 'bar',
-                    label: 'Subscriptions',
+                    label: 'Revenue',
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
-                    data: [4000, 10000, 15000, 4000],
-                    barThickness: 32
-                },
-                {
-                    type: 'bar',
-                    label: 'Advertising',
-                    backgroundColor: documentStyle.getPropertyValue('--p-primary-300'),
-                    data: [2100, 8400, 2400, 7500],
-                    barThickness: 32
-                },
-                {
-                    type: 'bar',
-                    label: 'Affiliate',
-                    backgroundColor: documentStyle.getPropertyValue('--p-primary-200'),
-                    data: [4100, 5200, 3400, 7400],
-                    borderRadius: {
-                        topLeft: 8,
-                        topRight: 8,
-                        bottomLeft: 0,
-                        bottomRight: 0
-                    },
-                    borderSkipped: false,
+                    data: [0, 0, 0, 0],
                     barThickness: 32
                 }
             ]
         };
+
+        this.dashboardService.getStats().subscribe({
+            next: (data) => {
+                if (data.chartData && Array.isArray(data.chartData)) {
+                    this.chartData = {
+                        ...this.chartData,
+                        datasets: [
+                            {
+                                type: 'bar',
+                                label: 'Revenue',
+                                backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
+                                data: data.chartData,
+                                barThickness: 32,
+                                borderRadius: {
+                                    topLeft: 8,
+                                    topRight: 8,
+                                    bottomLeft: 0,
+                                    bottomRight: 0
+                                },
+                            }
+                        ]
+                    };
+                }
+            },
+            error: (err) => console.error('Error fetching chart data:', err)
+        });
 
         this.chartOptions = {
             maintainAspectRatio: false,

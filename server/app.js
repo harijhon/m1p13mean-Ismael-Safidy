@@ -1,13 +1,10 @@
-// TODO: Import necessary modules
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
-// Load environment variables
 dotenv.config();
 
-// Import routes
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import productRoutes from './routes/product.routes.js';
@@ -17,15 +14,12 @@ import orderRoutes from './routes/orders.js';
 import storeRoutes from './routes/stores.js';
 import mouvementStockRoutes from './routes/mouvementStock.routes.js';
 
-// Initialize express app
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
@@ -35,13 +29,11 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/stores', storeRoutes);
 app.use('/api/stock', mouvementStockRoutes);
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!', error: err.message });
 });
 
-// Connect to MongoDB
 let cached = global.mongoose;
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
@@ -53,7 +45,6 @@ if (!cached.promise) {
   cached.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false })
     .then((mongoose) => {
       console.log('Connected to MongoDB');
-      // Only listen if NOT on Vercel
       if (process.env.VERCEL !== '1') {
         app.listen(PORT, () => {
           console.log(`Server is running on port ${PORT}`);
@@ -67,5 +58,4 @@ if (!cached.promise) {
     });
 }
 
-// Export the app for Vercel Serverless Functions
 export default app;

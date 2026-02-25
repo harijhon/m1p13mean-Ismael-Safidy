@@ -9,8 +9,7 @@ const storeSchema = new mongoose.Schema({
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
-    unique: true, // A user can only own one store
+    required: true
   },
   logo: {
     type: String,
