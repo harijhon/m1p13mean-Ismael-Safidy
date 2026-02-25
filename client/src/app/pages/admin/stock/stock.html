@@ -1,0 +1,101 @@
+<div class="card">
+    <p-toast></p-toast>
+    <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+            <h5 class="m-0">Gestion de Stock</h5>
+        </ng-template>
+        <ng-template pTemplate="right">
+            <p-button label="Nouveau Mouvement" icon="pi pi-plus" class="mr-2" (onClick)="openNewMouvement()" />
+        </ng-template>
+    </p-toolbar>
+
+    <div class="mb-4 flex align-items-center gap-3">
+        <label for="productSelect" class="font-bold">Sélectionner un produit pour voir son historique:</label>
+        <p-select id="productSelect" [options]="products" optionLabel="name" placeholder="Choisir un produit"
+            (onChange)="onProductChange($event)" [filter]="true" filterBy="name" [showClear]="true"
+            styleClass="w-full md:w-20rem">
+        </p-select>
+    </div>
+
+    <p-table #dt [value]="mouvements" [rows]="10" [paginator]="true" [loading]="isLoading"
+        [globalFilterFields]="['type', 'date']" [rowHover]="true" dataKey="_id"
+        currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} mouvements"
+        [showCurrentPageReport]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+                <th pSortableColumn="type">Type <p-sortIcon field="type"></p-sortIcon></th>
+                <th pSortableColumn="quantite">Quantité <p-sortIcon field="quantite"></p-sortIcon></th>
+                <th pSortableColumn="pu">Prix Unitaire <p-sortIcon field="pu"></p-sortIcon></th>
+                <th pSortableColumn="reste">Reste en Stock <p-sortIcon field="reste"></p-sortIcon></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-mouvement>
+            <tr>
+                <td>{{ mouvement.date | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                    <p-tag [value]="mouvement.type === 'entree' ? 'Entrée' : 'Sortie'"
+                        [severity]="getSeverity(mouvement.type)">
+                    </p-tag>
+                </td>
+                <td class="font-bold"
+                    [ngClass]="{'text-green-500': mouvement.type === 'entree', 'text-red-500': mouvement.type === 'sortie'}">
+                    {{ mouvement.type === 'entree' ? '+' : '-' }}{{ mouvement.quantite }}
+                </td>
+                <td>{{ mouvement.pu | currency:'MGA':'Ar ' }}</td>
+                <td class="font-bold text-primary">{{ mouvement.reste }}</td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5">Aucun historique de mouvement pour ce produit.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="mouvementDialog" [style]="{width: '450px'}" header="Saisir Mouvement de Stock" [modal]="true"
+    class="p-fluid">
+    <ng-template pTemplate="content">
+        <form [formGroup]="mouvementForm">
+
+            <div class="field mb-4">
+                <label for="product_id">Produit</label>
+                <p-select formControlName="product_id" [options]="products" optionLabel="name" optionValue="_id"
+                    placeholder="Sélectionner un produit" [filter]="true"></p-select>
+                <small class="p-error"
+                    *ngIf="mouvementForm.controls['product_id'].invalid && mouvementForm.controls['product_id'].touched">Le
+                    produit est obligatoire.</small>
+            </div>
+
+            <div class="field mb-4">
+                <label for="type">Type de Mouvement</label>
+                <p-select formControlName="type" [options]="mouvementTypes" optionLabel="label" optionValue="value"
+                    placeholder="Sélectionner le type"></p-select>
+            </div>
+
+            <div class="field mb-4">
+                <label for="quantite">Quantité</label>
+                <p-inputNumber id="quantite" formControlName="quantite" [min]="1" mode="decimal"></p-inputNumber>
+                <small class="p-error"
+                    *ngIf="mouvementForm.controls['quantite'].invalid && mouvementForm.controls['quantite'].touched">La
+                    quantité est invalide.</small>
+            </div>
+
+            <div class="field mb-4">
+                <label for="pu">Prix Unitaire</label>
+                <p-inputNumber id="pu" formControlName="pu" mode="currency" currency="MGA" [min]="0"></p-inputNumber>
+                <small class="p-error"
+                    *ngIf="mouvementForm.controls['pu'].invalid && mouvementForm.controls['pu'].touched">Le prix est
+                    invalide.</small>
+            </div>
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialog()"></button>
+        <button pButton pRipple label="Enregistrer" icon="pi pi-check" class="p-button-text"
+            (click)="saveMouvement()"></button>
+    </ng-template>
+</p-dialog>
