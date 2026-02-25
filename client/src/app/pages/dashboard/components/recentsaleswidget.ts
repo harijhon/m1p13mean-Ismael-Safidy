@@ -25,7 +25,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
                 <tr>
                     <td style="width: 25%; min-width: 7rem;">{{ sale.customer?.name || 'Guest' }}</td>
                     <td style="width: 25%; min-width: 7rem;">{{ sale.createdAt | date:'short' }}</td>
-                    <td style="width: 25%; min-width: 8rem;">{{ sale.totalAmount | currency:'EUR':'symbol':'1.0-0' }}</td>
+                    <td style="width: 25%; min-width: 8rem;">{{ sale.totalAmount | currency:'MGA':'Ar ':'1.0-0' }}</td>
                     <td style="width: 25%;">
                         <span class="font-medium" [class.text-green-500]="sale.status === 'COMPLETED'" 
                               [class.text-yellow-500]="sale.status === 'PENDING'"
@@ -43,7 +43,7 @@ export class RecentSalesWidget implements OnInit, OnDestroy {
     isLoading = true;
     private refreshSubscription!: Subscription;
 
-    constructor(private dashboardService: DashboardService) {}
+    constructor(private dashboardService: DashboardService) { }
 
     ngOnInit() {
         this.loadRecentSales();

@@ -54,20 +54,20 @@ import { Product } from '../../../models/product.model';
                 @if (product.hasVariants) {
                   <div class="mt-1">
                     @if (product.sale?.isActive) {
-                      <span class="text-gray-400 line-through text-sm mr-2">{{ getMinVariantPrice(product) | currency:'EUR':'symbol':'1.0-0' }}</span>
-                      <span class="text-red-500 font-bold">Dès {{ product.sale!.salePrice | currency:'EUR':'symbol':'1.0-0' }}</span>
+                      <span class="text-gray-400 line-through text-sm mr-2">{{ getMinVariantPrice(product) | currency:'MGA':'Ar ':'1.0-0' }}</span>
+                      <span class="text-red-500 font-bold">Dès {{ product.sale!.salePrice | currency:'MGA':'Ar ':'1.0-0' }}</span>
                     } @else {
-                      <span class="font-bold">Dès {{ getMinVariantPrice(product) | currency:'EUR':'symbol':'1.0-0' }}</span>
+                      <span class="font-bold">Dès {{ getMinVariantPrice(product) | currency:'MGA':'Ar ':'1.0-0' }}</span>
                     }
                     <span class="ml-2 inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">Options</span>
                   </div>
                 } @else {
                   <div class="mt-1 flex items-center gap-2">
                     @if (product.sale?.isActive) {
-                      <span class="text-gray-400 line-through text-sm">{{ product.price | currency:'EUR':'symbol':'1.0-0' }}</span>
-                      <span class="text-red-500 font-bold text-lg">{{ product.sale!.salePrice | currency:'EUR':'symbol':'1.0-0' }}</span>
+                      <span class="text-gray-400 line-through text-sm">{{ product.price | currency:'MGA':'Ar ':'1.0-0' }}</span>
+                      <span class="text-red-500 font-bold text-lg">{{ product.sale!.salePrice | currency:'MGA':'Ar ':'1.0-0' }}</span>
                     } @else {
-                      <span class="font-bold text-gray-900">{{ product.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                      <span class="font-bold text-gray-900">{{ product.price | currency:'MGA':'Ar ':'1.0-0' }}</span>
                     }
                   </div>
                 }

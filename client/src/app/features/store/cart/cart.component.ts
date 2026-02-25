@@ -33,7 +33,7 @@ import { CartItem } from '../../../models/cart.model';
                     <div class="flex-grow">
                       <h2 class="font-semibold text-gray-800">{{ item.name }}</h2>
 
-                      <p class="text-sm text-red-500 font-bold">{{ item.price | currency:'EUR' }}</p>
+                      <p class="text-sm text-red-500 font-bold">{{ item.price | currency:'MGA':'Ar ':'1.0-0' }}</p>
                     </div>
                     <div class="flex items-center gap-4">
                       <span class="font-semibold">x {{ item.quantity }}</span>
@@ -58,7 +58,7 @@ import { CartItem } from '../../../models/cart.model';
               <h2 class="text-xl font-bold border-b pb-4 mb-4">Résumé</h2>
               <div class="flex justify-between mb-2">
                 <span>Sous-total</span>
-                <span>{{ cartService.totalAmount() | currency:'EUR' }}</span>
+                <span>{{ cartService.totalAmount() | currency:'MGA':'Ar ':'1.0-0' }}</span>
               </div>
               <div class="flex justify-between mb-2">
                 <span>Livraison</span>
@@ -66,7 +66,7 @@ import { CartItem } from '../../../models/cart.model';
               </div>
               <div class="border-t pt-4 mt-4 flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span>{{ cartService.totalAmount() | currency:'EUR' }}</span>
+                <span>{{ cartService.totalAmount() | currency:'MGA':'Ar ':'1.0-0' }}</span>
               </div>
               <button 
                 (click)="checkout()" 

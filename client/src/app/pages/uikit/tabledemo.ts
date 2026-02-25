@@ -18,7 +18,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { TagModule } from 'primeng/tag';
 import { Customer, CustomerService, Representative } from '../service/customer.service';
 import { Product, ProductService } from '../service/product.service';
-import {ObjectUtils} from "primeng/utils";
+import { ObjectUtils } from "primeng/utils";
 
 interface expandedRows {
     [key: string]: boolean;
@@ -115,7 +115,7 @@ interface expandedRows {
                         <th style="min-width: 10rem">
                             <div class="flex justify-between items-center">
                                 Balance
-                                <p-columnFilter type="numeric" field="balance" display="menu" currency="USD"></p-columnFilter>
+                                <p-columnFilter type="numeric" field="balance" display="menu" currency="MGA"></p-columnFilter>
                             </div>
                         </th>
                         <th style="min-width: 12rem">
@@ -175,7 +175,7 @@ interface expandedRows {
                             {{ customer.date | date: 'MM/dd/yyyy' }}
                         </td>
                         <td>
-                            {{ customer.balance | currency: 'USD' : 'symbol' }}
+                            {{ customer.balance | currency: 'MGA' : 'Ar ':'1.0-0' }}
                         </td>
                         <td>
                             <p-tag [value]="customer.status.toLowerCase()" [severity]="getSeverity(customer.status.toLowerCase())" styleClass="dark:bg-surface-900!" />
@@ -264,7 +264,7 @@ interface expandedRows {
                         <td>
                             <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.name" width="50" class="shadow-lg" />
                         </td>
-                        <td>{{ product.price | currency: 'USD' }}</td>
+                        <td>{{ product.price | currency: 'MGA':'Ar ':'1.0-0' }}</td>
                         <td>{{ product.category }}</td>
                         <td>
                             <p-rating [ngModel]="product.rating" [readonly]="true" />
@@ -305,7 +305,7 @@ interface expandedRows {
                                             <td>{{ order.customer }}</td>
                                             <td>{{ order.date }}</td>
                                             <td>
-                                                {{ order.amount | currency: 'USD' }}
+                                                {{ order.amount | currency: 'MGA':'Ar ':'1.0-0' }}
                                             </td>
                                             <td>
                                                 <p-tag [value]="order.status" [severity]="getSeverity(order.status)" />
@@ -424,7 +424,7 @@ export class TableDemo implements OnInit {
     constructor(
         private customerService: CustomerService,
         private productService: ProductService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.customerService.getCustomersLarge().then((customers) => {
@@ -489,7 +489,7 @@ export class TableDemo implements OnInit {
     }
 
     expandAll() {
-        if(ObjectUtils.isEmpty(this.expandedRows)) {
+        if (ObjectUtils.isEmpty(this.expandedRows)) {
             this.expandedRows = this.products.reduce(
                 (acc, p) => {
                     if (p.id) {
@@ -512,7 +512,7 @@ export class TableDemo implements OnInit {
     }
 
     formatCurrency(value: number) {
-        return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        return value.toLocaleString('fr-MG', { style: 'currency', currency: 'MGA' });
     }
 
     onGlobalFilter(table: Table, event: Event) {

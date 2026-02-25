@@ -59,7 +59,7 @@
                 <div>
                     <span class="block text-muted-color font-medium mb-4">Revenu</span>
                     <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ revenue() |
-                        currency:'EUR':'symbol':'1.0-0' }}</div>
+                        currency:'MGA':'Ar ':'1.0-0' }}</div>
                 </div>
                 <!-- Dollar Icon (Orange) -->
                 <div class="flex items-center justify-center bg-orange-100 dark:bg-orange-400/10 rounded-border"
@@ -154,7 +154,8 @@
                                             [alt]="product.name" class="shadow-4" width="50">
                                     </td>
                                     <td style="width: 35%; min-width: 7rem;">{{product.name}}</td>
-                                    <td style="width: 20%; min-width: 8rem;">{{product.price | currency:'EUR'}}</td>
+                                    <td style="width: 20%; min-width: 8rem;">{{product.price | currency:'MGA':'Ar '}}
+                                    </td>
                                     <td style="width: 15%;">
                                         <p-tag [value]="product.isActive ? 'Actif' : 'Inactif'"
                                             [severity]="product.isActive ? 'success' : 'danger'"></p-tag>

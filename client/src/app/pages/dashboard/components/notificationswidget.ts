@@ -32,7 +32,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
                     </div>
                     <span class="text-surface-900 dark:text-surface-0 leading-normal"
                         >{{ notification.customerName }}
-                        <span class="text-surface-700 dark:text-surface-100">bought {{ notification.productName }} for <span class="text-primary font-bold">{{ notification.amount | currency:'EUR':'symbol':'1.0-2' }}</span></span>
+                        <span class="text-surface-700 dark:text-surface-100">bought {{ notification.productName }} for <span class="text-primary font-bold">{{ notification.amount | currency:'MGA':'Ar ':'1.0-2' }}</span></span>
                         <div class="text-surface-500 text-sm mt-1">{{ notification.date | date:'short' }}</div>
                     </span>
                 </li>

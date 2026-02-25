@@ -130,7 +130,7 @@ interface ExportColumn {
                     <td>
                         <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.name" style="width: 64px" class="rounded" />
                     </td>
-                    <td>{{ product.price | currency: 'USD' }}</td>
+                    <td>{{ product.price | currency:'MGA':'Ar ' }}</td>
                     <td>{{ product.category }}</td>
                     <td>
                         <p-rating [(ngModel)]="product.rating" [readonly]="true" />
@@ -190,7 +190,7 @@ interface ExportColumn {
                     <div class="grid grid-cols-12 gap-4">
                         <div class="col-span-6">
                             <label for="price" class="block font-bold mb-3">Price</label>
-                            <p-inputnumber id="price" [(ngModel)]="product.price" mode="currency" currency="USD" locale="en-US" fluid />
+                            <p-inputnumber id="price" [(ngModel)]="product.price" mode="currency" currency="MGA" locale="fr-FR" fluid />
                         </div>
                         <div class="col-span-6">
                             <label for="quantity" class="block font-bold mb-3">Quantity</label>
@@ -233,7 +233,7 @@ export class Crud implements OnInit {
         private productService: ProductService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
-    ) {}
+    ) { }
 
     exportCSV() {
         this.dt.exportCSV();

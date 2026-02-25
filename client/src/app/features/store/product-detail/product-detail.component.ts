@@ -53,25 +53,25 @@ import { Product, Variant } from '../../../models/product.model';
           <div class="mb-4">
             @if (currentVariant()) {
               @if (product()?.sale?.isActive) {
-                <span class="text-3xl font-bold text-red-500">{{ product()?.sale?.salePrice | currency:'EUR':'symbol':'1.0-0' }}</span>
-                <span class="text-gray-400 line-through text-lg ml-3">{{ currentVariant()?.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                <span class="text-3xl font-bold text-red-500">{{ product()?.sale?.salePrice | currency:'MGA':'Ar ':'1.0-0' }}</span>
+                <span class="text-gray-400 line-through text-lg ml-3">{{ currentVariant()?.price | currency:'MGA':'Ar ':'1.0-0' }}</span>
               } @else {
-                <span class="text-3xl font-bold text-gray-900">{{ currentVariant()?.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                <span class="text-3xl font-bold text-gray-900">{{ currentVariant()?.price | currency:'MGA':'Ar ':'1.0-0' }}</span>
               }
             } @else {
               @if (product()?.hasVariants) {
                 @if (product()?.sale?.isActive) {
-                  <span class="text-3xl font-bold text-red-500">Dès {{ product()?.sale?.salePrice | currency:'EUR':'symbol':'1.0-0' }}</span>
-                  <span class="text-gray-400 line-through text-lg ml-3">{{ minPrice() | currency:'EUR':'symbol':'1.0-0' }}</span>
+                  <span class="text-3xl font-bold text-red-500">Dès {{ product()?.sale?.salePrice | currency:'MGA':'Ar ':'1.0-0' }}</span>
+                  <span class="text-gray-400 line-through text-lg ml-3">{{ minPrice() | currency:'MGA':'Ar ':'1.0-0' }}</span>
                 } @else {
-                  <span class="text-3xl font-bold text-gray-900">Dès {{ minPrice() | currency:'EUR':'symbol':'1.0-0' }} à {{ maxPrice() | currency:'EUR':'symbol':'1.0-0' }}</span>
+                  <span class="text-3xl font-bold text-gray-900">Dès {{ minPrice() | currency:'MGA':'Ar ':'1.0-0' }} à {{ maxPrice() | currency:'MGA':'Ar ':'1.0-0' }}</span>
                 }
               } @else {
                 @if (product()?.sale?.isActive) {
-                  <span class="text-3xl font-bold text-red-500">{{ product()?.sale?.salePrice | currency:'EUR':'symbol':'1.0-0' }}</span>
-                  <span class="text-gray-400 line-through text-lg ml-3">{{ product()?.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                  <span class="text-3xl font-bold text-red-500">{{ product()?.sale?.salePrice | currency:'MGA':'Ar ':'1.0-0' }}</span>
+                  <span class="text-gray-400 line-through text-lg ml-3">{{ product()?.price | currency:'MGA':'Ar ':'1.0-0' }}</span>
                 } @else {
-                  <span class="text-3xl font-bold text-gray-900">{{ product()?.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                  <span class="text-3xl font-bold text-gray-900">{{ product()?.price | currency:'MGA':'Ar ':'1.0-0' }}</span>
                 }
               }
             }
@@ -186,7 +186,7 @@ import { Product, Variant } from '../../../models/product.model';
         @if (!currentVariant() || (currentVariant()?.stock && currentVariant()?.stock === 0)) {
           <span>Indisponible</span>
         } @else {
-          <span>Ajouter au panier - {{ (product()?.sale?.isActive ? product()?.sale?.salePrice : currentVariant()?.price) | currency:'EUR':'symbol':'1.0-0' }}</span>
+          <span>Ajouter au panier - {{ (product()?.sale?.isActive ? product()?.sale?.salePrice : currentVariant()?.price) | currency:'MGA':'Ar ':'1.0-0' }}</span>
         }
       </button>
     </div>
@@ -201,7 +201,7 @@ import { Product, Variant } from '../../../models/product.model';
         @if (!currentVariant() || (currentVariant()?.stock && currentVariant()?.stock === 0)) {
           <span>Indisponible</span>
         } @else {
-          <span>Ajouter au panier - {{ (product()?.sale?.isActive ? product()?.sale?.salePrice : currentVariant()?.price) | currency:'EUR':'symbol':'1.0-0' }}</span>
+          <span>Ajouter au panier - {{ (product()?.sale?.isActive ? product()?.sale?.salePrice : currentVariant()?.price) | currency:'MGA':'Ar ':'1.0-0' }}</span>
         }
       </button>
     </div>
