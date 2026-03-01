@@ -16,6 +16,10 @@ export class ProductService {
     return this.http.get<Product[]>(this.apiUrl);
   }
 
+  getProductById(id: string): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/${id}`);
+  }
+
   saveProduct(product: Product): Observable<Product> {
     if (product._id) {
       // Update existing product

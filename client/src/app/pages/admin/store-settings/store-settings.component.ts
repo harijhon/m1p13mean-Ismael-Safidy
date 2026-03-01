@@ -6,6 +6,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { StoreService } from '../../../core/services/store.service';
 import { ProductService } from '../../../core/services/product.service';
+import { StatsWidget } from '../../dashboard/components/statswidget';
+import { RecentSalesWidget } from '../../dashboard/components/recentsaleswidget';
+import { BestSellingWidget } from '../../dashboard/components/bestsellingwidget';
+import { RevenueStreamWidget } from '../../dashboard/components/revenuestreamwidget';
+import { NotificationsWidget } from '../../dashboard/components/notificationswidget';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { DialogModule } from 'primeng/dialog';
@@ -18,6 +23,7 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { Product } from '../../../models/product.model';
 import { Store } from '../../../models/store.model';
+import { DashboardService } from '../../../core/services/dashboard.service';
 
 @Component({
   selector: 'app-store-settings',
@@ -37,7 +43,12 @@ import { Store } from '../../../models/store.model';
     AvatarModule,
     BadgeModule,
     TableModule,
-    TagModule
+    TagModule,
+    StatsWidget,
+    RecentSalesWidget,
+    BestSellingWidget,
+    RevenueStreamWidget,
+    NotificationsWidget
   ],
   providers: [MessageService],
   templateUrl: 'store-settings.component.html',
@@ -48,6 +59,7 @@ export class StoreSettingsComponent implements OnInit {
   private productService = inject(ProductService);
   private fb = inject(FormBuilder);
   private messageService = inject(MessageService);
+  private dashboardService = inject(DashboardService);
 
   storeForm!: FormGroup;
   isSubmitting = false;
@@ -60,9 +72,10 @@ export class StoreSettingsComponent implements OnInit {
   productCount = signal<number>(0);
   products = signal<Product[]>([]);
 
-  // Mocks
+  // Dashboard Stats
   orderCount = signal<number>(0);
   revenue = signal<number>(0);
+  recentSales = signal<any[]>([]);
 
   constructor() {
     this.storeForm = this.fb.group({
@@ -98,6 +111,8 @@ export class StoreSettingsComponent implements OnInit {
 
   selectStore(store: Store): void {
     this.store.set(store);
+    this.storeService.activeStore.set(store); // Assure que le storeInterceptor l'utilise
+
     // Patch form
     this.storeForm.patchValue({
       name: store.name,
@@ -106,6 +121,20 @@ export class StoreSettingsComponent implements OnInit {
     });
     // Load products for this store
     this.loadProducts(store._id);
+
+    // Load Dashboard Stats
+    this.loadDashboardStats();
+  }
+
+  loadDashboardStats(): void {
+    this.dashboardService.getStats().subscribe({
+      next: (stats) => {
+        this.orderCount.set(stats.orders || 0);
+        this.revenue.set(stats.revenue || 0);
+        this.recentSales.set(stats.recentSales || []);
+      },
+      error: (err) => console.error('Failed to load dashboard stats', err)
+    });
   }
 
   onStoreTabChange(event: any): void {

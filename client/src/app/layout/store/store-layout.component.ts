@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { StoreHeaderComponent } from './header/store-header.component';
+import { CartToastComponent } from '../../shared/components/cart-toast/cart-toast.component';
 
 @Component({
   selector: 'app-store-layout',
   standalone: true,
-  imports: [RouterOutlet, StoreHeaderComponent],
+  imports: [RouterOutlet, StoreHeaderComponent, CartToastComponent],
   template: `
     <app-store-header />
-    <main class="pt-16 pb-4">
+    <app-cart-toast />
+    <main class="">
       <router-outlet />
     </main>
   `,
@@ -18,4 +20,4 @@ import { StoreHeaderComponent } from './header/store-header.component';
     }
   `]
 })
-export class StoreLayoutComponent {}
+export class StoreLayoutComponent { }

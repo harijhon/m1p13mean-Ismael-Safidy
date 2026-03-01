@@ -22,7 +22,6 @@ export const appRoutes: Routes = [
     {
         path: 'store',
         component: StoreLayoutComponent,
-        canActivate: [authGuard],
         children: [
             {
                 path: '',
@@ -35,6 +34,10 @@ export const appRoutes: Routes = [
             {
                 path: 'cart',
                 loadComponent: () => import('./app/features/store/cart/cart.component').then(m => m.CartComponent)
+            },
+            {
+                path: 'checkout',
+                loadComponent: () => import('./app/features/store/checkout/checkout.component').then(m => m.CheckoutComponent)
             }
         ]
     },
