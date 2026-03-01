@@ -1,0 +1,102 @@
+<div class="min-h-screen bg-gray-50 flex flex-col">
+
+  <!-- Hero Section -->
+  <section class="relative bg-gray-100 py-16 px-4 sm:px-6 lg:px-8 text-center border-b border-gray-200">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
+        Nouvelle Collection
+      </h1>
+      <p class="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        Découvrez nos derniers arrivages et tendances de la saison. Des pièces uniques conçues pour sublimer votre style
+        au quotidien.
+      </p>
+      <a href="#collection"
+        class="inline-block bg-black text-white px-8 py-3 rounded-md font-semibold text-lg hover:bg-gray-800 transition-colors shadow-sm">
+        Découvrir
+      </a>
+    </div>
+  </section>
+
+  <!-- Product Grid Section -->
+  <main id="collection" class="flex-grow max-w-7xl mx-auto w-full py-12 px-4 sm:px-6 lg:px-8">
+
+    <div class="flex justify-between items-end mb-8">
+      <h2 class="text-2xl font-bold text-gray-900">Nos Produits</h2>
+      <span class="text-sm text-gray-500 font-medium" *ngIf="!isLoading()">{{ products().length }} résultats</span>
+    </div>
+
+    <!-- Grille de Produits -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+
+      <!-- État de chargement (Skeletons) -->
+      @if (isLoading()) {
+      @for (item of skeletonArray; track $index) {
+      <div class="bg-white rounded-lg p-3 animate-pulse border border-gray-100 shadow-sm">
+        <div class="w-full aspect-[3/4] bg-gray-200 rounded-md mb-4"></div>
+        <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+        <div class="h-5 bg-gray-200 rounded w-1/4 mb-3"></div>
+        <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+      </div>
+      }
+      } @else {
+
+      <!-- Liste des Produits -->
+      @for (product of products(); track product._id) {
+      <a [routerLink]="['/store/product', product._id]"
+        class="group block h-full bg-white rounded-lg overflow-hidden border border-transparent hover:border-gray-200 hover:shadow-lg transition-all duration-300 flex flex-col cursor-pointer relative z-10">
+
+        <!-- Conteneur Image avec Ratio 3:4 -->
+        <div class="relative w-full aspect-[3/4] bg-gray-100 overflow-hidden">
+          <img [src]="product.images && product.images[0] ? product.images[0] : 'assets/images/placeholder.png'"
+            [alt]="product.name"
+            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            loading="lazy">
+
+          <!-- Badge "Épuisé" si stock 0 -->
+          @if (product.currentStock === 0) {
+          <span
+            class="absolute top-2 left-2 bg-white text-gray-900 text-xs font-bold px-2 py-1 rounded shadow-sm opacity-90">
+            Épuisé
+          </span>
+          }
+        </div>
+
+        <!-- Corps de la carte -->
+        <div class="p-4 flex flex-col flex-grow">
+          <h3 class="text-sm font-medium text-gray-900 truncate mb-1 group-hover:text-black transition-colors">
+            {{ product.name }}
+          </h3>
+
+          <div class="mt-auto pt-2 flex items-baseline justify-between">
+            <p class="text-base font-bold text-gray-900">
+              {{ product.price | currency:'EUR':'symbol':'1.2-2' }}
+            </p>
+          </div>
+
+          <!-- Badge Variantes -->
+          @if (product.hasVariants) {
+          <p class="text-xs text-gray-500 mt-2 font-medium">
+            + Plusieurs options
+          </p>
+          }
+        </div>
+      </a>
+      } @empty {
+      <!-- État Vide -->
+      <div class="col-span-2 md:col-span-3 lg:col-span-4 py-20 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-1">Aucun produit trouvé</h3>
+        <p class="text-gray-500">Revenez plus tard pour découvrir nos nouvelles collections.</p>
+      </div>
+      }
+      }
+    </div>
+  </main>
+
+</div>

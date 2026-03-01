@@ -1,19 +1,19 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
       <div class="container mx-auto px-4 py-3">
         <div class="flex items-center justify-between">
           <!-- Logo -->
           <div class="flex items-center">
-            <h1 class="text-xl font-bold text-gray-800">ShopEasy</h1>
+            <h1 class="text-xl font-bold text-gray-800 cursor-pointer hover:text-gray-600 transition-colors" (click)="goToHome()">ShopEasy</h1>
           </div>
 
           <!-- Barre de recherche -->
@@ -57,6 +57,10 @@ import { CartService } from '../../../core/services/cart.service';
 export class HeaderComponent {
   protected cartService = inject(CartService);
   private router = inject(Router);
+
+  goToHome() {
+    this.router.navigate(['/store']);
+  }
 
   goToCart() {
     // Placeholder pour la navigation vers le panier

@@ -1,0 +1,181 @@
+<div class="bg-white min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-8">Votre Panier</h1>
+
+        @if (cartItems().length === 0) {
+        <!-- ÉTAT VIDE (Empty State) -->
+        <div
+            class="py-16 flex flex-col items-center justify-center text-center bg-gray-50 rounded-2xl border border-gray-100">
+            <div class="w-24 h-24 mb-6 text-gray-300">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                </svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-900 mb-2">Votre panier est tristement vide</h2>
+            <p class="text-gray-500 mb-8 max-w-md">On dirait que vous n'avez pas encore trouvé la pièce parfaite.
+                Naviguez dans notre boutique pour découvrir nos collections.</p>
+            <a routerLink="/store"
+                class="inline-flex items-center justify-center bg-teal-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-teal-700 transition-colors shadow-sm">
+                Continuer mes achats
+            </a>
+        </div>
+        } @else {
+        <!-- PANIER PLEIN (Grid Layout) -->
+        <div class="lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12">
+
+            <!-- COLONNE GAUCHE (Articles) -->
+            <div class="lg:col-span-8">
+                <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-200">
+                    <h2 class="text-lg font-bold text-gray-900">{{ totalItems() }} article(s)</h2>
+                    <button (click)="clearCart()"
+                        class="text-sm font-medium text-red-600 hover:text-red-800 transition-colors underline">
+                        Vider le panier
+                    </button>
+                </div>
+
+                <ul class="divide-y divide-gray-200">
+                    @for (item of cartItems(); track item.productId + '-' + item.variantSku) {
+                    <li class="py-6 flex flex-col sm:flex-row gap-6">
+
+                        <!-- Image -->
+                        <div class="flex-shrink-0">
+                            <img [src]="item.image ? item.image : 'assets/images/placeholder.png'" [alt]="item.name"
+                                class="rounded-lg bg-gray-50 object-cover w-24 h-24 sm:w-32 sm:h-32 border border-gray-100">
+                        </div>
+
+                        <!-- Infos et Actions -->
+                        <div class="flex-1 flex flex-col justify-between">
+                            <div class="flex justify-between items-start gap-4">
+                                <div>
+                                    <h3 class="text-base font-bold text-gray-900 line-clamp-2">
+                                        <a [routerLink]="['/store/product', item.productId]"
+                                            class="hover:text-teal-600 transition-colors">
+                                            {{ item.name }}
+                                        </a>
+                                    </h3>
+                                    <!-- Variant Subtitle -->
+                                    @if (item.variantSku) {
+                                    <p
+                                        class="text-sm text-gray-500 mt-1 font-medium bg-gray-100 inline-block px-2 py-0.5 rounded">
+                                        SKU: {{ item.variantSku }}
+                                    </p>
+                                    }
+                                </div>
+                                <p class="text-lg font-bold text-gray-900 shrink-0">
+                                    {{ (item.price * item.quantity) | currency:'EUR':'symbol':'1.2-2' }}
+                                </p>
+                            </div>
+
+                            <div class="mt-4 flex items-center justify-between">
+
+                                <!-- Quantité interactive -->
+                                <div
+                                    class="flex items-center border border-gray-300 rounded-lg bg-white shadow-sm overflow-hidden">
+                                    <button (click)="updateQuantity(item.productId, item.variantSku, item.quantity, -1)"
+                                        class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                                        [disabled]="item.quantity <= 1" aria-label="Diminuer la quantité">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M20 12H4"></path>
+                                        </svg>
+                                    </button>
+                                    <span class="w-10 text-center text-sm font-semibold text-gray-900">
+                                        {{ item.quantity }}
+                                    </span>
+                                    <button (click)="updateQuantity(item.productId, item.variantSku, item.quantity, 1)"
+                                        class="px-3 py-1.5 text-gray-600 hover:bg-gray-100 transition-colors"
+                                        aria-label="Augmenter la quantité">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Supprimer -->
+                                <button (click)="removeItem(item.productId, item.variantSku)"
+                                    class="text-sm font-medium text-gray-400 hover:text-red-600 transition-colors flex items-center gap-1 group">
+                                    <svg class="w-5 h-5 group-hover:fill-red-100" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg>
+                                    Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                    }
+                </ul>
+            </div>
+
+            <!-- COLONNE DROITE (Résumé - Sticky) -->
+            <div class="lg:col-span-4 mt-8 lg:mt-0">
+                <div class="bg-gray-50 rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-sm sticky top-24">
+                    <h2 class="text-lg font-bold text-gray-900 mb-6">Résumé de la commande</h2>
+
+                    <dl class="space-y-4 text-sm text-gray-600">
+                        <div class="flex items-center justify-between">
+                            <dt>Sous-total</dt>
+                            <dd class="font-medium text-gray-900">{{ cartTotal() | currency:'EUR':'symbol':'1.2-2' }}
+                            </dd>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <dt>Frais de livraison</dt>
+                            <dd class="font-bold text-teal-600">Gratuite</dd>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <dt>Taxes (Estimées)</dt>
+                            <dd class="font-medium text-gray-900">Incluses</dd>
+                        </div>
+                        <div class="border-t border-gray-200 pt-4 flex items-center justify-between text-base">
+                            <dt class="font-extrabold text-gray-900">Total</dt>
+                            <dd class="font-extrabold text-gray-900">{{ cartTotal() | currency:'EUR':'symbol':'1.2-2' }}
+                            </dd>
+                        </div>
+                    </dl>
+
+                    <a routerLink="/store/checkout"
+                        class="mt-8 w-full bg-black text-white py-4 px-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-colors shadow-md flex justify-center items-center gap-2">
+                        Passer la commande
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+
+                    <!-- Réassurance -->
+                    <div class="mt-6 flex flex-col gap-3">
+                        <div
+                            class="flex items-center gap-3 text-xs text-gray-500 font-medium bg-white p-3 rounded-lg border border-gray-100">
+                            <div class="bg-gray-100 p-1.5 rounded-full text-gray-700">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                    </path>
+                                </svg>
+                            </div>
+                            Paiement 100% sécurisé
+                        </div>
+                        <div
+                            class="flex items-center gap-3 text-xs text-gray-500 font-medium bg-white p-3 rounded-lg border border-gray-100">
+                            <div class="bg-gray-100 p-1.5 rounded-full text-gray-700">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                    </path>
+                                </svg>
+                            </div>
+                            Retours gratuits sous 14 jours
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        }
+    </div>
+</div>

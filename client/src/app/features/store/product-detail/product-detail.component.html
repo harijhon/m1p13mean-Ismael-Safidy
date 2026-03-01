@@ -1,0 +1,251 @@
+<div class="bg-white min-h-screen pb-16">
+
+    <!-- État de chargement (Skeletons) -->
+    @if (isLoading()) {
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-pulse">
+        <div class="h-4 bg-gray-200 rounded w-1/4 mb-8"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="w-full aspect-square bg-gray-200 rounded-2xl"></div>
+            <div class="space-y-4 pt-4">
+                <div class="h-8 bg-gray-200 rounded w-3/4"></div>
+                <div class="h-6 bg-gray-200 rounded w-1/4"></div>
+                <div class="h-32 bg-gray-200 rounded w-full mt-6"></div>
+                <div class="h-10 bg-gray-200 rounded w-full mt-8"></div>
+            </div>
+        </div>
+    </div>
+    } @else if (product()) {
+    <!-- Contenu Dynamique -->
+
+    <!-- Breadcrumb -->
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <ol class="flex text-sm text-gray-500 font-medium">
+            <li>
+                <a routerLink="/store" class="hover:text-teal-600 transition-colors">Accueil</a>
+            </li>
+            <li class="px-2">/</li>
+            <li>
+                <a routerLink="/store" class="hover:text-teal-600 transition-colors">Boutique</a>
+            </li>
+            <li class="px-2">/</li>
+            <li class="text-gray-900" aria-current="page">{{ product()?.name }}</li>
+        </ol>
+    </nav>
+
+    <!-- Main Layout : 2 Colonnes -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+
+            <!-- Colonne Gauche : Galerie Visuelle -->
+            <div class="flex flex-col">
+                <!-- Image Principale -->
+                <div class="relative w-full aspect-square bg-gray-50 rounded-2xl overflow-hidden shadow-sm">
+                    <img [src]="selectedImage() ? selectedImage() : 'assets/images/placeholder.png'"
+                        [alt]="product()?.name"
+                        class="w-full h-full object-cover object-center transition-all duration-500" loading="lazy">
+
+                    <!-- Badge Épuisé sur l'image si stock 0 -->
+                    @if (displayStock() === 0) {
+                    <span
+                        class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-gray-900 px-3 py-1.5 rounded-lg text-sm font-bold uppercase tracking-wider shadow-sm border border-gray-100">
+                        Épuisé
+                    </span>
+                    }
+                </div>
+
+                <!-- Carrousel de Vignettes -->
+                @if (product()?.images && (product()?.images)!.length > 0) {
+                <div class="flex gap-4 overflow-x-auto mt-6 pb-2 snap-x scrollbar-hide">
+                    @for (image of product()!.images; track $index) {
+                    <button (click)="changeImage($index)"
+                        class="relative w-20 sm:w-24 aspect-square flex-shrink-0 snap-start bg-gray-50 rounded-xl overflow-hidden cursor-pointer transition-all duration-200"
+                        [class.ring-2]="selectedImage() === image" [class.ring-teal-600]="selectedImage() === image"
+                        [class.ring-offset-2]="selectedImage() === image" [class.opacity-60]="selectedImage() !== image"
+                        [class.hover:opacity-100]="selectedImage() !== image">
+                        <img [src]="image" [alt]="product()?.name + ' thumbnail ' + $index"
+                            class="w-full h-full object-cover">
+                    </button>
+                    }
+                </div>
+                }
+            </div>
+
+            <!-- Colonne Droite : Buy Box & Détails -->
+            <div class="flex flex-col pt-2 lg:pt-8">
+
+                <!-- Titre et Prix -->
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+                    {{ product()?.name }}
+                </h1>
+
+                <div class="mt-4 flex items-center justify-between">
+                    <p class="text-2xl sm:text-3xl text-teal-700 font-bold">
+                        {{ displayPrice() | currency:'EUR':'symbol':'1.2-2' }}
+                    </p>
+                </div>
+
+                <!-- Description Courte (fallback si pas de description) -->
+                <p class="mt-6 text-base text-gray-600 leading-relaxed">
+                    {{ product()?.type === 'SERVICE' ? 'Un service exclusif.' : 'Un produit de qualité exceptionnelle.'
+                    }}
+                </p>
+
+                <hr class="my-6 border-gray-200">
+
+                <!-- SÉLECTEURS DE VARIANTES DYNAMIQUES -->
+                @if (product()?.hasVariants) {
+                <div class="space-y-6 mb-6">
+                    @for (attr of availableAttributes(); track attr.name) {
+                    <div>
+                        <h3 class="text-sm text-gray-900 font-bold uppercase tracking-wider mb-3">
+                            {{ attr.name }}
+                        </h3>
+                        <div class="flex flex-wrap gap-3">
+                            @for (val of attr.values; track val) {
+                            <!-- Variant Chip -->
+                            <button (click)="selectAttribute(attr.name, val)"
+                                class="px-5 py-2.5 rounded-lg border text-sm font-medium transition-all duration-200 focus:outline-none"
+                                [ngClass]="selectedAttributes()[attr.name] === val ? 
+                                'border-teal-600 bg-teal-50 text-teal-700 ring-1 ring-teal-600' : 
+                                'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'">
+                                {{ val }}
+                            </button>
+                            }
+                        </div>
+                    </div>
+                    }
+
+                    <!-- Message d'alerte si une combinaison spécifique est sélectionnée mais out of stock -->
+                    @if (currentVariant() && currentVariant()!.stock === 0) {
+                    <p class="text-sm text-red-600 font-medium mt-2">Cette variante est actuellement en rupture de
+                        stock.</p>
+                    }
+                </div>
+                }
+
+                <!-- Actions : Quantité et Bouton -->
+                <div class="mt-auto">
+
+                    <!-- Si en stock, afficher le sélecteur de quantité AND Variante valide (ou produit simple) -->
+                    @if (displayStock() > 0 && (!product()?.hasVariants || currentVariant())) {
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="text-sm font-medium text-gray-700">Quantité</span>
+                        <div class="flex items-center border border-gray-300 rounded-md">
+                            <button (click)="decrementQuantity()"
+                                class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                                [disabled]="quantity() <= 1">
+                                -
+                            </button>
+                            <input type="text" [value]="quantity()" readonly
+                                class="w-12 text-center font-semibold text-gray-900 focus:outline-none bg-transparent">
+                            <button (click)="incrementQuantity()"
+                                class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                                [disabled]="quantity() >= displayStock()">
+                                +
+                            </button>
+                        </div>
+                        <span class="text-sm text-gray-500">{{ displayStock() }} disponibles</span>
+                    </div>
+
+                    <!-- Bouton Ajouter au panier -->
+                    <button (click)="addToCart()" [disabled]="isAddToCartDisabled()"
+                        class="w-full bg-teal-600 text-white py-4 px-8 rounded-xl font-bold text-lg hover:bg-teal-700 transition-all duration-300 shadow-md hover:shadow-lg flex justify-center items-center gap-2 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-none">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        Ajouter au panier
+                    </button>
+                    } @else {
+                    <!-- État Épuisé ou Sélection de Variante requise -->
+                    @if (product()?.hasVariants && !currentVariant()) {
+                    <div class="bg-blue-50 rounded-lg p-4 mb-6 border border-blue-200">
+                        <h4 class="text-sm font-medium text-blue-800 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Veuillez sélectionner toutes les options pour vérifier la disponibilité et le prix.
+                        </h4>
+                    </div>
+                    } @else {
+                    <div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">
+                        <h4 class="text-sm font-medium text-red-600 flex items-center gap-2 mb-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                </path>
+                            </svg>
+                            Article momentanément indisponible
+                        </h4>
+                    </div>
+
+                    <button (click)="notifyMe()"
+                        class="w-full bg-gray-900 text-white py-4 px-8 rounded-xl font-bold text-lg hover:bg-gray-800 transition-all duration-300 shadow-md flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                            </path>
+                        </svg>
+                        M'avertir du réapprovisionnement
+                    </button>
+                    }
+                    }
+
+                    <!-- Réassurance -->
+                    <div class="mt-8 grid grid-cols-2 gap-4 text-sm text-gray-500 font-medium">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
+                                </path>
+                            </svg>
+                            Livraison Standard
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                </path>
+                            </svg>
+                            Paiement Sécurisé
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Spécifications & Onglets -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-gray-100">
+        <div
+            class="flex flex-col sm:flex-row sm:space-x-8 border-b border-gray-200 overflow-x-auto scrollbar-hide py-2 sm:py-0">
+            <button (click)="setActiveTab('specifications')"
+                class="whitespace-nowrap py-4 px-1 text-sm font-bold border-b-2 transition-colors pb-3"
+                [class.border-teal-600]="activeTab() === 'specifications'"
+                [class.text-teal-600]="activeTab() === 'specifications'"
+                [class.border-transparent]="activeTab() !== 'specifications'"
+                [class.text-gray-500]="activeTab() !== 'specifications'"
+                [class.hover:text-gray-700]="activeTab() !== 'specifications'">
+                Spécifications Complètes
+            </button>
+        </div>
+
+        <!-- Contenu des onglets -->
+        <div class="py-8 text-gray-600 text-sm leading-loose max-w-3xl">
+            <p>Caractéristiques et détails du produit à insérer depuis la base de données ou le CMS.</p>
+        </div>
+    </div>
+    } @else {
+    <div class="py-20 text-center">
+        <h2 class="text-2xl font-bold text-gray-900">Produit introuvable</h2>
+        <a routerLink="/store" class="mt-4 inline-block text-teal-600 hover:underline">Retour à la boutique</a>
+    </div>
+    }
+</div>
