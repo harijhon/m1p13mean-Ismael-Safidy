@@ -12,6 +12,7 @@ import promotionRoutes from './routes/promotion.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import orderRoutes from './routes/orders.js';
 import storeRoutes from './routes/stores.js';
+import rentRoutes from './routes/rent.routes.js';
 import mouvementStockRoutes from './routes/mouvementStock.routes.js';
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api/promotions', promotionRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/stores', storeRoutes);
+app.use('/api/rent', rentRoutes);
 app.use('/api/stock', mouvementStockRoutes);
 
 app.use((err, req, res, next) => {

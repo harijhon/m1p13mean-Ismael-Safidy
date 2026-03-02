@@ -27,7 +27,8 @@ export class AppMenu {
         if (user?.role === 'admin') {
             mainMenuItems.push({ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin/dashboard'] });
             mainMenuItems.push({ label: 'Utilisateurs', icon: 'pi pi-fw pi-users', routerLink: ['/admin/users'] });
-            mainMenuItems.push({ label: 'Loyers', icon: 'pi pi-fw pi-money-bill', routerLink: ['/admin/rents'] });
+            mainMenuItems.push({ label: 'Magasins', icon: 'pi pi-fw pi-shop', routerLink: ['/admin/stores'] });
+            mainMenuItems.push({ label: 'Gestion Locative', icon: 'pi pi-fw pi-wallet', routerLink: ['/admin/rent'] });
         }
 
         if (user?.role === 'manager') {

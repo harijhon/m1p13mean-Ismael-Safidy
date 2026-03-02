@@ -38,6 +38,7 @@
             <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
             <th pSortableColumn="owner.name">Propriétaire <p-sortIcon field="owner.name"></p-sortIcon></th>
             <th>Description</th>
+            <th pSortableColumn="status">Statut <p-sortIcon field="status"></p-sortIcon></th>
             <th>Actions</th>
         </tr>
     </ng-template>
@@ -59,13 +60,22 @@
             </td>
             <td>{{ store.description }}</td>
             <td>
+                <p-tag
+                    [severity]="store.status === 'ACTIVE' ? 'success' : (store.status === 'EVICTION_NOTICE' ? 'danger' : 'info')"
+                    [value]="store.status || 'ACTIVE'">
+                </p-tag>
+            </td>
+            <td>
                 <div class="flex gap-2">
                     <button pButton pRipple icon="pi pi-pencil"
-                        class="p-button-rounded p-button-outlined p-button-success mr-2"
-                        (click)="editStore(store)"></button>
+                        class="p-button-rounded p-button-outlined p-button-success" pTooltip="Éditer"
+                        tooltipPosition="top" (click)="editStore(store)"></button>
                     <button pButton pRipple icon="pi pi-trash"
-                        class="p-button-rounded p-button-outlined p-button-danger"
-                        (click)="deleteStore(store)"></button>
+                        class="p-button-rounded p-button-outlined p-button-danger" pTooltip="Supprimer"
+                        tooltipPosition="top" (click)="deleteStore(store)"></button>
+                    <button *ngIf="isAdmin() && store.status !== 'EVICTION_NOTICE'" pButton pRipple icon="pi pi-ban"
+                        class="p-button-rounded p-button-warning" pTooltip="Envoyer Préavis" tooltipPosition="top"
+                        (click)="openEvictionDialog(store)"></button>
                 </div>
             </td>
         </tr>
@@ -110,6 +120,27 @@
             (click)="hideDialog()"></button>
         <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-text"
             (click)="saveStore()"></button>
+    </ng-template>
+</p-dialog>
+
+<!-- Eviction Dialog -->
+<p-dialog [(visible)]="evictionDialog" [style]="{width: '450px'}" header="Envoyer un Préavis de Résiliation"
+    [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <p class="mb-4">Vous êtes sur le point d'envoyer un préavis d'expulsion pour le magasin <strong>{{
+                selectedStoreToEvict?.name }}</strong>.</p>
+        <div class="field">
+            <label for="reason" class="block font-bold mb-3">Motif de la résiliation</label>
+            <textarea pInputTextarea id="reason" [(ngModel)]="evictionReason" rows="4" class="p-inputtext-fluid"
+                placeholder="Ex: Retards de paiement répétés..."></textarea>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text"
+            (click)="evictionDialog = false"></button>
+        <button pButton pRipple label="Confirmer (Irréversible)" icon="pi pi-check" class="p-button-danger"
+            (click)="sendEviction()" [disabled]="!evictionReason"></button>
     </ng-template>
 </p-dialog>
 

@@ -63,6 +63,10 @@ export class StoresComponent implements OnInit {
   storeDialog = false;
   isLoading = true;
 
+  evictionDialog = false;
+  evictionReason = '';
+  selectedStoreToEvict: Store | null = null;
+
   constructor(
     private fb: FormBuilder,
     private storeService: StoreService,
@@ -80,6 +84,10 @@ export class StoresComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadStores();
+  }
+
+  isAdmin(): boolean {
+    return this.authService.currentUser()?.role === 'admin';
   }
 
   loadStores(): void {
@@ -182,6 +190,29 @@ export class StoresComponent implements OnInit {
         }
       },
       reject: () => { }
+    });
+  }
+
+  openEvictionDialog(store: Store): void {
+    this.selectedStoreToEvict = store;
+    this.evictionReason = '';
+    this.evictionDialog = true;
+  }
+
+  sendEviction(): void {
+    if (!this.selectedStoreToEvict || !this.selectedStoreToEvict._id || !this.evictionReason.trim()) return;
+
+    this.storeService.sendEvictionNotice(this.selectedStoreToEvict._id, this.evictionReason).subscribe({
+      next: () => {
+        this.loadStores();
+        this.messageService.add({ severity: 'success', summary: 'Préavis envoyé', detail: 'Le statut du magasin a été mis à jour', life: 3000 });
+        this.evictionDialog = false;
+        this.selectedStoreToEvict = null;
+      },
+      error: (err: any) => {
+        console.error('Error evicting store:', err);
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Échec de l\'envoi du préavis', life: 3000 });
+      }
     });
   }
 

@@ -77,4 +77,8 @@ export class StoreService {
   updateMyStore(store: Store): Observable<Store> {
     return this.http.put<Store>(`${this.apiUrl}/my-store`, store);
   }
+
+  sendEvictionNotice(storeId: string, reason: string): Observable<Store> {
+    return this.http.put<Store>(`${this.apiUrl}/${storeId}/evict`, { reason });
+  }
 }

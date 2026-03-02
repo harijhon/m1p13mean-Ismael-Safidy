@@ -15,6 +15,19 @@ const storeSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  status: {
+    type: String,
+    enum: ['ACTIVE', 'INACTIVE', 'EVICTION_NOTICE'],
+    default: 'ACTIVE'
+  },
+  evictionReason: {
+    type: String
+  },
+  rentContract: {
+    boxNumber: String,
+    monthlyAmount: Number,
+    paymentDueDate: { type: Number, default: 5 }
+  }
 }, {
   timestamps: true,
 });
