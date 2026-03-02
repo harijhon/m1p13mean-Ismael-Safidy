@@ -35,10 +35,10 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
                 (focus)="showDropdown = true"
                 (blur)="hideDropdown()"
                 placeholder="Rechercher des produits ou boutiques..." 
-                class="w-full px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-shadow"
+                class="w-full px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-shadow text-base"
               />
-              <button class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 focus:outline-none" (click)="onSearch()">
-                <i class="pi pi-search"></i>
+              <button class="absolute right-2 top-1.5 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full focus:outline-none transition-colors" (click)="onSearch()">
+                <i class="pi pi-search text-lg"></i>
               </button>
             </div>
 
@@ -101,23 +101,23 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
           </div>
           
           <!-- DROITE (Actions) -->
-          <div class="flex items-center gap-4 sm:gap-6">
+          <div class="flex items-center gap-2 sm:gap-4">
             <!-- Profil -->
             @if (authService.isLoggedIn()) {
               <a 
                 routerLink="/profile" 
-                class="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-700"
+                class="w-12 h-12 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-gray-700"
               >
-                <i class="pi pi-user text-xl"></i>
+                <i class="pi pi-user text-2xl"></i>
               </a>
             }
 
             <!-- Panier -->
             <button 
-              class="p-2 rounded-full hover:bg-gray-100 transition-colors relative text-gray-700"
+              class="w-12 h-12 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors relative text-gray-700"
               (click)="goToCart()"
             >
-              <i class="pi pi-shopping-cart text-xl"></i>
+              <i class="pi pi-shopping-cart text-2xl"></i>
               @if (cartService.totalItems() > 0) {
                 <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
                   {{ cartService.totalItems() }}
