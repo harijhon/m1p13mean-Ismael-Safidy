@@ -38,6 +38,14 @@ export const appRoutes: Routes = [
             {
                 path: 'checkout',
                 loadComponent: () => import('./app/features/store/checkout/checkout.component').then(m => m.CheckoutComponent)
+            },
+            {
+                path: 'search',
+                loadComponent: () => import('./app/features/store/search-results/search-results.component').then(m => m.SearchResultsComponent)
+            },
+            {
+                path: 'shop/:id',
+                loadComponent: () => import('./app/features/store/store-profile/store-profile.component').then(m => m.StoreProfileComponent)
             }
         ]
     },
