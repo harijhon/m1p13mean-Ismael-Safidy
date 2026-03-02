@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { DashboardService } from '../../../core/services/dashboard.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
     standalone: true,
@@ -41,7 +42,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
             <div class="card mb-0">
                 <div class="flex justify-between mb-4">
                     <div>
-                        <span class="block text-muted-color font-medium mb-4">Clients</span>
+                        <span class="block text-muted-color font-medium mb-4">{{ isAdmin ? 'Magasins' : 'Clients' }}</span>
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ stats.customers || 0 }}</div>
                     </div>
                     <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
@@ -49,7 +50,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
                     </div>
                 </div>
                 <span class="text-primary font-medium">{{ newCustomers }} </span>
-                <span class="text-muted-color">nouvellement inscrits</span>
+                <span class="text-muted-color">{{ isAdmin ? 'nouveaux magasins' : 'nouvellement inscrits' }}</span>
             </div>
         </div>
         <div class="col-span-12 lg:col-span-6 xl:col-span-3">
@@ -76,11 +77,15 @@ export class StatsWidget implements OnInit, OnDestroy {
     newCustomers = 520;
     activeProducts = 85;
 
+    protected authService = inject(AuthService);
+    isAdmin = false;
+
     private refreshSubscription!: Subscription;
 
     constructor(private dashboardService: DashboardService) { }
 
     ngOnInit() {
+        this.isAdmin = this.authService.currentUser()?.role === 'admin';
         this.loadStats();
         this.refreshSubscription = this.dashboardService.refresh$.subscribe(() => this.loadStats());
     }

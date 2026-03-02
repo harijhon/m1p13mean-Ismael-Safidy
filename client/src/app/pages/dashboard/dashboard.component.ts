@@ -6,6 +6,9 @@ import { StatsWidget } from './components/statswidget';
 import { RecentSalesWidget } from './components/recentsaleswidget';
 import { BestSellingWidget } from './components/bestsellingwidget';
 import { RevenueStreamWidget } from './components/revenuestreamwidget';
+import { AdminStatsWidget } from './components/admin-stats-widget';
+import { AdminRecentRentsWidget } from './components/admin-recent-rents-widget';
+import { AdminRentRevenueWidget } from './components/admin-rent-revenue-widget';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { CreateStoreComponent } from '../admin/create-store/create-store.component';
@@ -21,18 +24,20 @@ import { CreateStoreComponent } from '../admin/create-store/create-store.compone
         BestSellingWidget,
         RevenueStreamWidget,
         NotificationsWidget,
+        AdminStatsWidget,
+        AdminRecentRentsWidget,
+        AdminRentRevenueWidget,
         CreateStoreComponent
     ],
     template: `
-        @if (authService.currentUser()?.storeId) {
-
+        @if (authService.currentUser()?.role === 'admin') {
             <div class="grid grid-cols-12 gap-8">
                 <div class="col-span-12">
                     <div class="card mb-0">
                         <div class="flex justify-between items-start">
                             <div>
                                 <span class="block text-500 font-medium mb-3">Bonjour, {{ authService.currentUser()?.email }}</span>
-                                <div class="text-900 font-medium text-xl">Bienvenue sur votre Dashboard</div>
+                                <div class="text-900 font-medium text-xl">Tableau de Bord Administrateur (Gestion Locative)</div>
                             </div>
                             <div>
                                 <button pButton pRipple icon="pi pi-refresh" (click)="refreshData()" class="p-button-text"></button>
@@ -40,6 +45,31 @@ import { CreateStoreComponent } from '../admin/create-store/create-store.compone
                         </div>
                     </div>
                 </div>
+                <!-- Admin Specific Widgets -->
+                <app-admin-stats-widget class="contents" />
+                <div class="col-span-12 xl:col-span-6">
+                    <app-admin-recent-rents-widget />
+                </div>
+                <div class="col-span-12 xl:col-span-6">
+                    <app-admin-rent-revenue-widget />
+                </div>
+            </div>
+        } @else if (authService.currentUser()?.storeId) {
+            <div class="grid grid-cols-12 gap-8">
+                <div class="col-span-12">
+                    <div class="card mb-0">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="block text-500 font-medium mb-3">Bonjour, {{ authService.currentUser()?.email }}</span>
+                                <div class="text-900 font-medium text-xl">Bienvenue sur votre Dashboard (Manager)</div>
+                            </div>
+                            <div>
+                                <button pButton pRipple icon="pi pi-refresh" (click)="refreshData()" class="p-button-text"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Manager Specific Widgets -->
                 <app-stats-widget class="contents" />
                 <div class="col-span-12 xl:col-span-6">
                     <app-recent-sales-widget />
@@ -51,7 +81,6 @@ import { CreateStoreComponent } from '../admin/create-store/create-store.compone
                 </div>
             </div>
         } @else {
-
             <div>
                 <div class="col-12">
                     <app-create-store />

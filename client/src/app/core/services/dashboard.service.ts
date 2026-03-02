@@ -7,7 +7,7 @@ import { Observable, Subject } from 'rxjs';
 })
 export class DashboardService {
 
-  private apiUrl = '/api/dashboard/stats';
+  private apiUrl = '/api/dashboard';
   private refreshSource = new Subject<void>();
 
   refresh$ = this.refreshSource.asObservable();
@@ -15,7 +15,11 @@ export class DashboardService {
   constructor(private http: HttpClient) { }
 
   getStats(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+    return this.http.get<any>(`${this.apiUrl}/stats`);
+  }
+
+  getAdminStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/admin`);
   }
 
   triggerRefresh(): void {
