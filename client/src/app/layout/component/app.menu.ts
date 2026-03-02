@@ -27,10 +27,10 @@ export class AppMenu {
         if (user?.role === 'admin') {
             mainMenuItems.push({ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin/dashboard'] });
             mainMenuItems.push({ label: 'Utilisateurs', icon: 'pi pi-fw pi-users', routerLink: ['/admin/users'] });
-            mainMenuItems.push({ label: 'Validation Magasins', icon: 'pi-fw pi-check-circle', routerLink: ['/admin/validation'] });
-            mainMenuItems.push({ label: 'Carte des Box', icon: 'pi-fw pi-map', routerLink: ['/admin/store-grid'] });
-            mainMenuItems.push({ label: 'Gestion Locative', icon: 'pi-fw pi-wallet', routerLink: ['/admin/rent'] });
-            mainMenuItems.push({ label: 'Pré-Avis', icon: 'pi-fw pi-exclamation-triangle', routerLink: ['/admin/evictions'] });
+            mainMenuItems.push({ label: 'Validation Magasins', icon: 'pi pi-fw pi-check-circle', routerLink: ['/admin/validation'] });
+            mainMenuItems.push({ label: 'Carte des Box', icon: 'pi pi-fw pi-map', routerLink: ['/admin/store-grid'] });
+            mainMenuItems.push({ label: 'Gestion Locative', icon: 'pi pi-fw pi-wallet', routerLink: ['/admin/rent'] });
+            mainMenuItems.push({ label: 'Pré-Avis', icon: 'pi pi-fw pi-exclamation-triangle', routerLink: ['/admin/evictions'] });
         }
 
         if (user?.role === 'manager') {
