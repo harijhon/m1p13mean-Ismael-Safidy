@@ -23,9 +23,13 @@ export class LoginComponent {
 
   error: string | null = null;
 
+  testAccounts = [
     { label: 'Admin', role: 'admin', email: 'admin@example.com', password: 'admin123' },
-    { label: 'Manager', role: 'manager', email: 'manager1@example.com', password: 'password123' },
-    { label: 'Client', role: 'client', email: 'client1@example.com', password: 'password123' }
+    { label: 'Manager (Tech)', role: 'manager', email: 'techmanager@example.com', password: 'manager123' },
+    { label: 'Manager (Fashion)', role: 'manager', email: 'fashionmanager@example.com', password: 'manager123' },
+    { label: 'Manager (Deco)', role: 'manager', email: 'decomanager@example.com', password: 'manager123' },
+    { label: 'Client 1', role: 'client', email: 'client1@example.com', password: 'client123' },
+    { label: 'Client 2', role: 'client', email: 'client2@example.com', password: 'client123' }
   ];
 
   onAccountSelect(event: Event): void {

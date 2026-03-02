@@ -15,6 +15,7 @@ import { CartToastComponent } from '../../shared/components/cart-toast/cart-toas
         <router-outlet />
       </main>
       
+      <footer class="bg-white border-t border-neutral-200 py-8 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
           <p class="text-sm text-neutral-500 font-medium text-center">
             Designed & Developed by

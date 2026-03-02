@@ -13,5 +13,6 @@ export const roleGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
+  router.navigate(['/access-denied']);
   return false;
 };
