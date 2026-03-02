@@ -3,7 +3,7 @@ import Product from '../models/Product.js';
 export const getAllProducts = async (req, res) => {
     try {
         const filter = req.storeContext ? { store: req.storeContext } : {};
-        const products = await Product.find(filter);
+        const products = await Product.find(filter).populate('store', 'name logo');
         res.status(200).json(products);
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -13,7 +13,7 @@ export const getAllProducts = async (req, res) => {
 
 export const getProductById = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findById(req.params.id).populate('store', 'name logo');
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }

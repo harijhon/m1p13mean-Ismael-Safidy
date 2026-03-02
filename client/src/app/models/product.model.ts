@@ -9,7 +9,11 @@ export interface Product {
   hasVariants: boolean;
   variants?: Variant[];
   images: string[];
-  store?: any;
+  store?: {
+    _id: string;
+    name: string;
+    logo?: string;
+  };
   sale?: {
     isActive: boolean;
     discountPercent: number;
