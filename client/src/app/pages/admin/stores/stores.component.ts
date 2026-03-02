@@ -62,6 +62,7 @@ export class StoresComponent implements OnInit {
   submitted = false;
   storeDialog = false;
   isLoading = true;
+  emptyBoxes: any[] = [];
 
   evictionDialog = false;
   evictionReason = '';
@@ -78,12 +79,26 @@ export class StoresComponent implements OnInit {
       _id: [''],
       name: ['', Validators.required],
       description: [''],
-      logo: ['']
+      logo: [''],
+      requestedBoxId: [null]
     });
   }
 
   ngOnInit(): void {
     this.loadStores();
+    this.loadEmptyBoxes();
+  }
+
+  loadEmptyBoxes(): void {
+    this.storeService.getEmptyBoxes().subscribe({
+      next: (boxes) => {
+        this.emptyBoxes = boxes.map(b => ({
+          label: `Box ${b.boxNumber} (Étage ${b.floor})`,
+          value: b._id
+        }));
+      },
+      error: (err) => console.error('Error loading empty boxes', err)
+    });
   }
 
   isAdmin(): boolean {
@@ -110,7 +125,12 @@ export class StoresComponent implements OnInit {
   }
 
   openNew(): void {
-    this.storeForm.reset();
+    this.storeForm.reset({
+      name: '',
+      description: '',
+      logo: '',
+      requestedBoxId: null
+    });
     this.submitted = false;
     this.storeDialog = true;
   }
@@ -165,7 +185,9 @@ export class StoresComponent implements OnInit {
       _id: store._id,
       name: store.name,
       description: store.description,
-      logo: store.logo
+      logo: store.logo,
+      // requestedBoxId shouldn't typically be edited securely if it's already VALIDATED, but if it's CREATED we could show it.
+      requestedBoxId: store.rentContract?.requestedBoxId?._id || null
     });
     this.storeDialog = true;
   }

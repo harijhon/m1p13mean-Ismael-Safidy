@@ -111,6 +111,14 @@
                 <label for="description" class="block font-bold mb-3 mt-3">Description</label>
                 <textarea pInputTextarea id="description" formControlName="description" rows="3"
                     class="p-inputtext-fluid"></textarea>
+
+                <label *ngIf="!storeForm.value._id" for="requestedBoxId" class="block font-bold mb-3 mt-3">Demander un
+                    Box</label>
+                <select *ngIf="!storeForm.value._id" id="requestedBoxId" formControlName="requestedBoxId"
+                    class="w-full p-3 border border-surface-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-surface-700 bg-surface-0">
+                    <option [ngValue]="null" disabled selected>Sélectionnez un box disponible (Optionnel)</option>
+                    <option *ngFor="let box of emptyBoxes" [ngValue]="box.value">{{ box.label }}</option>
+                </select>
             </form>
         </div>
     </ng-template>

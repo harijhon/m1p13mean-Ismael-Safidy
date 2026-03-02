@@ -81,4 +81,12 @@ export class StoreService {
   sendEvictionNotice(storeId: string, reason: string): Observable<Store> {
     return this.http.put<Store>(`${this.apiUrl}/${storeId}/evict`, { reason });
   }
+
+  getEmptyBoxes(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/boxes/empty`);
+  }
+
+  validateStore(storeId: string, boxId: string, monthlyAmount: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${storeId}/validate`, { boxId, monthlyAmount });
+  }
 }

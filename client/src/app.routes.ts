@@ -121,6 +121,30 @@ export const appRoutes: Routes = [
                 loadComponent: () => import('./app/pages/admin/stock/stock').then(m => m.Stock),
                 canActivate: [roleGuard],
                 data: { roles: ['manager'] }
+            },
+            {
+                path: 'store-grid',
+                loadComponent: () => import('./app/pages/admin/store-grid/store-grid').then(m => m.StoreGrid),
+                canActivate: [roleGuard],
+                data: { roles: ['admin'] }
+            },
+            {
+                path: 'evictions',
+                loadComponent: () => import('./app/pages/admin/evictions/evictions').then(m => m.EvictionsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['admin'] }
+            },
+            {
+                path: 'rents',
+                loadComponent: () => import('./app/pages/admin/rents/rents').then(m => m.RentsComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['admin', 'manager'] }
+            },
+            {
+                path: 'validation',
+                loadComponent: () => import('./app/pages/admin/store-validation/store-validation').then(m => m.StoreValidationComponent),
+                canActivate: [roleGuard],
+                data: { roles: ['admin'] }
             }
         ]
     }

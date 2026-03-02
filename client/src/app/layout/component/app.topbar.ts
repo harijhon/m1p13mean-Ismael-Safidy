@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -6,6 +6,7 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { AppConfigurator } from './app.configurator';
 import { LayoutService } from '../service/layout.service';
 import { StoreSwitcherComponent } from './store-switcher.component';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
     selector: 'app-topbar',
@@ -69,9 +70,13 @@ import { StoreSwitcherComponent } from './store-switcher.component';
                         <i class="pi pi-calendar"></i>
                         <span>Calendar</span>
                     </button>
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-inbox"></i>
-                        <span>Messages</span>
+                    <!-- Notification Bell with Tailwind Badge -->
+                    <button type="button" class="layout-topbar-action relative">
+                        <i class="pi pi-bell"></i>
+                        <div *ngIf="getUnreadCount() !== '0'" class="absolute top-[2px] right-[2px] w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-surface-0 border-solid shadow-sm">
+                            {{ getUnreadCount() }}
+                        </div>
+                        <span>Notifications</span>
                     </button>
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-user"></i>
@@ -85,7 +90,14 @@ import { StoreSwitcherComponent } from './store-switcher.component';
 export class AppTopbar {
     items!: MenuItem[];
 
+    public notificationService = inject(NotificationService);
+
     constructor(public layoutService: LayoutService) { }
+
+    getUnreadCount(): string {
+        const count = this.notificationService.unreadCount();
+        return count > 0 ? count.toString() : '0';
+    }
 
     toggleDarkMode() {
         this.layoutService.layoutConfig.update((state) => ({ ...state, darkTheme: !state.darkTheme }));

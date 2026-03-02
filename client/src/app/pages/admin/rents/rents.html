@@ -1,0 +1,64 @@
+<div class="card p-8 bg-surface-0 rounded-3xl shadow-xl">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight text-surface-900 mb-1">Historique des Loyers</h1>
+            <p class="text-surface-500">Suivi des factures mensuelles pour les emplacements (box).</p>
+        </div>
+        <div>
+            <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    placeholder="Rechercher..." />
+            </span>
+        </div>
+    </div>
+
+    <p-table #dt [value]="invoices()" [loading]="loading()" [paginator]="true" [rows]="10"
+        [globalFilterFields]="['store.name', 'month', 'status']" responsiveLayout="scroll" [rowHover]="true"
+        styleClass="p-datatable-gridlines p-datatable-striped">
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngIf="isAdmin()" pSortableColumn="store.name">Magasin <p-sortIcon field="store.name"></p-sortIcon>
+                </th>
+                <th *ngIf="isAdmin()" pSortableColumn="store.owner.name">Gérant <p-sortIcon
+                        field="store.owner.name"></p-sortIcon></th>
+                <th pSortableColumn="month">Mois Cible <p-sortIcon field="month"></p-sortIcon></th>
+                <th pSortableColumn="amountDue">Montant (Mensuel) <p-sortIcon field="amountDue"></p-sortIcon></th>
+                <th pSortableColumn="balance">Reste à payer <p-sortIcon field="balance"></p-sortIcon></th>
+                <th pSortableColumn="status">Statut <p-sortIcon field="status"></p-sortIcon></th>
+                <th>Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-invoice>
+            <tr>
+                <td *ngIf="isAdmin()" class="font-bold">{{ invoice.store?.name }}</td>
+                <td *ngIf="isAdmin()">{{ invoice.store?.owner?.name }}</td>
+                <td>{{ invoice.month | date:'MMMM yyyy' }}</td>
+                <td class="font-semibold">{{ invoice.amountDue | currency:'EUR':'symbol' }}</td>
+                <td class="font-bold text-red-500">{{ invoice.balance > 0 ? (invoice.balance | currency:'EUR':'symbol')
+                    : '-' }}</td>
+                <td>
+                    <p-tag [value]="translateStatus(invoice.status)" [severity]="getSeverity(invoice.status)"></p-tag>
+                </td>
+                <td>
+                    <div class="flex gap-2">
+                        <button *ngIf="isAdmin() && invoice.balance > 0" pButton pRipple icon="pi pi-check"
+                            class="p-button-rounded p-button-success p-button-text" title="Marquer comme payé"></button>
+                        <button pButton pRipple icon="pi pi-eye" class="p-button-rounded p-button-info p-button-text"
+                            title="Voir les détails"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="7" class="text-center p-8">
+                    <div class="flex flex-col items-center justify-center text-surface-400">
+                        <i class="pi pi-folder-open text-4xl mb-4"></i>
+                        <span class="text-xl">Aucun historique de loyer trouvé.</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

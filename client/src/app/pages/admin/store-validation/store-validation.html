@@ -1,0 +1,95 @@
+<div class="card p-8 bg-surface-0 rounded-3xl shadow-xl">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight text-surface-900 mb-1">Validation des Magasins</h1>
+            <p class="text-surface-500">Demandes de création de magasins en attente d'assignation de Box.</p>
+        </div>
+    </div>
+
+    <p-toast></p-toast>
+
+    <p-table [value]="pendingStores()" [loading]="loading()" [paginator]="true" [rows]="10" responsiveLayout="scroll"
+        styleClass="p-datatable-gridlines p-datatable-striped">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="name">Nom du Magasin <p-sortIcon field="name"></p-sortIcon></th>
+                <th pSortableColumn="owner.name">Propriétaire <p-sortIcon field="owner.name"></p-sortIcon></th>
+                <th pSortableColumn="rentContract.requestedBoxId.boxNumber">Box Demandé <p-sortIcon
+                        field="rentContract.requestedBoxId.boxNumber"></p-sortIcon></th>
+                <th pSortableColumn="createdAt">Date de demande <p-sortIcon field="createdAt"></p-sortIcon></th>
+                <th>Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-store>
+            <tr>
+                <td class="font-bold">{{ store.name }}</td>
+                <td>
+                    <div class="flex flex-col">
+                        <span>{{ store.owner?.name }}</span>
+                        <span class="text-xs text-surface-500">{{ store.owner?.email }}</span>
+                    </div>
+                </td>
+                <td class="font-medium text-indigo-600">
+                    <span *ngIf="store.rentContract?.requestedBoxId">
+                        Box {{ store.rentContract.requestedBoxId.boxNumber }}
+                    </span>
+                    <span *ngIf="!store.rentContract?.requestedBoxId">Non spécifié</span>
+                </td>
+                <td>{{ store.createdAt | date:'dd MMM yyyy à HH:mm' }}</td>
+                <td>
+                    <button pButton pRipple label="Valider et Assigner" icon="pi pi-check" class="p-button-success"
+                        (click)="openValidationDialog(store)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5" class="text-center p-8">
+                    <div class="flex flex-col items-center justify-center text-surface-400">
+                        <i class="pi pi-inbox text-4xl mb-4"></i>
+                        <span class="text-xl">Aucune demande de création de magasin en attente.</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- Dialog de Validation -->
+    <p-dialog [(visible)]="validationDialog" header="Validation du Magasin" [modal]="true" [style]="{width: '450px'}"
+        class="p-fluid">
+        <ng-template pTemplate="content">
+            <div class="mb-6 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                <p class="text-sm text-blue-800 m-0">
+                    Vous êtes sur le point d'approuver <strong>{{ selectedStore?.name }}</strong>.
+                    Le gérant ({{ selectedStore?.owner?.name }}) a demandé le <strong>Box {{
+                        selectedStore?.rentContract?.requestedBoxId?.boxNumber || 'Non spécifié' }}</strong>.
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <div class="field">
+                    <label for="boxSelect" class="font-bold text-surface-900 block mb-2">Choisir un Box Physique</label>
+                    <select id="boxSelect" [(ngModel)]="selectedBox"
+                        class="w-full p-3 border border-surface-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-surface-700 bg-surface-0">
+                        <option [ngValue]="null" disabled selected>Sélectionnez un box disponible</option>
+                        <option *ngFor="let box of emptyBoxes()" [ngValue]="box.value">{{ box.label }}</option>
+                    </select>
+                </div>
+
+                <div class="field mt-4">
+                    <label for="rentAmount" class="font-bold text-surface-900 block mb-2">Montant du Loyer Mensuel
+                        (€)</label>
+                    <p-inputNumber id="rentAmount" [(ngModel)]="monthlyRent" mode="currency" currency="EUR"
+                        locale="fr-FR"></p-inputNumber>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+            <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text p-button-secondary"
+                (click)="validationDialog = false"></button>
+            <button pButton pRipple label="Confirmer Assignation" icon="pi pi-check" class="p-button-primary"
+                (click)="confirmValidation()"></button>
+        </ng-template>
+    </p-dialog>
+</div>

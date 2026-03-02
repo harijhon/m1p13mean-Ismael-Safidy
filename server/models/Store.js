@@ -17,14 +17,22 @@ const storeSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['ACTIVE', 'INACTIVE', 'EVICTION_NOTICE'],
-    default: 'ACTIVE'
+    enum: ['CREATED', 'VALIDATED', 'PRE_NOTICE', 'WITHDRAWN'],
+    default: 'CREATED'
+  },
+  statusHistory: [{
+    status: String,
+    date: { type: Date, default: Date.now }
+  }],
+  evictionDate: {
+    type: Date
   },
   evictionReason: {
     type: String
   },
   rentContract: {
-    boxNumber: String,
+    boxId: { type: mongoose.Schema.Types.ObjectId, ref: 'Box' },
+    requestedBoxId: { type: mongoose.Schema.Types.ObjectId, ref: 'Box' }, // Specific Box requested by Manager
     monthlyAmount: Number,
     paymentDueDate: { type: Number, default: 5 }
   }

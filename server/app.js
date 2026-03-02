@@ -14,6 +14,8 @@ import orderRoutes from './routes/orders.js';
 import storeRoutes from './routes/stores.js';
 import rentRoutes from './routes/rent.routes.js';
 import mouvementStockRoutes from './routes/mouvementStock.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
+import { startRentCronJob } from './services/rent-cron.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +32,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/stores', storeRoutes);
 app.use('/api/rent', rentRoutes);
 app.use('/api/stock', mouvementStockRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -47,6 +50,10 @@ if (!cached.promise) {
   cached.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false })
     .then((mongoose) => {
       console.log('Connected to MongoDB');
+
+      // Initialize Background Processes
+      startRentCronJob();
+
       if (process.env.VERCEL !== '1') {
         app.listen(PORT, () => {
           console.log(`Server is running on port ${PORT}`);

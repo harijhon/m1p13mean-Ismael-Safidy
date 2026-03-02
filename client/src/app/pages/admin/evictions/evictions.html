@@ -1,0 +1,73 @@
+<div class="card p-8 bg-surface-0 rounded-3xl shadow-xl border-t-8 border-orange-500">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold tracking-tight text-surface-900 mb-1">Pré-avis et Évictions</h1>
+            <p class="text-surface-500">Liste des magasins ayant reçu un pré-avis de départ.</p>
+        </div>
+        <div>
+            <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')"
+                    placeholder="Rechercher un magasin..." />
+            </span>
+        </div>
+    </div>
+
+    <p-table #dt [value]="evictions()" [loading]="loading()" [paginator]="true" [rows]="10"
+        [globalFilterFields]="['name', 'owner.name', 'rentContract.boxId.boxNumber']" responsiveLayout="scroll"
+        [rowHover]="true" styleClass="p-datatable-gridlines p-datatable-striped p-datatable-sm">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="rentContract.boxId.boxNumber">Box <p-sortIcon
+                        field="rentContract.boxId.boxNumber"></p-sortIcon></th>
+                <th pSortableColumn="name">Magasin <p-sortIcon field="name"></p-sortIcon></th>
+                <th pSortableColumn="owner.name">Gérant <p-sortIcon field="owner.name"></p-sortIcon></th>
+                <th>Raison du pré-avis</th>
+                <th pSortableColumn="evictionDate">Date limite <p-sortIcon field="evictionDate"></p-sortIcon></th>
+                <th>Jours restants</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-store>
+            <tr>
+                <td class="font-bold text-lg text-surface-900">{{ store.rentContract?.boxId?.boxNumber || 'N/A' }}</td>
+                <td class="font-semibold">{{ store.name }}</td>
+                <td>
+                    <div class="flex flex-col">
+                        <span>{{ store.owner?.name }}</span>
+                        <span class="text-xs text-surface-500">{{ store.owner?.email }}</span>
+                    </div>
+                </td>
+                <td class="text-orange-600 font-medium max-w-xs truncate" [title]="store.evictionReason">{{
+                    store.evictionReason || 'Non spécifiée' }}</td>
+                <td>{{ store.evictionDate | date:'dd MMM yyyy' }}</td>
+                <td>
+                    <p-tag [value]="calculateRemainingDays(store.evictionDate) + ' Jours'"
+                        [severity]="getDaysSeverity(calculateRemainingDays(store.evictionDate))">
+                    </p-tag>
+                </td>
+                <td>
+                    <div class="flex gap-2 justify-center">
+                        <button pButton pRipple icon="pi pi-envelope"
+                            class="p-button-rounded p-button-warning p-button-text" title="Relancer le gérant"></button>
+                        <button pButton pRipple icon="pi pi-times-circle"
+                            class="p-button-rounded p-button-danger p-button-text"
+                            title="Éviction forcée (Dossier clos)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="7" class="text-center p-8">
+                    <div class="flex flex-col items-center justify-center text-emerald-500">
+                        <i class="pi pi-check-circle text-5xl mb-4"></i>
+                        <span class="text-xl font-semibold">Excellente nouvelle !</span>
+                        <span class="text-surface-500 mt-2">Aucun magasin n'est actuellement sous le coup d'un pré-avis
+                            d'éviction.</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

@@ -1,18 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface RentInvoice {
-    _id: string;
-    store: any; // Populated store object
-    month: string | Date;
-    amountDue: number;
-    amountPaid: number;
-    balance: number;
-    status: 'PENDING' | 'PAID' | 'PARTIAL' | 'LATE';
-    history: any[];
-    createdAt?: string;
-}
 
 export interface RentStats {
     totalExpected: number;
@@ -20,34 +8,54 @@ export interface RentStats {
     lateCount: number;
 }
 
+export interface RentInvoice {
+    _id: string;
+    store: {
+        _id: string;
+        name: string;
+        owner?: { name: string; email: string };
+        rentContract?: { paymentDueDate?: number };
+    };
+    month: string;
+    amountDue: number;
+    amountPaid: number;
+    balance: number;
+    status: 'PENDING' | 'PAID' | 'PARTIAL' | 'LATE';
+    history: any[];
+    createdAt: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class RentService {
     private http = inject(HttpClient);
-    // Remove hardcoded localhost in favor of proper proxy or interceptor if configured, but we will use standard:
-    private apiUrl = '/api/rent';
+    private apiUrl = '/api/rent'; // Assuming you have a rent.routes.js in backend
 
+    // For Managers: Get their own store invoices
+    getMyInvoices(): Observable<RentInvoice[]> {
+        return this.http.get<RentInvoice[]>(`${this.apiUrl}/my-invoices`);
+    }
+
+    // For Admins: Get all invoices
+    getAllInvoices(): Observable<RentInvoice[]> {
+        return this.http.get<RentInvoice[]>(this.apiUrl);
+    }
+
+    // New methods for Rent Manager
     getStats(): Observable<RentStats> {
         return this.http.get<RentStats>(`${this.apiUrl}/stats`);
     }
 
-    getInvoices(month?: number, year?: number, status?: string): Observable<RentInvoice[]> {
-        let params = new HttpParams();
-        if (month && year) {
-            params = params.set('month', month.toString()).set('year', year.toString());
-        }
-        if (status) {
-            params = params.set('status', status);
-        }
-        return this.http.get<RentInvoice[]>(this.apiUrl, { params });
+    getInvoices(month: number, year: number): Observable<RentInvoice[]> {
+        return this.http.get<RentInvoice[]>(`${this.apiUrl}?month=${month}&year=${year}`);
     }
 
     generateInvoices(month: number, year: number): Observable<any> {
-        return this.http.post(`${this.apiUrl}/generate`, { month, year });
+        return this.http.post<any>(`${this.apiUrl}/generate`, { month, year });
     }
 
-    recordPayment(invoiceId: string, amount: number, note: string = ''): Observable<any> {
-        return this.http.post(`${this.apiUrl}/payment`, { invoiceId, amount, note });
+    recordPayment(invoiceId: string, amount: number, note?: string): Observable<RentInvoice> {
+        return this.http.post<RentInvoice>(`${this.apiUrl}/${invoiceId}/pay`, { amount, note });
     }
 }
