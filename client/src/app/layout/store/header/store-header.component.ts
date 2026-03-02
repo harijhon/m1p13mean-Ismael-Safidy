@@ -101,25 +101,43 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
           </div>
           
           <!-- DROITE (Actions) -->
-          <div class="flex items-center gap-2 sm:gap-4">
-            <!-- Profil -->
+          <div class="flex items-center gap-4 sm:gap-6 relative z-50">
+            <!-- Profil & Deconnexion -->
             @if (authService.isLoggedIn()) {
+              <div class="flex items-center gap-2">
+                <a 
+                  routerLink="/profile" 
+                  class="p-2 justify-center flex rounded-full hover:bg-gray-100 transition-colors text-gray-700 cursor-pointer"
+                  title="Mon Profil"
+                >
+                  <i class="pi pi-user text-xl"></i>
+                </a>
+                <button 
+                  (click)="logout()"
+                  class="p-2 justify-center flex rounded-full hover:bg-red-50 text-red-500 transition-colors cursor-pointer"
+                  title="Se Déconnecter"
+                >
+                  <i class="pi pi-sign-out text-xl"></i>
+                </button>
+              </div>
+            } @else {
               <a 
-                routerLink="/profile" 
-                class="w-12 h-12 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-gray-700"
+                routerLink="/auth/login" 
+                class="p-2 justify-center flex rounded-full hover:bg-gray-100 transition-colors text-gray-700 cursor-pointer"
+                title="Se Connecter"
               >
-                <i class="pi pi-user text-2xl"></i>
+                <i class="pi pi-sign-in text-xl"></i>
               </a>
             }
 
             <!-- Panier -->
             <button 
-              class="w-12 h-12 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors relative text-gray-700"
+              class="p-2 rounded-full hover:bg-gray-100 transition-colors relative text-gray-700 cursor-pointer"
               (click)="goToCart()"
             >
               <i class="pi pi-shopping-cart text-2xl"></i>
               @if (cartService.totalItems() > 0) {
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm">
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm pointer-events-none">
                   {{ cartService.totalItems() }}
                 </span>
               }
@@ -238,5 +256,10 @@ export class StoreHeaderComponent implements OnInit, OnDestroy {
 
   goToCart() {
     this.router.navigate(['/store/cart']);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/store']);
   }
 }

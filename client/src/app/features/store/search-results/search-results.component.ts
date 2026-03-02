@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { PaginatorModule } from 'primeng/paginator';
 import { ProductService } from '../../../core/services/product.service';
 import { StoreService } from '../../../core/services/store.service';
 import { Product } from '../../../models/product.model';
@@ -10,7 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
     selector: 'app-search-results',
     standalone: true,
-    imports: [CommonModule, RouterLink],
+    imports: [CommonModule, RouterLink, PaginatorModule],
     templateUrl: './search-results.component.html'
 })
 export class SearchResultsComponent implements OnInit, OnDestroy {
@@ -25,12 +26,18 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
 
     isLoading = signal<boolean>(true);
 
+    // Pagination
+    first = signal<number>(0);
+    rows = signal<number>(10);
+    totalRecords = signal<number>(0);
+
     private destroy$ = new Subject<void>();
 
     ngOnInit() {
         this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
             const query = params['q'] || '';
             this.searchQuery.set(query);
+            this.first.set(0); // Reset pagination on new search
             this.performSearch(query);
         });
     }
@@ -67,11 +74,22 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
                         (p.store && p.store.name && p.store.name.toLowerCase().includes(lowerQuery))
                     )
                 );
-                this.products.set(filteredProducts);
+
+                this.totalRecords.set(filteredProducts.length);
+                const startIndex = this.first();
+                const endIndex = startIndex + this.rows();
+                this.products.set(filteredProducts.slice(startIndex, endIndex));
+
                 this.checkLoadingState('products');
             },
             error: () => this.checkLoadingState('products')
         });
+    }
+
+    onPageChange(event: any) {
+        this.first.set(event.first);
+        this.rows.set(event.rows);
+        this.performSearch(this.searchQuery());
     }
 
     private loadingFlags = { stores: false, products: false };

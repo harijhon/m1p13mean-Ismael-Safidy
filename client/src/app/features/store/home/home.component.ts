@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
+import { PaginatorModule } from 'primeng/paginator';
 import { ProductService } from '../../../core/services/product.service';
 import { StoreService } from '../../../core/services/store.service';
 import { Product } from '../../../models/product.model';
@@ -9,7 +10,7 @@ import { Store } from '../../../models/store.model';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, PaginatorModule],
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
@@ -26,6 +27,11 @@ export class HomeComponent implements OnInit {
   searchQuery = signal<string>('');
   selectedStoreId = signal<string | null>(null);
 
+  // Pagination
+  first = signal<number>(0);
+  rows = signal<number>(8);
+  totalRecords = signal<number>(0);
+
   skeletonArray = Array(8).fill(0);
 
   ngOnInit(): void {
@@ -36,6 +42,7 @@ export class HomeComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.searchQuery.set(params['q'] || '');
       this.selectedStoreId.set(params['store'] || null);
+      this.first.set(0); // Reset pagination on filter change
       this.applyFilters();
     });
   }
@@ -88,6 +95,15 @@ export class HomeComponent implements OnInit {
       filtered = filtered.filter(p => p.store && p.store._id === storeId);
     }
 
-    this.products.set(filtered);
+    this.totalRecords.set(filtered.length);
+    const startIndex = this.first();
+    const endIndex = startIndex + this.rows();
+    this.products.set(filtered.slice(startIndex, endIndex));
+  }
+
+  onPageChange(event: any) {
+    this.first.set(event.first);
+    this.rows.set(event.rows);
+    this.applyFilters();
   }
 }

@@ -121,6 +121,17 @@
                 </a>
                 }
             </div>
+
+            <!-- Paginator -->
+            @if (!isLoading() && totalRecords() > 0) {
+            <div class="mt-12 flex justify-center">
+                <p-paginator (onPageChange)="onPageChange($event)" [first]="first()" [rows]="rows()"
+                    [totalRecords]="totalRecords()" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+                    currentPageReportTemplate="{first} à {last} sur {totalRecords} articles"
+                    styleClass="bg-white rounded-full border border-neutral-200 shadow-sm px-4 py-2">
+                </p-paginator>
+            </div>
+            }
         </section>
         }
 
