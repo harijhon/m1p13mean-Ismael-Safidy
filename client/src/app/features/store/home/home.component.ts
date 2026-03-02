@@ -54,9 +54,9 @@ export class HomeComponent implements OnInit {
 
   loadActiveProducts(): void {
     this.isLoading.set(true);
-    this.productService.getProducts().subscribe({
+    this.productService.getProducts(true).subscribe({
       next: (data: Product[]) => {
-        this.allActiveProducts = data.filter((p: Product) => p.isActive);
+        this.allActiveProducts = data.filter((p: Product) => p.isActive !== false);
 
         // Extract promoted products
         const promoted = this.allActiveProducts.filter(p => p.sale?.isActive);

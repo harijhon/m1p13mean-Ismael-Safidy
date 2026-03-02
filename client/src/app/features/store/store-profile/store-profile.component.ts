@@ -70,9 +70,9 @@ export class StoreProfileComponent implements OnInit, OnDestroy {
     }
 
     private loadStoreProducts(id: string) {
-        this.productService.getProducts().subscribe({
+        this.productService.getProducts(true).subscribe({
             next: (allProducts) => {
-                const storeProducts = allProducts.filter(p => p.store && p.store._id === id && p.isActive);
+                const storeProducts = allProducts.filter(p => p.store && p.store._id === id && p.isActive !== false);
                 this.products.set(storeProducts);
 
                 const promoted = storeProducts.filter(p => p.sale?.isActive);

@@ -58,10 +58,10 @@ export class SearchResultsComponent implements OnInit, OnDestroy {
             error: () => this.checkLoadingState('stores')
         });
 
-        this.productService.getProducts().subscribe({
+        this.productService.getProducts(true).subscribe({
             next: (allProducts) => {
                 const filteredProducts = allProducts.filter(p =>
-                    p.isActive && (
+                    p.isActive !== false && (
                         !lowerQuery ||
                         p.name.toLowerCase().includes(lowerQuery) ||
                         (p.store && p.store.name && p.store.name.toLowerCase().includes(lowerQuery))

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../../models/product.model';
 
@@ -12,8 +12,12 @@ export class ProductService {
 
   constructor(private http: HttpClient) { }
 
-  getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.apiUrl);
+  getProducts(global: boolean = false): Observable<Product[]> {
+    let headers = new HttpHeaders();
+    if (global) {
+      headers = headers.set('X-Skip-Store-Interceptor', 'true');
+    }
+    return this.http.get<Product[]>(this.apiUrl, { headers });
   }
 
   getProductById(id: string): Observable<Product> {

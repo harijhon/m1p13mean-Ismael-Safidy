@@ -160,8 +160,8 @@ export class StoreHeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Précharger les données pour une recherche rapide côté client (si petit volume)
-    this.productService.getProducts().pipe(takeUntil(this.destroy$)).subscribe(products => {
-      this.allProducts = products.filter(p => p.isActive);
+    this.productService.getProducts(true).pipe(takeUntil(this.destroy$)).subscribe(products => {
+      this.allProducts = products.filter(p => p.isActive !== false);
     });
 
     this.storeService.getStores().pipe(takeUntil(this.destroy$)).subscribe(stores => {
