@@ -11,19 +11,19 @@ import { DashboardService } from '../../../core/services/dashboard.service';
     selector: 'app-recent-sales-widget',
     imports: [CommonModule, TableModule, ButtonModule, RippleModule],
     template: `<div class="card mb-8!">
-        <div class="font-semibold text-xl mb-4">Recent Sales</div>
+        <div class="font-semibold text-xl mb-4">Ventes récentes</div>
         <p-table [value]="recentSales" [paginator]="true" [rows]="5" responsiveLayout="scroll">
             <ng-template #header>
                 <tr>
-                    <th>Customer</th>
+                    <th>Client</th>
                     <th>Date</th>
                     <th>Total</th>
-                    <th>Status</th>
+                    <th>Statut</th>
                 </tr>
             </ng-template>
             <ng-template #body let-sale>
                 <tr>
-                    <td style="width: 25%; min-width: 7rem;">{{ sale.customer?.name || 'Guest' }}</td>
+                    <td style="width: 25%; min-width: 7rem;">{{ sale.customer?.name || 'Invité' }}</td>
                     <td style="width: 25%; min-width: 7rem;">{{ sale.createdAt | date:'short' }}</td>
                     <td style="width: 25%; min-width: 8rem;">{{ sale.totalAmount | currency:'MGA':'Ar ':'1.0-0' }}</td>
                     <td style="width: 25%;">

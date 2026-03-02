@@ -17,11 +17,27 @@ export class LoginComponent {
   private router = inject(Router);
 
   loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    email: ['admin@example.com', [Validators.required, Validators.email]],
+    password: ['admin123', [Validators.required]]
   });
 
   error: string | null = null;
+
+    { label: 'Admin', role: 'admin', email: 'admin@example.com', password: 'admin123' },
+    { label: 'Manager', role: 'manager', email: 'manager1@example.com', password: 'password123' },
+    { label: 'Client', role: 'client', email: 'client1@example.com', password: 'password123' }
+  ];
+
+  onAccountSelect(event: Event): void {
+    const selectedEmail = (event.target as HTMLSelectElement).value;
+    const account = this.testAccounts.find(a => a.email === selectedEmail);
+    if (account) {
+      this.loginForm.patchValue({
+        email: account.email,
+        password: account.password
+      });
+    }
+  }
 
   onSubmit(): void {
     this.error = null;

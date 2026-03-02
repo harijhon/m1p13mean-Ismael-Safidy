@@ -39,14 +39,14 @@ import { ToastModule } from 'primeng/toast';
 
         <!-- En-tête -->
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Create Account</h2>
-            <p class="text-sm text-gray-500 font-medium">Join us today!</p>
+            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Créer un compte</h2>
+            <p class="text-sm text-gray-500 font-medium">Rejoignez-nous aujourd'hui !</p>
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
             <!-- Full Name -->
             <div>
-                <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nom complet</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,13 +55,13 @@ import { ToastModule } from 'primeng/toast';
                     </div>
                     <input id="name" formControlName="name" type="text"
                         class="block w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent focus:bg-white transition-all duration-200 ease-in-out sm:text-sm" 
-                        placeholder="Jane Doe">
+                        placeholder="Jean Dupont">
                 </div>
             </div>
 
             <!-- Email -->
             <div>
-                <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Adresse e-mail</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -70,13 +70,13 @@ import { ToastModule } from 'primeng/toast';
                     </div>
                     <input id="email" formControlName="email" type="email"
                         class="block w-full pl-11 pr-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent focus:bg-white transition-all duration-200 ease-in-out sm:text-sm" 
-                        placeholder="you@example.com">
+                        placeholder="vous@exemple.com">
                 </div>
             </div>
 
             <!-- Password -->
             <div>
-                <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Mot de passe</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -91,7 +91,7 @@ import { ToastModule } from 'primeng/toast';
 
             <!-- Confirm Password -->
             <div>
-                <label for="confirmPassword" class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+                <label for="confirmPassword" class="block text-sm font-semibold text-gray-700 mb-2">Confirmer le mot de passe</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -103,29 +103,29 @@ import { ToastModule } from 'primeng/toast';
                         placeholder="••••••••">
                 </div>
                 <div *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched" class="mt-2 text-sm text-red-600">
-                    Passwords do not match.
+                    Les mots de passe ne correspondent pas.
                 </div>
             </div>
 
             <!-- Bouton Submit -->
             <button type="submit" [disabled]="registerForm.invalid || isSubmitting"
                 class="w-full flex justify-center items-center gap-2 py-3.5 px-4 mt-2 border border-transparent rounded-xl shadow-lg shadow-violet-500/30 text-sm font-bold text-white bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-fuchsia-500 transform transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/40 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-violet-500/30">
-                <span *ngIf="!isSubmitting">Sign Up</span>
+                <span *ngIf="!isSubmitting">S'inscrire</span>
                 <span *ngIf="isSubmitting" class="flex items-center">
                     <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Processing...
+                    Traitement en cours...
                 </span>
             </button>
         </form>
 
         <div class="mt-8 text-center bg-gray-50/80 -mx-8 sm:-mx-10 -mb-8 sm:-mb-10 p-6 rounded-b-3xl border-t border-gray-100">
             <p class="text-sm text-gray-500 font-medium">
-                Already have an account?  
+                Vous avez déjà un compte ?  
                 <a routerLink="/login" class="font-bold text-violet-600 hover:text-violet-500 hover:underline transition-colors">
-                    Sign in
+                    Se connecter
                 </a>
             </p>
         </div>

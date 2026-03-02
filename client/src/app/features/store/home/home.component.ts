@@ -106,4 +106,11 @@ export class HomeComponent implements OnInit {
     this.rows.set(event.rows);
     this.applyFilters();
   }
+
+  scrollToProducts(): void {
+    const element = document.getElementById('collection');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
 }

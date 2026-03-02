@@ -20,8 +20,14 @@ export const appRoutes: Routes = [
         loadComponent: () => import('./app/pages/auth/register/register.component').then(m => m.RegisterComponent)
     },
     {
+        path: 'access-denied',
+        canActivate: [authGuard],
+        loadComponent: () => import('./app/pages/auth/access-denied/access-denied.component').then(m => m.AccessDeniedComponent)
+    },
+    {
         path: 'store',
         component: StoreLayoutComponent,
+        canActivate: [authGuard],
         children: [
             {
                 path: '',
@@ -67,7 +73,8 @@ export const appRoutes: Routes = [
     {
         path: 'admin',
         component: AppLayoutComponent,
-        canActivate: [authGuard],
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['admin', 'manager'] },
         children: [
             {
                 path: 'dashboard',

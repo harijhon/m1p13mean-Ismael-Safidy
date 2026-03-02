@@ -11,22 +11,22 @@ import { DashboardService } from '../../../core/services/dashboard.service';
             <div class="card mb-0">
                 <div class="flex justify-between mb-4">
                     <div>
-                        <span class="block text-muted-color font-medium mb-4">Orders</span>
+                        <span class="block text-muted-color font-medium mb-4">Commandes</span>
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ stats.orders || 0 }}</div>
                     </div>
                     <div class="flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
                         <i class="pi pi-shopping-cart text-blue-500 text-xl!"></i>
                     </div>
                 </div>
-                <span class="text-primary font-medium">{{ newOrders }} new </span>
-                <span class="text-muted-color">since last visit</span>
+                <span class="text-primary font-medium">{{ newOrders }} nouvelles </span>
+                <span class="text-muted-color">depuis la dernière visite</span>
             </div>
         </div>
         <div class="col-span-12 lg:col-span-6 xl:col-span-3">
             <div class="card mb-0">
                 <div class="flex justify-between mb-4">
                     <div>
-                        <span class="block text-muted-color font-medium mb-4">Revenue</span>
+                        <span class="block text-muted-color font-medium mb-4">Revenus</span>
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ stats.revenue | currency:'MGA':'Ar ':'1.0-0' }}</div>
                     </div>
                     <div class="flex items-center justify-center bg-orange-100 dark:bg-orange-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
@@ -34,14 +34,14 @@ import { DashboardService } from '../../../core/services/dashboard.service';
                     </div>
                 </div>
                 <span class="text-primary font-medium">{{ revenueGrowth }}%+ </span>
-                <span class="text-muted-color">since last week</span>
+                <span class="text-muted-color">depuis la semaine dernière</span>
             </div>
         </div>
         <div class="col-span-12 lg:col-span-6 xl:col-span-3">
             <div class="card mb-0">
                 <div class="flex justify-between mb-4">
                     <div>
-                        <span class="block text-muted-color font-medium mb-4">Customers</span>
+                        <span class="block text-muted-color font-medium mb-4">Clients</span>
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ stats.customers || 0 }}</div>
                     </div>
                     <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
@@ -49,14 +49,14 @@ import { DashboardService } from '../../../core/services/dashboard.service';
                     </div>
                 </div>
                 <span class="text-primary font-medium">{{ newCustomers }} </span>
-                <span class="text-muted-color">newly registered</span>
+                <span class="text-muted-color">nouvellement inscrits</span>
             </div>
         </div>
         <div class="col-span-12 lg:col-span-6 xl:col-span-3">
             <div class="card mb-0">
                 <div class="flex justify-between mb-4">
                     <div>
-                        <span class="block text-muted-color font-medium mb-4">Products</span>
+                        <span class="block text-muted-color font-medium mb-4">Produits</span>
                         <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">{{ stats.products || 0 }}</div>
                     </div>
                     <div class="flex items-center justify-center bg-purple-100 dark:bg-purple-400/10 rounded-border" style="width: 2.5rem; height: 2.5rem">
@@ -64,7 +64,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
                     </div>
                 </div>
                 <span class="text-primary font-medium">{{ activeProducts }} </span>
-                <span class="text-muted-color">active products</span>
+                <span class="text-muted-color">produits actifs</span>
             </div>
         </div>`
 })
@@ -78,7 +78,7 @@ export class StatsWidget implements OnInit, OnDestroy {
 
     private refreshSubscription!: Subscription;
 
-    constructor(private dashboardService: DashboardService) {}
+    constructor(private dashboardService: DashboardService) { }
 
     ngOnInit() {
         this.loadStats();

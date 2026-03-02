@@ -29,13 +29,13 @@
         quotidien avec sophistication.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-        <a href="#collection"
+        <button (click)="scrollToProducts()"
           class="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-300 bg-neutral-900 border border-transparent rounded-full hover:bg-neutral-800 hover:shadow-[0_8px_30px_rgb(0,0,0,0.15)] hover:-translate-y-0.5 w-full sm:w-auto overflow-hidden">
           <span class="relative z-10 flex items-center gap-2">
             Découvrir la collection <i
               class="pi pi-arrow-down transition-transform group-hover:translate-y-1 text-sm"></i>
           </span>
-        </a>
+        </button>
       </div>
     </div>
   </section>
@@ -100,7 +100,7 @@
       <span
         class="inline-flex items-center justify-center px-4 py-1.5 bg-neutral-100 text-neutral-800 text-sm font-bold rounded-full shadow-inner"
         *ngIf="!isLoading()">
-        {{ products().length }} {{ products().length > 1 ? 'articles' : 'article' }}
+        {{ totalRecords() }} {{ totalRecords() > 1 ? 'articles' : 'article' }}
       </span>
     </div>
 

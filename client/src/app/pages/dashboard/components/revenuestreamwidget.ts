@@ -9,8 +9,8 @@ import { DashboardService } from '../../../core/services/dashboard.service';
     selector: 'app-revenue-stream-widget',
     imports: [ChartModule],
     template: `<div class="card mb-8!">
-        <div class="font-semibold text-xl mb-4">Revenue Stream</div>
-        <p-chart type="bar" [data]="chartData" [options]="chartOptions" class="h-100" />
+        <div class="font-semibold text-xl mb-4">Flux de revenus</div>
+        <p-chart type="line" [data]="chartData" [options]="chartOptions" class="h-100" />
     </div>`
 })
 export class RevenueStreamWidget {
@@ -38,14 +38,17 @@ export class RevenueStreamWidget {
         const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
 
         this.chartData = {
-            labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+            labels: ['S1', 'S2', 'S3', 'S4'],
             datasets: [
                 {
-                    type: 'bar',
-                    label: 'Revenue',
+                    type: 'line',
+                    label: 'Revenus',
+                    borderColor: documentStyle.getPropertyValue('--p-primary-400'),
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
-                    data: [0, 0, 0, 0],
-                    barThickness: 32
+                    borderWidth: 3,
+                    fill: false,
+                    tension: 0.4,
+                    data: [0, 0, 0, 0]
                 }
             ]
         };
@@ -57,17 +60,20 @@ export class RevenueStreamWidget {
                         ...this.chartData,
                         datasets: [
                             {
-                                type: 'bar',
-                                label: 'Revenue',
+                                type: 'line',
+                                label: 'Revenus',
+                                borderColor: documentStyle.getPropertyValue('--p-primary-400'),
                                 backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
-                                data: data.chartData,
-                                barThickness: 32,
-                                borderRadius: {
-                                    topLeft: 8,
-                                    topRight: 8,
-                                    bottomLeft: 0,
-                                    bottomRight: 0
-                                },
+                                borderWidth: 3,
+                                fill: false,
+                                tension: 0.4,
+                                pointBackgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
+                                pointBorderColor: documentStyle.getPropertyValue('--p-surface-0'),
+                                pointHoverBackgroundColor: documentStyle.getPropertyValue('--p-primary-500'),
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                data: data.chartData
                             }
                         ]
                     };
@@ -88,7 +94,6 @@ export class RevenueStreamWidget {
             },
             scales: {
                 x: {
-                    stacked: true,
                     ticks: {
                         color: textMutedColor
                     },
@@ -98,7 +103,6 @@ export class RevenueStreamWidget {
                     }
                 },
                 y: {
-                    stacked: true,
                     ticks: {
                         color: textMutedColor
                     },

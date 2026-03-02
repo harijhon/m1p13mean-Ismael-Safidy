@@ -11,19 +11,19 @@ import { DashboardService } from '../../../core/services/dashboard.service';
     imports: [ButtonModule, MenuModule, CommonModule],
     template: `<div class="card">
         <div class="flex items-center justify-between mb-6">
-            <div class="font-semibold text-xl">Recent Activity</div>
+            <div class="font-semibold text-xl">Activité récente</div>
             <div>
                 <button pButton type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>
                 <p-menu #menu [popup]="true" [model]="items"></p-menu>
             </div>
         </div>
 
-        <span class="block text-muted-color font-medium mb-4">LATEST TRANSACTIONS</span>
+        <span class="block text-muted-color font-medium mb-4">DERNIÈRES TRANSACTIONS</span>
         
         @if (isLoading) {
-            <p class="text-surface-500">Loading activities...</p>
+            <p class="text-surface-500">Chargement des activités...</p>
         } @else if (notifications.length === 0) {
-            <p class="text-surface-500">No recent activity found.</p>
+            <p class="text-surface-500">Aucune activité récente trouvée.</p>
         } @else {
             <ul class="p-0 mx-0 mt-0 mb-6 list-none">
                 <li *ngFor="let notification of notifications; let last = last" class="flex items-center py-2" [class.border-b]="!last" [class.border-surface]="!last">
@@ -32,8 +32,8 @@ import { DashboardService } from '../../../core/services/dashboard.service';
                     </div>
                     <span class="text-surface-900 dark:text-surface-0 leading-normal"
                         >{{ notification.customerName }}
-                        <span class="text-surface-700 dark:text-surface-100">bought {{ notification.productName }} for <span class="text-primary font-bold">{{ notification.amount | currency:'MGA':'Ar ':'1.0-2' }}</span></span>
-                        <div class="text-surface-500 text-sm mt-1">{{ notification.date | date:'short' }}</div>
+                        <span class="text-surface-700 dark:text-surface-100">a acheté {{ notification.productName }} pour <span class="text-primary font-bold">{{ notification.amount | currency:'MGA':'Ar ':'1.0-2' }}</span></span>
+                        <div class="text-surface-500 text-sm mt-1">{{ notification.date | date:'shortTime' }}</div>
                     </span>
                 </li>
             </ul>
@@ -44,8 +44,8 @@ export class NotificationsWidget implements OnInit, OnDestroy {
     notifications: any[] = [];
     isLoading = true;
     items = [
-        { label: 'View All', icon: 'pi pi-fw pi-eye' },
-        { label: 'Clear', icon: 'pi pi-fw pi-trash' }
+        { label: 'Voir tout', icon: 'pi pi-fw pi-eye' },
+        { label: 'Effacer', icon: 'pi pi-fw pi-trash' }
     ];
 
     private refreshSubscription!: Subscription;

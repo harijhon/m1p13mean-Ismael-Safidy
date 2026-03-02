@@ -10,7 +10,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
     imports: [CommonModule, ButtonModule, MenuModule],
     template: ` <div class="card">
         <div class="flex justify-between items-center mb-6">
-            <div class="font-semibold text-xl">Best Selling Products</div>
+            <div class="font-semibold text-xl">Produits les plus vendus</div>
             <div>
                 <button pButton type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>
                 <p-menu #menu [popup]="true" [model]="items"></p-menu>
@@ -19,7 +19,7 @@ import { DashboardService } from '../../../core/services/dashboard.service';
         <ul class="list-none p-0 m-0">
             <li *ngFor="let product of topProducts; let i = index" class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
-                    <span class="text-surface-900 dark:text-surface-0 font-medium mr-2 mb-1 md:mb-0">{{ product.productDetails[0]?.name || 'Product ' + (i+1) }}</span>
+                    <span class="text-surface-900 dark:text-surface-0 font-medium mr-2 mb-1 md:mb-0">{{ product.productDetails[0]?.name || 'Produit ' + (i+1) }}</span>
                     <div class="mt-1 text-muted-color">{{ product.productDetails[0]?.type || 'Type' }}</div>
                 </div>
                 <div class="mt-2 md:mt-0 flex items-center">
@@ -38,11 +38,11 @@ export class BestSellingWidget implements OnInit {
     menu: any = null;
 
     items = [
-        { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-        { label: 'Remove', icon: 'pi pi-fw pi-trash' }
+        { label: 'Ajouter', icon: 'pi pi-fw pi-plus' },
+        { label: 'Supprimer', icon: 'pi pi-fw pi-trash' }
     ];
 
-    constructor(private dashboardService: DashboardService) {}
+    constructor(private dashboardService: DashboardService) { }
 
     ngOnInit() {
         this.dashboardService.getStats().subscribe({
@@ -59,11 +59,11 @@ export class BestSellingWidget implements OnInit {
 
     calculatePercentage(index: number): number {
         if (this.topProducts.length === 0) return 0;
-        
+
         // Find the highest quantity sold to normalize percentages
         const maxQuantity = Math.max(...this.topProducts.map(p => p.totalQuantity), 1);
         const currentQuantity = this.topProducts[index]?.totalQuantity || 0;
-        
+
         // Calculate percentage relative to the highest selling product
         return Math.round((currentQuantity / maxQuantity) * 100);
     }
