@@ -36,6 +36,8 @@
             </th>
             <th>Logo</th>
             <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
+            <th pSortableColumn="rentContract.boxId.boxNumber">Box <p-sortIcon
+                    field="rentContract.boxId.boxNumber"></p-sortIcon></th>
             <th pSortableColumn="owner.name">Propriétaire <p-sortIcon field="owner.name"></p-sortIcon></th>
             <th>Description</th>
             <th pSortableColumn="status">Statut <p-sortIcon field="status"></p-sortIcon></th>
@@ -54,6 +56,10 @@
                 }
             </td>
             <td>{{ store.name }}</td>
+            <td class="font-bold text-indigo-600">
+                <span *ngIf="store.rentContract?.boxId">Box {{ store.rentContract.boxId.boxNumber }}</span>
+                <span *ngIf="!store.rentContract?.boxId" class="text-surface-400 font-normal">En attente</span>
+            </td>
             <td>
                 {{ store.owner?.name }}
                 <div class="text-sm text-500">{{ store.owner?.email }}</div>
@@ -88,6 +94,7 @@
             <td><p-skeleton height="2rem"></p-skeleton></td>
             <td><p-skeleton height="2rem"></p-skeleton></td>
             <td><p-skeleton height="2rem"></p-skeleton></td>
+            <td><p-skeleton height="2rem"></p-skeleton></td>
             <td class="text-center"><p-skeleton size="2rem" shape="circle"></p-skeleton></td>
         </tr>
     </ng-template>
@@ -119,6 +126,18 @@
                     <option [ngValue]="null" disabled selected>Sélectionnez un box disponible (Optionnel)</option>
                     <option *ngFor="let box of emptyBoxes" [ngValue]="box.value">{{ box.label }}</option>
                 </select>
+
+                <div *ngIf="storeForm.value._id">
+                    <label class="block font-bold mb-3 mt-3">Box Assigné / Demandé</label>
+                    <div class="p-3 border border-surface-200 rounded-lg bg-surface-50 text-surface-600 font-medium">
+                        <span *ngIf="storeForm.value?.requestedBoxIdDisplay">
+                            {{ storeForm.value.requestedBoxIdDisplay }}
+                        </span>
+                        <span *ngIf="!storeForm.value?.requestedBoxIdDisplay">
+                            Aucun Box assigné (En attente)
+                        </span>
+                    </div>
+                </div>
             </form>
         </div>
     </ng-template>

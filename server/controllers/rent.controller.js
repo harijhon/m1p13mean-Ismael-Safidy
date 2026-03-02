@@ -14,8 +14,8 @@ export const generateInvoices = async (req, res) => {
         // Create a UTC date for the 1st of the specified month
         const invoiceMonth = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, 1));
 
-        // Fetch all active stores
-        const activeStores = await Store.find({ status: 'ACTIVE' });
+        // Fetch all validated stores (equivalent to active)
+        const activeStores = await Store.find({ status: 'VALIDATED' });
 
         // Filter stores that have a valid rentContract and monthlyAmount > 0
         const invoicesToCreate = activeStores

@@ -34,8 +34,9 @@
                 <td *ngIf="isAdmin()" class="font-bold">{{ invoice.store?.name }}</td>
                 <td *ngIf="isAdmin()">{{ invoice.store?.owner?.name }}</td>
                 <td>{{ invoice.month | date:'MMMM yyyy' }}</td>
-                <td class="font-semibold">{{ invoice.amountDue | currency:'EUR':'symbol' }}</td>
-                <td class="font-bold text-red-500">{{ invoice.balance > 0 ? (invoice.balance | currency:'EUR':'symbol')
+                <td class="font-semibold">{{ invoice.amountDue | currency:'MGA':'Ar ':'1.0-0' }}</td>
+                <td class="font-bold text-red-500">{{ invoice.balance > 0 ? (invoice.balance | currency:'MGA':'Ar
+                    ':'1.0-0')
                     : '-' }}</td>
                 <td>
                     <p-tag [value]="translateStatus(invoice.status)" [severity]="getSeverity(invoice.status)"></p-tag>

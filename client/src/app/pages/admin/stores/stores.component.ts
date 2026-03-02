@@ -80,7 +80,8 @@ export class StoresComponent implements OnInit {
       name: ['', Validators.required],
       description: [''],
       logo: [''],
-      requestedBoxId: [null]
+      requestedBoxId: [null],
+      requestedBoxIdDisplay: ['']
     });
   }
 
@@ -129,7 +130,8 @@ export class StoresComponent implements OnInit {
       name: '',
       description: '',
       logo: '',
-      requestedBoxId: null
+      requestedBoxId: null,
+      requestedBoxIdDisplay: ''
     });
     this.submitted = false;
     this.storeDialog = true;
@@ -187,7 +189,8 @@ export class StoresComponent implements OnInit {
       description: store.description,
       logo: store.logo,
       // requestedBoxId shouldn't typically be edited securely if it's already VALIDATED, but if it's CREATED we could show it.
-      requestedBoxId: store.rentContract?.requestedBoxId?._id || null
+      requestedBoxId: store.rentContract?.requestedBoxId?._id || null,
+      requestedBoxIdDisplay: store.rentContract?.boxId?.boxNumber ? `Box ${store.rentContract.boxId.boxNumber}` : ''
     });
     this.storeDialog = true;
   }

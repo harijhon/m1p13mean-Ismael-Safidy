@@ -10,7 +10,8 @@ export const getStores = async (req, res) => {
     try {
         const stores = await Store.find({})
             .populate('owner', 'name email')
-            .populate('rentContract.requestedBoxId', 'boxNumber floor');
+            .populate('rentContract.requestedBoxId', 'boxNumber floor')
+            .populate('rentContract.boxId', 'boxNumber floor');
         res.status(200).json(stores);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -86,7 +87,9 @@ export const createStore = async (req, res) => {
 export const getMyStores = async (req, res) => {
     try {
         // Find all stores owned by the user
-        const stores = await Store.find({ owner: req.user._id }).populate('owner', 'name email');
+        const stores = await Store.find({ owner: req.user._id })
+            .populate('owner', 'name email')
+            .populate('rentContract.boxId', 'boxNumber floor');
 
         res.status(200).json(stores);
     } catch (error) {
