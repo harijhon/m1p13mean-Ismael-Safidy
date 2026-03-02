@@ -80,9 +80,9 @@
                             {{ product.name }}</h3>
                         <div class="mt-auto pt-1 flex items-baseline gap-2">
                             <span class="text-base font-extrabold text-rose-600">{{ product.sale?.salePrice |
-                                currency:'EUR':'symbol':'1.2-2' }}</span>
+                                currency:'MGA':'Ar ':'1.0-0' }}</span>
                             <span class="text-xs font-medium text-neutral-400 line-through">{{ product.price |
-                                currency:'EUR':'symbol':'1.2-2' }}</span>
+                                currency:'MGA':'Ar ':'1.0-0' }}</span>
                         </div>
                     </div>
                 </a>
@@ -114,12 +114,12 @@
                         <div class="mt-auto pt-1 flex items-baseline gap-2">
                             @if (product.sale?.isActive) {
                             <span class="text-base font-extrabold text-rose-600">{{ product.sale?.salePrice |
-                                currency:'EUR':'symbol':'1.2-2' }}</span>
+                                currency:'MGA':'Ar ':'1.0-0' }}</span>
                             <span class="text-xs font-medium text-neutral-400 line-through">{{ product.price |
-                                currency:'EUR':'symbol':'1.2-2' }}</span>
+                                currency:'MGA':'Ar ':'1.0-0' }}</span>
                             } @else {
                             <span class="text-base font-bold text-neutral-900">{{ product.price |
-                                currency:'EUR':'symbol':'1.2-2' }}</span>
+                                currency:'MGA':'Ar ':'1.0-0' }}</span>
                             }
                         </div>
                     </div>

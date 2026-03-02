@@ -64,7 +64,7 @@
                                     }
                                 </div>
                                 <p class="text-lg font-bold text-gray-900 shrink-0">
-                                    {{ (item.price * item.quantity) | currency:'EUR':'symbol':'1.2-2' }}
+                                    {{ (item.price * item.quantity) | currency:'MGA':'Ar ':'1.0-0' }}
                                 </p>
                             </div>
 
@@ -120,7 +120,7 @@
                     <dl class="space-y-4 text-sm text-gray-600">
                         <div class="flex items-center justify-between">
                             <dt>Sous-total</dt>
-                            <dd class="font-medium text-gray-900">{{ cartTotal() | currency:'EUR':'symbol':'1.2-2' }}
+                            <dd class="font-medium text-gray-900">{{ cartTotal() | currency:'MGA':'Ar ':'1.0-0' }}
                             </dd>
                         </div>
                         <div class="flex items-center justify-between">
@@ -133,7 +133,7 @@
                         </div>
                         <div class="border-t border-gray-200 pt-4 flex items-center justify-between text-base">
                             <dt class="font-extrabold text-gray-900">Total</dt>
-                            <dd class="font-extrabold text-gray-900">{{ cartTotal() | currency:'EUR':'symbol':'1.2-2' }}
+                            <dd class="font-extrabold text-gray-900">{{ cartTotal() | currency:'MGA':'Ar ':'1.0-0' }}
                             </dd>
                         </div>
                     </dl>

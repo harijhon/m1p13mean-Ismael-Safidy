@@ -181,14 +181,14 @@
           <div class="mt-auto pt-1 flex items-baseline gap-2">
             @if (product.sale?.isActive) {
             <span class="text-xl font-extrabold text-rose-600">
-              {{ product.sale?.salePrice | currency:'EUR':'symbol':'1.2-2' }}
+              {{ product.sale?.salePrice | currency:'MGA':'Ar ':'1.0-0' }}
             </span>
             <span class="text-sm font-medium text-neutral-400 line-through decoration-neutral-300">
-              {{ product.price | currency:'EUR':'symbol':'1.2-2' }}
+              {{ product.price | currency:'MGA':'Ar ':'1.0-0' }}
             </span>
             } @else {
             <span class="text-xl font-bold text-neutral-900">
-              {{ product.price | currency:'EUR':'symbol':'1.2-2' }}
+              {{ product.price | currency:'MGA':'Ar ':'1.0-0' }}
             </span>
             }
           </div>

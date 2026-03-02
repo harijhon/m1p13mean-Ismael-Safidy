@@ -34,7 +34,7 @@ export class CheckoutComponent implements OnInit {
         this.checkoutForm = this.fb.group({
             contact: this.fb.group({
                 email: ['test@shopeasy.com', [Validators.required, Validators.email]],
-                phone: ['+261 34 00 000 00', [Validators.required, Validators.pattern(/^[0-9+ ]{8,15}$/)]]
+                phone: ['+261340201524', [Validators.required, Validators.pattern(/^[0-9+ ]{8,15}$/)]]
             }),
             shipping: this.fb.group({
                 firstName: ['Jean', Validators.required],

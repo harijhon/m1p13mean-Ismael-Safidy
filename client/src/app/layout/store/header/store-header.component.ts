@@ -84,7 +84,7 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
                             </div>
                             <div class="flex flex-col overflow-hidden">
                               <span class="font-medium text-sm text-neutral-800 truncate">{{ product.name }}</span>
-                              <span class="text-xs text-teal-600 font-bold">{{ product.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+                              <span class="text-xs text-teal-600 font-bold">{{ product.price | currency:'MGA':'Ar ':'1.0-0' }}</span>
                             </div>
                           </a>
                         </li>
