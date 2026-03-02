@@ -53,7 +53,7 @@
           class="shadow-lg" alt="{{ product.name }}" width="50" />
       </td>
       <td>{{ product.name }}</td>
-      <td>{{ product.price | currency:'USD':'symbol':'1.0-0' }}</td>
+      <td>{{ product.price | currency:'MGA':'Ar ':'1.0-0' }}</td>
       <td>
         <p-tag [value]="product.currentStock" [severity]="getStockSeverity(product.currentStock)"></p-tag>
       </td>
@@ -122,14 +122,14 @@
 
         <div class="field">
           <label for="price" class="block font-bold mb-3">Prix</label>
-          <p-inputNumber id="price" formControlName="price" mode="currency" currency="USD" locale="en-US"
+          <p-inputNumber id="price" formControlName="price" mode="currency" currency="MGA" locale="fr-FR"
             class="p-inputtext-fluid"
             [ngClass]="{'ng-invalid': submitted && productForm.get('price')?.invalid}"></p-inputNumber>
         </div>
 
         <div class="field">
           <label for="costPrice" class="block font-bold mb-3">Prix de Revient</label>
-          <p-inputNumber id="costPrice" formControlName="costPrice" mode="currency" currency="USD" locale="en-US"
+          <p-inputNumber id="costPrice" formControlName="costPrice" mode="currency" currency="MGA" locale="fr-FR"
             class="p-inputtext-fluid"
             [ngClass]="{'ng-invalid': submitted && productForm.get('costPrice')?.invalid}"></p-inputNumber>
         </div>
@@ -183,7 +183,7 @@
                     </div>
                   </td>
                   <td>
-                    <p-inputNumber formControlName="price" mode="currency" currency="USD" locale="en-US"
+                    <p-inputNumber formControlName="price" mode="currency" currency="MGA" locale="fr-FR"
                       class="w-full"></p-inputNumber>
                   </td>
                   <td>

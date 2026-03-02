@@ -1,0 +1,139 @@
+<div class="bg-gray-50 min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        @if (authService.isLoggedIn()) {
+        <!-- HEADER UTILISATEUR -->
+        <div class="flex items-center gap-6 mb-10">
+            <div
+                class="w-20 h-20 bg-gradient-to-tr from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                <span class="text-white text-3xl font-bold">{{ user().initials }}</span>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">{{ user().name }}</h1>
+                <p class="text-gray-500 text-lg">{{ user().email }}</p>
+            </div>
+        </div>
+
+        <!-- LAYOUT PRINCIPAL -->
+        <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+
+            <!-- COLONNE GAUCHE (Nav Menu) -->
+            <div class="col-span-3 mb-8 lg:mb-0">
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-gray-100 p-2 overflow-hidden flex flex-col h-full">
+                    <nav class="flex-1 space-y-1">
+                        <a href="javascript:void(0)"
+                            class="flex items-center gap-3 w-full px-4 py-3 bg-teal-50 text-teal-700 font-semibold rounded-lg transition-colors">
+                            <i class="pi pi-th-large text-lg"></i>
+                            Aperçu du compte
+                        </a>
+                        <a routerLink="orders"
+                            class="flex items-center gap-3 w-full px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors cursor-pointer">
+                            <i class="pi pi-shopping-bag text-lg"></i>
+                            Mes Commandes
+                        </a>
+                        <a href="javascript:void(0)"
+                            class="flex items-center gap-3 w-full px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors cursor-pointer">
+                            <i class="pi pi-map-marker text-lg"></i>
+                            Adresses
+                        </a>
+                        <a href="javascript:void(0)"
+                            class="flex items-center gap-3 w-full px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors cursor-pointer">
+                            <i class="pi pi-question-circle text-lg"></i>
+                            Support
+                        </a>
+                    </nav>
+
+                    <div class="pt-4 mt-4 border-t border-gray-100">
+                        <button (click)="logout()"
+                            class="flex items-center gap-3 w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium">
+                            <i class="pi pi-power-off text-lg"></i>
+                            Déconnexion
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLONNE DROITE (Dashboard / Contenu) -->
+            <div class="col-span-9">
+
+                <!-- Suivi Rapide (Quick Stats) -->
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Suivi Rapide</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    <div
+                        class="bg-white border text-center border-gray-100 rounded-xl p-6 shadow-sm flex flex-col items-center hover:shadow-md transition-shadow">
+                        <div
+                            class="w-12 h-12 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mb-4">
+                            <i class="pi pi-wallet text-xl"></i>
+                        </div>
+                        <span class="text-4xl font-bold text-gray-900 mb-1">{{ orderStats().unpaid }}</span>
+                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Non Payé</span>
+                    </div>
+
+                    <div
+                        class="bg-white border text-center border-gray-100 rounded-xl p-6 shadow-sm flex flex-col items-center hover:shadow-md transition-shadow">
+                        <div
+                            class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
+                            <i class="pi pi-box text-xl"></i>
+                        </div>
+                        <span class="text-4xl font-bold text-gray-900 mb-1">{{ orderStats().processing }}</span>
+                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">En Cours</span>
+                    </div>
+
+                    <div
+                        class="bg-white border text-center border-gray-100 rounded-xl p-6 shadow-sm flex flex-col items-center hover:shadow-md transition-shadow">
+                        <div
+                            class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4">
+                            <i class="pi pi-send text-xl"></i>
+                        </div>
+                        <span class="text-4xl font-bold text-gray-900 mb-1">{{ orderStats().shipped }}</span>
+                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Expédié</span>
+                    </div>
+                </div>
+
+                <!-- Dernière commande -->
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Dernière commande</h2>
+                    <a routerLink="orders"
+                        class="text-teal-600 hover:text-teal-700 font-semibold cursor-pointer text-sm">Voir tout <i
+                            class="pi pi-arrow-right text-xs ml-1"></i></a>
+                </div>
+
+                <div class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-lg font-bold text-gray-900">{{ latestOrder().id }}</span>
+                                <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full">{{
+                                    latestOrder().status }}</span>
+                            </div>
+                            <p class="text-gray-500">{{ latestOrder().date }}</p>
+                        </div>
+                        <div class="text-left sm:text-right">
+                            <p class="text-sm text-gray-500 mb-1">Total</p>
+                            <p class="text-xl font-bold text-gray-900">{{ latestOrder().total | currency:'MGA':'Ar
+                                ':'1.0-0' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        } @else {
+        <!-- Not Logged In State -->
+        <div class="flex flex-col items-center justify-center h-[60vh] text-center">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                <i class="pi pi-lock text-4xl text-gray-400"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Accédez à votre compte</h2>
+            <p class="text-gray-500 max-w-md mb-8">Veuillez vous connecter pour accéder à votre espace personnel, suivre
+                vos commandes et gérer vos informations.</p>
+            <button (click)="goToLogin()"
+                class="px-8 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg transition-colors shadow-md">
+                Se connecter
+            </button>
+        </div>
+        }
+    </div>
+</div>

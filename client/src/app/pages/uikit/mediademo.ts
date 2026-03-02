@@ -27,7 +27,7 @@ import { Product, ProductService } from '../service/product.service';
                         </div>
                         <div class="mb-4 font-medium">{{ product.name }}</div>
                         <div class="flex justify-between items-center">
-                            <div class="mt-0 font-semibold text-xl">{{ '$' + product.price }}</div>
+                            <div class="mt-0 font-semibold text-xl">{{ (product.price | currency:'MGA':'Ar ':'1.0-0') }}</div>
                             <span>
                                 <p-button icon="pi pi-heart" severity="secondary" [outlined]="true" />
                                 <p-button icon="pi pi-shopping-cart" styleClass="ml-2" />
@@ -101,7 +101,7 @@ export class MediaDemo implements OnInit {
     constructor(
         private productService: ProductService,
         private photoService: PhotoService
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.productService.getProductsSmall().then((products) => {

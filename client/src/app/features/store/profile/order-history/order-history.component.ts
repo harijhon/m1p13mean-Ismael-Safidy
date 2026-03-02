@@ -62,7 +62,7 @@ import { SkeletonModule } from 'primeng/skeleton';
                 }
               </div>
               <div class="flex justify-between items-center">
-                <span class="font-bold text-gray-800">{{ order.totalAmount | currency: 'EUR' }}</span>
+                <span class="font-bold text-gray-800">{{ order.totalAmount | currency: 'MGA':'Ar ':'1.0-0' }}</span>
                 <button pButton label="Détails" class="p-button-sm p-button-outlined"></button>
               </div>
             </div>
@@ -74,7 +74,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 })
 export class OrderHistoryComponent implements OnInit {
   private storeOrderService = inject(StoreOrderService);
-  
+
   orders = signal<any[]>([]);
   isLoading = signal(true);
 

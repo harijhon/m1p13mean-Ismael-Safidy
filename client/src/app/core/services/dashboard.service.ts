@@ -10,7 +10,6 @@ export class DashboardService {
   private apiUrl = '/api/dashboard/stats';
   private refreshSource = new Subject<void>();
 
-  // Observable stream for components to subscribe to
   refresh$ = this.refreshSource.asObservable();
 
   constructor(private http: HttpClient) { }
@@ -19,9 +18,6 @@ export class DashboardService {
     return this.http.get<any>(this.apiUrl);
   }
 
-  /**
-   * Triggers a refresh event for all subscribed components.
-   */
   triggerRefresh(): void {
     this.refreshSource.next();
   }

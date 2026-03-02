@@ -22,7 +22,6 @@ export const appRoutes: Routes = [
     {
         path: 'store',
         component: StoreLayoutComponent,
-        canActivate: [authGuard],
         children: [
             {
                 path: '',
@@ -35,6 +34,18 @@ export const appRoutes: Routes = [
             {
                 path: 'cart',
                 loadComponent: () => import('./app/features/store/cart/cart.component').then(m => m.CartComponent)
+            },
+            {
+                path: 'checkout',
+                loadComponent: () => import('./app/features/store/checkout/checkout.component').then(m => m.CheckoutComponent)
+            },
+            {
+                path: 'search',
+                loadComponent: () => import('./app/features/store/search-results/search-results.component').then(m => m.SearchResultsComponent)
+            },
+            {
+                path: 'shop/:id',
+                loadComponent: () => import('./app/features/store/store-profile/store-profile.component').then(m => m.StoreProfileComponent)
             }
         ]
     },
@@ -97,6 +108,12 @@ export const appRoutes: Routes = [
                 loadComponent: () => import('./app/pages/admin/stores/stores.component').then(m => m.StoresComponent),
                 canActivate: [roleGuard],
                 data: { roles: ['admin', 'manager'] }
+            },
+            {
+                path: 'stock',
+                loadComponent: () => import('./app/pages/admin/stock/stock').then(m => m.Stock),
+                canActivate: [roleGuard],
+                data: { roles: ['manager'] }
             }
         ]
     }

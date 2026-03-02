@@ -20,7 +20,7 @@ import { RippleModule } from 'primeng/ripple';
                         <img src="https://primefaces.org/cdn/templates/sakai/landing/free.svg" class="w-10/12 mx-auto" alt="free" />
                         <div class="my-8 flex flex-col items-center gap-4">
                             <div class="flex items-center">
-                                <span class="text-5xl font-bold mr-2 text-surface-900 dark:text-surface-0">$0</span>
+                                <span class="text-5xl font-bold mr-2 text-surface-900 dark:text-surface-0">Ar 0</span>
                                 <span class="text-surface-600 dark:text-surface-200">per month</span>
                             </div>
                             <button pButton pRipple label="Get Started" class="p-button-rounded border-0 ml-4 font-light leading-tight bg-blue-500 text-white"></button>
@@ -53,7 +53,7 @@ import { RippleModule } from 'primeng/ripple';
                         <img src="https://primefaces.org/cdn/templates/sakai/landing/startup.svg" class="w-10/12 mx-auto" alt="startup" />
                         <div class="my-8 flex flex-col items-center gap-4">
                             <div class="flex items-center">
-                                <span class="text-5xl font-bold mr-2 text-surface-900 dark:text-surface-0">$1</span>
+                                <span class="text-5xl font-bold mr-2 text-surface-900 dark:text-surface-0">Ar 1</span>
                                 <span class="text-surface-600 dark:text-surface-200">per month</span>
                             </div>
                             <button pButton pRipple label="Get Started" class="p-button-rounded border-0 ml-4 font-light leading-tight bg-blue-500 text-white"></button>
@@ -86,7 +86,7 @@ import { RippleModule } from 'primeng/ripple';
                         <img src="https://primefaces.org/cdn/templates/sakai/landing/enterprise.svg" class="w-10/12 mx-auto" alt="enterprise" />
                         <div class="my-8 flex flex-col items-center gap-4">
                             <div class="flex items-center">
-                                <span class="text-5xl font-bold mr-2 text-surface-900 dark:text-surface-0">$5</span>
+                                <span class="text-5xl font-bold mr-2 text-surface-900 dark:text-surface-0">Ar 5</span>
                                 <span class="text-surface-600 dark:text-surface-200">per month</span>
                             </div>
                             <button pButton pRipple label="Try Free" class="p-button-rounded border-0 ml-4 font-light leading-tight bg-blue-500 text-white"></button>
@@ -116,4 +116,4 @@ import { RippleModule } from 'primeng/ripple';
         </div>
     `
 })
-export class PricingWidget {}
+export class PricingWidget { }

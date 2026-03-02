@@ -22,21 +22,21 @@ export class AppMenu {
 
     ngOnInit() {
         const user = this.authService.currentUser();
-        const mainMenuItems: MenuItem[] = [
-            { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin/store-settings'] }
-        ];
+        const mainMenuItems: MenuItem[] = [];
 
         if (user?.role === 'admin') {
+            mainMenuItems.push({ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin/dashboard'] });
             mainMenuItems.push({ label: 'Utilisateurs', icon: 'pi pi-fw pi-users', routerLink: ['/admin/users'] });
             mainMenuItems.push({ label: 'Magasins', icon: 'pi pi-fw pi-shop', routerLink: ['/admin/stores'] });
             mainMenuItems.push({ label: 'Gestion Locative', icon: 'pi pi-fw pi-wallet', routerLink: ['/admin/rent'] });
         }
 
         if (user?.role === 'manager') {
-            // Manager only items as requested
+            mainMenuItems.push({ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/admin/store-settings'] });
             mainMenuItems.push({ label: 'Mes Magasins', icon: 'pi pi-fw pi-shop', routerLink: ['/admin/stores'] });
             mainMenuItems.push({ label: 'Produits', icon: 'pi pi-fw pi-box', routerLink: ['/admin/products'] });
             mainMenuItems.push({ label: 'Promotions', icon: 'pi pi-fw pi-tags', routerLink: ['/admin/promotions'] });
+            mainMenuItems.push({ label: 'Stock', icon: 'pi pi-fw pi-sync', routerLink: ['/admin/stock'] });
         }
 
         this.model = [

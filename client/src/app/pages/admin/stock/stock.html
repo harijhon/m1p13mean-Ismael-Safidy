@@ -1,0 +1,224 @@
+<div class="stock-container max-w-7xl mx-auto">
+    <p-toast></p-toast>
+
+    <div class="flex flex-column md:flex-row md:align-items-center mb-5 w-full">
+        <div>
+            <span class="text-primary font-medium text-sm tracking-wide uppercase mb-2 block">Administration</span>
+            <h1 class="m-0 text-4xl font-extrabold tracking-tight gradient-text">Gestion de Stock Centralisée</h1>
+            <p class="text-color-secondary mt-2 text-lg">Contrôlez et suivez les mouvements de vos produits avec
+                précision.</p>
+        </div>
+        <div class="mt-4 md:mt-0 ml-auto text-right">
+            <p-button label="Nouveau Mouvement" icon="pi pi-plus" styleClass="float-btn"
+                (onClick)="openNewMouvement()" />
+        </div>
+    </div>
+
+    <div class="glass-card mb-5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 surface-100 border-circle opacity-50 blur-xl"></div>
+        <div class="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 surface-200 border-circle opacity-50 blur-xl"></div>
+
+        <div class="relative z-10">
+            <div
+                class="flex flex-column md:flex-row align-items-start md:align-items-center mb-5 p-4 surface-50 border-round-2xl border-1 surface-border">
+                <div class="flex-1 w-full">
+                    <label for="productSelect" class="block font-bold text-color mb-2 text-lg">Sélectionner un produit
+                        pour analyser son historique</label>
+                    <p-select id="productSelect" [options]="products" optionLabel="name"
+                        placeholder="Rechercher ou sélectionner un produit..." (onChange)="onProductChange($event)"
+                        [filter]="true" filterBy="name" [showClear]="true"
+                        styleClass="w-full md:w-30rem p-inputtext-lg shadow-1"
+                        panelStyleClass="shadow-4 border-round-xl">
+                        <ng-template pTemplate="selectedItem" let-selectedOption>
+                            <div class="flex align-items-center gap-2" *ngIf="selectedOption">
+                                <i class="pi pi-tag text-primary"></i>
+                                <span class="font-medium">{{ selectedOption.name }}</span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="item" let-product>
+                            <div class="flex align-items-center justify-content-between w-full">
+                                <span class="font-medium">{{ product.name }}</span>
+                                <p-tag [severity]="product.currentStock > 0 ? 'success' : 'danger'"
+                                    [value]="product.currentStock + ' en stock'"></p-tag>
+                            </div>
+                        </ng-template>
+                    </p-select>
+                </div>
+            </div>
+
+            <p-table #dt [value]="mouvements" [rows]="10" [paginator]="true" [loading]="isLoading"
+                [globalFilterFields]="['type', 'date']" [rowHover]="true" dataKey="_id"
+                styleClass="premium-table p-datatable-lg"
+                currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} mouvements"
+                [showCurrentPageReport]="true">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="date" style="width:20%">Date & Heure <p-sortIcon field="date"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="type" style="width:15%">Opération <p-sortIcon field="type"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="quantite" style="width:20%">Flux <p-sortIcon field="quantite"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="pu" style="width:25%">Prix Unitaire <p-sortIcon field="pu"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="reste" style="width:20%" class="text-right">Reste en Stock <p-sortIcon
+                                field="reste"></p-sortIcon></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-mouvement>
+                    <tr>
+                        <td>
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-calendar text-color-secondary"></i>
+                                <span class="font-medium text-color">{{ mouvement.date | date:'dd/MM/yyyy' }}</span>
+                                <span class="text-color-secondary text-sm ml-1">{{ mouvement.date | date:'HH:mm'
+                                    }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <p-tag [value]="mouvement.type === 'entree' ? 'Entrée' : 'Sortie'"
+                                [severity]="getSeverity(mouvement.type)" [rounded]="true" styleClass="px-3">
+                                <ng-template pTemplate="icon">
+                                    <i class="pi"
+                                        [ngClass]="mouvement.type === 'entree' ? 'pi-arrow-down-left' : 'pi-arrow-up-right'"></i>
+                                </ng-template>
+                            </p-tag>
+                        </td>
+                        <td>
+                            <div class="flex align-items-center gap-2 font-bold text-lg"
+                                [ngClass]="{'text-green-600': mouvement.type === 'entree', 'text-red-500': mouvement.type === 'sortie'}">
+                                {{ mouvement.type === 'entree' ? '+' : '-' }}{{ mouvement.quantite }}
+                                <span class="text-sm font-normal text-color-secondary">unités</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="font-medium">{{ mouvement.pu | currency:'MGA':'Ar ' }}</span>
+                        </td>
+                        <td class="text-right">
+                            <span class="text-xl font-black"
+                                [ngClass]="{'text-primary': mouvement.reste > 0, 'text-red-500': mouvement.reste <= 0}">
+                                {{ mouvement.reste }}
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <i class="pi pi-folder-open"></i>
+                                <h4 class="text-xl font-bold text-color mb-2">Aucun historique disponible</h4>
+                                <p class="m-0">Sélectionnez un autre produit ou enregistrez un nouveau mouvement de
+                                    stock.</p>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="mouvementDialog" [style]="{width: '500px'}" [modal]="true" styleClass="premium-dialog"
+    [draggable]="false" [resizable]="false">
+
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center gap-3">
+            <div class="flex align-items-center justify-content-center bg-primary border-circle w-2rem h-2rem">
+                <i class="pi pi-sliders-h text-white text-sm"></i>
+            </div>
+            <span class="p-dialog-title m-0">Saisir un Mouvement</span>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+        <form [formGroup]="mouvementForm" class="pt-2">
+
+            <div class="premium-field mb-4">
+                <label for="product_id">
+                    <i class="pi pi-tag mr-2 text-primary"></i>Produit concerné
+                </label>
+                <p-select formControlName="product_id" [options]="products" optionLabel="name" optionValue="_id"
+                    placeholder="Sélectionner le produit cible" [filter]="true" styleClass="w-full">
+                </p-select>
+                <small class="text-red-500 block mt-1"
+                    *ngIf="mouvementForm.controls['product_id'].invalid && mouvementForm.controls['product_id'].touched">
+                    <i class="pi pi-exclamation-circle mr-1"></i>Le produit est obligatoire.
+                </small>
+            </div>
+
+            <div class="premium-field mb-4">
+                <label for="type">
+                    <i class="pi pi-sort-alt mr-2 text-primary"></i>Nature de l'opération
+                </label>
+                <p-select formControlName="type" [options]="mouvementTypes" optionLabel="label" optionValue="value"
+                    placeholder="Sélectionner le type" styleClass="w-full">
+                    <ng-template pTemplate="selectedItem" let-selectedOption>
+                        <div class="flex align-items-center gap-2" *ngIf="selectedOption">
+                            <div class="w-1rem h-1rem border-circle"
+                                [ngClass]="selectedOption.value === 'entree' ? 'bg-green-500' : 'bg-red-500'"></div>
+                            <span>{{ selectedOption.label }}</span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="item" let-option>
+                        <div class="flex align-items-center gap-2">
+                            <div class="w-1rem h-1rem border-circle"
+                                [ngClass]="option.value === 'entree' ? 'bg-green-500' : 'bg-red-500'"></div>
+                            <span>{{ option.label }}</span>
+                        </div>
+                    </ng-template>
+                </p-select>
+            </div>
+
+            <div class="flex gap-4">
+                <div class="premium-field mb-4 flex-1">
+                    <label for="quantite">
+                        <i class="pi pi-box mr-2 text-primary"></i>Quantité
+                    </label>
+                    <p-inputNumber id="quantite" formControlName="quantite" [min]="1" mode="decimal"
+                        [showButtons]="true" buttonLayout="horizontal" inputId="quantite" spinnerMode="horizontal"
+                        [step]="1" decrementButtonClass="p-button-secondary" incrementButtonClass="p-button-secondary"
+                        incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" class="w-full">
+                    </p-inputNumber>
+                    <small class="text-red-500 block mt-1"
+                        *ngIf="mouvementForm.controls['quantite'].invalid && mouvementForm.controls['quantite'].touched">
+                        <i class="pi pi-exclamation-circle mr-1"></i>Quantité invalide.
+                    </small>
+                </div>
+
+                <div class="premium-field mb-4 flex-1">
+                    <label for="pu">
+                        <i class="pi pi-money-bill mr-2 text-primary"></i>Prix Unitaire
+                    </label>
+                    <p-inputNumber id="pu" formControlName="pu" mode="currency" currency="MGA" [min]="0"
+                        styleClass="w-full" placeholder="0,00 Ar"></p-inputNumber>
+                    <small class="text-red-500 block mt-1"
+                        *ngIf="mouvementForm.controls['pu'].invalid && mouvementForm.controls['pu'].touched">
+                        <i class="pi pi-exclamation-circle mr-1"></i>Prix invalide.
+                    </small>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 border-round-xl surface-ground border-1 border-primary flex align-items-start gap-3">
+                <i class="pi pi-info-circle text-primary text-xl mt-1"></i>
+                <div class="text-color-secondary text-sm line-height-3">
+                    Cette action va immédiatement affecter le niveau de stock du produit sélectionné et sera tracée dans
+                    l'historique non altérable.
+                </div>
+            </div>
+
+        </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-end gap-3">
+            <button pButton pRipple label="Annuler" icon="pi pi-times"
+                class="p-button-text p-button-secondary border-round-3xl px-4" (click)="hideDialog()"></button>
+            <button pButton pRipple label="Confirmer le mouvement" icon="pi pi-check" styleClass="float-btn"
+                (click)="saveMouvement()"></button>
+        </div>
+    </ng-template>
+</p-dialog>

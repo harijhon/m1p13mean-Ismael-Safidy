@@ -1,0 +1,148 @@
+<div class="min-h-screen bg-neutral-50 pt-8 pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Search Header -->
+        <div class="mb-12 border-b border-neutral-200 pb-8">
+            <h1 class="text-3xl font-bold text-neutral-900">
+                Résultats de recherche pour <span class="text-teal-600">"{{ searchQuery() }}"</span>
+            </h1>
+            <p class="text-neutral-500 mt-2">
+                @if (!isLoading()) {
+                Nous avons trouvé {{ stores().length }} boutique(s) et {{ products().length }} produit(s).
+                } @else {
+                Recherche en cours...
+                }
+            </p>
+        </div>
+
+        @if (isLoading()) {
+        <div class="flex justify-center py-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500"></div>
+        </div>
+        } @else {
+
+        <!-- Boutiques Section -->
+        @if (stores().length > 0) {
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold text-neutral-900 mb-6 flex items-center gap-2">
+                <i class="pi pi-building text-teal-600"></i> Boutiques
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @for (store of stores(); track store._id) {
+                <a [routerLink]="['/store/shop', store._id]"
+                    class="group bg-white rounded-2xl p-6 border border-neutral-200 hover:border-teal-500 hover:shadow-xl transition-all duration-300 flex items-center gap-5 cursor-pointer h-full">
+                    <div
+                        class="w-20 h-20 rounded-full bg-neutral-100 flex items-center justify-center overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform duration-300 shadow-inner">
+                        @if (store.logo) {
+                        <img [src]="store.logo" [alt]="store.name" class="w-full h-full object-cover">
+                        } @else {
+                        <span class="text-3xl font-bold text-neutral-300">{{ store.name.charAt(0).toUpperCase()
+                            }}</span>
+                        }
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <h3
+                            class="font-bold text-lg text-neutral-900 group-hover:text-teal-700 transition-colors truncate">
+                            {{ store.name }}</h3>
+                        <p class="text-sm text-neutral-500 line-clamp-2 mt-1">{{ store.description || 'Visitez cette
+                            boutique pour découvrir ses produits.' }}</p>
+                        <span
+                            class="inline-flex items-center gap-1 text-xs font-bold text-teal-600 mt-3 group-hover:translate-x-1 transition-transform">
+                            Visiter <i class="pi pi-arrow-right text-[10px]"></i>
+                        </span>
+                    </div>
+                </a>
+                }
+            </div>
+        </section>
+        }
+
+        <!-- Produits Section -->
+        @if (products().length > 0) {
+        <section>
+            <div class="flex items-end justify-between mb-8">
+                <h2 class="text-2xl font-bold text-neutral-900 flex items-center gap-2">
+                    <i class="pi pi-box text-teal-600"></i> Produits
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-10 sm:gap-x-6">
+                @for (product of products(); track product._id) {
+                <a [routerLink]="['/store/product', product._id]"
+                    class="group flex flex-col cursor-pointer relative z-10 w-full h-full">
+
+                    <!-- Image Container -->
+                    <div
+                        class="relative w-full aspect-[4/5] bg-neutral-100 rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-lg transition-all duration-500">
+                        <img [src]="product.images && product.images[0] ? product.images[0] : 'assets/images/placeholder.png'"
+                            [alt]="product.name"
+                            class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-in-out bg-white"
+                            loading="lazy">
+
+                        <div
+                            class="absolute inset-0 bg-neutral-900/0 group-hover:bg-neutral-900/10 transition-colors duration-500">
+                        </div>
+
+                        <div
+                            class="absolute bottom-4 left-0 right-0 flex justify-center opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 z-20 px-4">
+                            <div
+                                class="bg-white/95 backdrop-blur-md text-neutral-900 text-xs font-bold py-2.5 px-6 rounded-full shadow-lg w-full text-center hover:bg-neutral-900 hover:text-white transition-colors">
+                                Détails
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="flex flex-col flex-grow px-1">
+                        <span
+                            class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest line-clamp-1 mb-1.5">
+                            {{ product.store?.name || 'Inconnu' }}
+                        </span>
+                        <h3
+                            class="text-sm font-semibold text-neutral-900 line-clamp-2 mb-2 group-hover:text-teal-700 transition-colors leading-tight">
+                            {{ product.name }}
+                        </h3>
+
+                        <div class="mt-auto pt-1 flex items-baseline gap-2">
+                            @if (product.sale?.isActive) {
+                            <span class="text-base font-extrabold text-rose-600">
+                                {{ product.sale?.salePrice | currency:'MGA':'Ar ':'1.0-0' }}
+                            </span>
+                            <span class="text-xs font-medium text-neutral-400 line-through">
+                                {{ product.price | currency:'MGA':'Ar ':'1.0-0' }}
+                            </span>
+                            } @else {
+                            <span class="text-base font-bold text-neutral-900">
+                                {{ product.price | currency:'MGA':'Ar ':'1.0-0' }}
+                            </span>
+                            }
+                        </div>
+                    </div>
+                </a>
+                }
+            </div>
+        </section>
+        }
+
+        <!-- Empty State -->
+        @if (stores().length === 0 && products().length === 0) {
+        <div
+            class="py-20 text-center bg-white rounded-3xl border border-neutral-100 shadow-sm flex flex-col items-center">
+            <div class="w-24 h-24 bg-neutral-50 rounded-full flex items-center justify-center mb-6">
+                <i class="pi pi-search text-4xl text-neutral-300"></i>
+            </div>
+            <h3 class="text-xl font-bold text-neutral-900 mb-2">Aucun résultat trouvé</h3>
+            <p class="text-neutral-500 max-w-md mx-auto">
+                Nous n'avons rien trouvé correspondant à "{{ searchQuery() }}". Essayez de chercher avec des termes
+                différents, plus généraux.
+            </p>
+            <button routerLink="/store"
+                class="mt-8 px-6 py-3 bg-teal-600 text-white rounded-full font-bold hover:bg-teal-700 transition-colors">
+                Retour à l'accueil
+            </button>
+        </div>
+        }
+
+        }
+    </div>
+</div>

@@ -1,0 +1,332 @@
+<div class="bg-white min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+        <!-- En-tête -->
+        <div class="flex items-baseline justify-between mb-8">
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Finaliser la commande</h1>
+            <a routerLink="/store/cart"
+                class="text-sm font-medium text-teal-600 hover:text-teal-800 transition-colors hidden sm:block">
+                Retour au panier
+            </a>
+        </div>
+
+        <!-- Layout 2 colonnes -->
+        <div class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start" *ngIf="cartItems().length > 0">
+
+            <!-- COLONNE GAUCHE (Formulaire) -->
+            <div class="lg:col-span-7 xl:col-span-8">
+                <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" id="checkoutForm" class="space-y-10">
+
+                    <!-- Section 1 : Contact -->
+                    <div formGroupName="contact" class="bg-white">
+                        <h2 class="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">Contact</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Adresse
+                                    e-mail</label>
+                                <input type="email" id="email" formControlName="email"
+                                    class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                    [ngClass]="isFieldInvalid(contactForm, 'email') ? 'border-red-300 ring-red-100 focus:ring-red-500 focus:border-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500 focus:border-teal-500'">
+                                <p *ngIf="isFieldInvalid(contactForm, 'email')" class="mt-1 text-sm text-red-600">Un
+                                    e-mail valide est requis.</p>
+                            </div>
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone
+                                    personnel</label>
+                                <input type="tel" id="phone" formControlName="phone" placeholder="+261 34 00 000 00"
+                                    class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                    [ngClass]="isFieldInvalid(contactForm, 'phone') ? 'border-red-300 ring-red-100 focus:ring-red-500 focus:border-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500 focus:border-teal-500'">
+                                <p *ngIf="isFieldInvalid(contactForm, 'phone')" class="mt-1 text-sm text-red-600">Un
+                                    numéro valide est requis.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2 : Livraison -->
+                    <div formGroupName="shipping">
+                        <h2 class="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">Adresse de
+                            livraison</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="firstName"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+                                <input type="text" id="firstName" formControlName="firstName"
+                                    class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                    [ngClass]="isFieldInvalid(shippingForm, 'firstName') ? 'border-red-300 ring-red-100 focus:ring-red-500 focus:border-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500 focus:border-teal-500'">
+                            </div>
+                            <div>
+                                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                                <input type="text" id="lastName" formControlName="lastName"
+                                    class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                    [ngClass]="isFieldInvalid(shippingForm, 'lastName') ? 'border-red-300 ring-red-100 focus:ring-red-500 focus:border-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500 focus:border-teal-500'">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Adresse
+                                    (Numéro et rue)</label>
+                                <input type="text" id="address" formControlName="address"
+                                    class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                    [ngClass]="isFieldInvalid(shippingForm, 'address') ? 'border-red-300 ring-red-100 focus:ring-red-500 focus:border-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500 focus:border-teal-500'">
+                            </div>
+                            <div>
+                                <label for="city" class="block text-sm font-medium text-gray-700 mb-1">Ville</label>
+                                <input type="text" id="city" formControlName="city"
+                                    class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                    [ngClass]="isFieldInvalid(shippingForm, 'city') ? 'border-red-300 ring-red-100 focus:ring-red-500 focus:border-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500 focus:border-teal-500'">
+                            </div>
+                            <div>
+                                <label for="zipCode" class="block text-sm font-medium text-gray-700 mb-1">Code
+                                    Postal</label>
+                                <input type="text" id="zipCode" formControlName="zipCode"
+                                    class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                    [ngClass]="isFieldInvalid(shippingForm, 'zipCode') ? 'border-red-300 ring-red-100 focus:ring-red-500 focus:border-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500 focus:border-teal-500'">
+                            </div>
+                        </div>
+                        <p *ngIf="shippingForm.invalid && shippingForm.touched" class="mt-2 text-sm text-red-600">
+                            Veuillez remplir correctement l'adresse de livraison.</p>
+                    </div>
+
+                    <!-- Section 3 : Paiement -->
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">Paiement</h2>
+
+                        <div class="space-y-4">
+                            <!-- Options de paiement -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                                <!-- Option Carte Bancaire -->
+                                <label
+                                    class="relative flex cursor-pointer rounded-2xl border p-4 shadow-sm hover:border-gray-300 transition-colors focus:outline-none"
+                                    [class.border-teal-600]="paymentMethod === 'card'"
+                                    [class.bg-teal-50]="paymentMethod === 'card'"
+                                    [class.border-gray-200]="paymentMethod !== 'card'"
+                                    [class.bg-white]="paymentMethod !== 'card'">
+                                    <input type="radio" formControlName="paymentMethod" value="card" class="sr-only">
+                                    <span class="flex flex-col flex-1">
+                                        <span class="block text-sm font-medium text-gray-900">Carte Bancaire</span>
+                                        <span class="mt-1 flex items-center gap-1 text-gray-500">
+                                            <svg class="h-6 w-auto" viewBox="0 0 36 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <rect width="36" height="24" rx="3" fill="#1434CB" />
+                                                <path
+                                                    d="M14.694 17.6531H12.9813L13.918 11.234H15.6307L14.694 17.6531ZM27.086 11.4116C26.7907 11.3115 26.2307 11.1332 25.546 11.1332C23.9573 11.1332 22.8053 12.0305 22.7907 13.3134C22.7747 14.2594 23.5853 14.7885 24.1947 15.1054C24.818 15.4294 25.0293 15.6322 25.0253 15.9198C25.0213 16.3576 24.536 16.5513 24.0853 16.5513C23.212 16.5513 22.684 16.3009 22.2507 16.0886L21.936 15.934L21.624 17.9547C22.0533 18.1575 22.864 18.3332 23.704 18.3332C25.464 18.3332 26.5867 17.4194 26.6067 16.0592C26.6267 14.8054 25.7533 14.2465 24.2693 13.5135C23.7227 13.2429 23.3813 13.0645 23.3853 12.7215C23.3853 12.3396 23.8347 11.9796 24.6467 11.9796C25.32 11.966 25.864 12.1336 26.284 12.3087L26.4387 12.3787L27.086 11.4116ZM33.2207 17.6531H34.786L33.784 11.234H32.484C32.1867 11.234 31.956 11.4017 31.84 11.6888L29.1307 17.6531H30.8973L31.2507 16.6416H33.4027L33.2207 17.6531ZM31.7507 15.2223L32.492 13.0645L32.9093 15.2223H31.7507ZM21.904 17.6531L22.696 11.234H21.1347L20.3427 17.6531H21.904ZM18.9907 11.234L18.4413 15.0287L17.4813 11.6669C17.3827 11.3364 17.16 11.234 16.904 11.234H13.6827L13.6187 11.4746C14.072 11.5836 14.7307 11.8329 15.1187 12.1084C15.2413 12.1934 15.3427 12.28 15.4093 12.5694L16.484 17.6531H18.2733L20.8067 11.234H18.9907Z"
+                                                    fill="white" />
+                                            </svg>
+                                            <svg class="h-6 w-auto" viewBox="0 0 36 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <rect width="36" height="24" rx="3" fill="#DFDFDF" />
+                                                <path
+                                                    d="M14.9333 12C14.9333 15.4264 16.2913 18.5307 18.508 20.8093C20.6953 18.5373 22.0493 15.4373 22.0493 12C22.0493 8.56267 20.6953 5.46267 18.508 3.19067C16.2913 5.46933 14.9333 8.57356 14.9333 12Z"
+                                                    fill="#FF5F00" />
+                                                <path
+                                                    d="M15.4947 12C15.4947 14.9084 16.6476 17.5413 18.5013 19.4667C20.3547 17.544 21.5036 14.912 21.5036 12C21.5036 9.08803 20.3551 6.45603 18.5013 4.53336C16.6476 6.45869 15.4947 9.0916 15.4947 12Z"
+                                                    fill="#FF5F00" />
+                                                <path
+                                                    d="M18.5013 24C25.1287 24 30.5018 18.627 30.5018 12C30.5018 5.373 25.1287 0 18.5013 0C16.2911 0.000109503 14.1534 0.612051 12.3023 1.77061C10.4513 2.92918 8.95155 4.59364 8.00166 6.59828C7.05177 8.60292 6.69082 10.8756 6.9535 13.1118C7.21617 15.348 8.09322 17.4361 9.49755 19.1678C10.9019 20.8995 12.7831 22.2132 14.9458 22.9696C17.1085 23.7261 19.4754 23.8996 21.8021 23.4705C24.1287 23.0413 26.3323 22.0251 28.1824 20.5262C30.0326 19.0273 31.4589 17.1042 32.3168 14.9543"
+                                                    fill="#EB001B" />
+                                                <path
+                                                    d="M22.0493 12C22.0493 15.4373 20.6953 18.5373 18.508 20.8093C20.0617 22.3636 21.9059 23.4901 23.9404 24.1282C25.9749 24.7663 28.1601 24.9038 30.2687 24.5323C32.3773 24.1609 34.3687 23.288 36.0353 21.9616C37.7018 20.6353 38.9959 18.8824 39.8166 16.8202C40.6373 14.7579 40.963 12.4461 40.7686 10.0988C40.5742 7.75151 39.8661 5.44856 38.7042 3.4079C37.5422 1.36724 35.955 -0.347392 34.0203 -1.55403C32.0855 -2.76068 29.85 -3.42784 27.524 3.5134L27.5253 3.51473C30.2818 3.51473 32.9252 4.60971 34.8743 6.55883C36.8234 8.50796 37.9184 11.1514 37.9184 13.9079"
+                                                    fill="#F79E1B" />
+                                            </svg>
+                                        </span>
+                                    </span>
+                                    <!-- Checkmark visuel -->
+                                    <svg class="h-5 w-5 fill-current text-teal-600 hidden mt-1"
+                                        [class.hidden]="paymentMethod !== 'card'" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </label>
+
+                                <!-- Option Mobile Money -->
+                                <label
+                                    class="relative flex cursor-pointer rounded-2xl border p-4 shadow-sm hover:border-gray-300 transition-colors focus:outline-none"
+                                    [class.border-teal-600]="paymentMethod === 'mobile_money'"
+                                    [class.bg-teal-50]="paymentMethod === 'mobile_money'"
+                                    [class.border-gray-200]="paymentMethod !== 'mobile_money'"
+                                    [class.bg-white]="paymentMethod !== 'mobile_money'">
+                                    <input type="radio" formControlName="paymentMethod" value="mobile_money"
+                                        class="sr-only">
+                                    <span class="flex flex-col flex-1">
+                                        <span class="block text-sm font-medium text-gray-900">Mobile Money
+                                            (Mvola)</span>
+                                        <span
+                                            class="mt-1 flex items-center gap-1 text-gray-500 font-bold tracking-widest text-lg">
+                                            Mvola / Orange
+                                        </span>
+                                    </span>
+                                    <!-- Checkmark visuel -->
+                                    <svg class="h-5 w-5 fill-current text-teal-600 hidden mt-1"
+                                        [class.hidden]="paymentMethod !== 'mobile_money'" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </label>
+
+                            </div>
+
+                            <!-- Formulaire conditionnel: Carte Bancaire -->
+                            <div *ngIf="paymentMethod === 'card'" formGroupName="cardDetails"
+                                class="bg-gray-50 p-6 rounded-2xl border border-gray-200 mt-4 animate-fade-in">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="sm:col-span-2">
+                                        <label for="cardNumber"
+                                            class="block text-sm font-medium text-gray-700 mb-1">Numéro de carte</label>
+                                        <input type="text" id="cardNumber" formControlName="cardNumber"
+                                            placeholder="0000 0000 0000 0000"
+                                            class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                            [ngClass]="isFieldInvalid(cardForm, 'cardNumber') ? 'border-red-300 ring-red-100 focus:ring-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500'">
+                                    </div>
+                                    <div>
+                                        <label for="expiryDate"
+                                            class="block text-sm font-medium text-gray-700 mb-1">Date
+                                            d'expiration</label>
+                                        <input type="text" id="expiryDate" formControlName="expiryDate"
+                                            placeholder="MM/YY"
+                                            class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                            [ngClass]="isFieldInvalid(cardForm, 'expiryDate') ? 'border-red-300 ring-red-100 focus:ring-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500'">
+                                    </div>
+                                    <div>
+                                        <label for="cvv" class="block text-sm font-medium text-gray-700 mb-1">Code
+                                            CVV</label>
+                                        <input type="text" id="cvv" formControlName="cvv" placeholder="123"
+                                            class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                            [ngClass]="isFieldInvalid(cardForm, 'cvv') ? 'border-red-300 ring-red-100 focus:ring-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500'">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Formulaire conditionnel: Mobile Money -->
+                            <div *ngIf="paymentMethod === 'mobile_money'"
+                                class="bg-gray-50 p-6 rounded-2xl border border-gray-200 mt-4 animate-fade-in">
+                                <div>
+                                    <label for="mobileMoneyNumber"
+                                        class="block text-sm font-medium text-gray-700 mb-1">Numéro du compte Mobile
+                                        Money</label>
+                                    <input type="tel" id="mobileMoneyNumber" formControlName="mobileMoneyNumber"
+                                        placeholder="034 00 000 00"
+                                        class="w-full px-4 py-3 rounded-lg border focus:ring-2 focus:outline-none transition-colors shadow-sm"
+                                        [ngClass]="isFieldInvalid(checkoutForm, 'mobileMoneyNumber') ? 'border-red-300 ring-red-100 focus:ring-red-500 bg-red-50' : 'border-gray-300 focus:ring-teal-500'">
+                                    <p class="text-xs text-gray-500 mt-2">Un message de confirmation vous sera envoyé
+                                        sur ce numéro pour valider le paiement.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Erreur globale si le form est invalide et qu'on a cliqué sur submit -->
+                    <div *ngIf="checkoutForm.invalid && checkoutForm.touched"
+                        class="bg-red-50 border-l-4 border-red-500 p-4 rounded mt-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-red-700 font-medium">
+                                    Veuillez corriger les erreurs en rouge ci-dessus avant de payer.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- COLONNE DROITE (Résumé - Sticky) -->
+            <div class="lg:col-span-5 xl:col-span-4 mt-10 lg:mt-0">
+                <div class="bg-gray-50 rounded-2xl border border-gray-200 p-6 sm:p-8 shadow-sm lg:sticky lg:top-8">
+
+                    <h2 class="text-lg font-bold text-gray-900 mb-6">Résumé de la commande</h2>
+
+                    <!-- Liste très compacte des articles -->
+                    <ul class="divide-y divide-gray-200 border-b border-gray-200 pb-4 mb-4">
+                        @for (item of cartItems(); track item.productId + '-' + item.variantSku) {
+                        <li class="py-3 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="relative flex-shrink-0">
+                                    <img [src]="item.image ? item.image : 'assets/images/placeholder.png'"
+                                        [alt]="item.name"
+                                        class="w-16 h-16 rounded-md object-cover border border-gray-100 bg-white">
+                                    <span
+                                        class="absolute -top-2 -right-2 bg-gray-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
+                                        {{ item.quantity }}
+                                    </span>
+                                </div>
+                                <div class="flex max-w-[150px] sm:max-w-xs flex-col">
+                                    <span class="text-sm font-medium text-gray-900 truncate">{{ item.name }}</span>
+                                    @if (item.variantSku) {
+                                    <span class="text-xs text-gray-500 font-medium truncate">{{ item.variantSku
+                                        }}</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="text-sm font-bold text-gray-900 ml-4 shrink-0">
+                                {{ (item.price * item.quantity) | currency:'MGA':'Ar ':'1.0-0' }}
+                            </div>
+                        </li>
+                        }
+                    </ul>
+
+                    <!-- Totaux -->
+                    <dl class="space-y-3 text-sm text-gray-600 mb-6">
+                        <div class="flex items-center justify-between">
+                            <dt>Sous-total</dt>
+                            <dd class="font-medium text-gray-900">{{ cartTotal() | currency:'MGA':'Ar ':'1.0-0' }}
+                            </dd>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <dt>Livraison</dt>
+                            <dd class="font-medium text-teal-600">Gratuite</dd>
+                        </div>
+                    </dl>
+
+                    <div class="border-t border-gray-200 pt-4 flex flex-col gap-6">
+                        <div class="flex items-center justify-between">
+                            <span class="text-base font-bold text-gray-900">Total à payer</span>
+                            <span class="text-2xl font-extrabold text-gray-900">{{ cartTotal() |
+                                currency:'MGA':'Ar ':'1.0-0' }}</span>
+                        </div>
+
+                        <!-- Grand Call to action -->
+                        <button type="submit" form="checkoutForm" [disabled]="isProcessing"
+                            class="w-full relative bg-teal-700 text-white px-6 py-4 rounded-xl font-bold text-lg hover:bg-teal-800 transition-colors shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center">
+
+                            <span [class.opacity-0]="isProcessing">Payer {{ cartTotal() |
+                                currency:'MGA':'Ar ':'1.0-0' }}</span>
+
+                            <!-- Spinner (S'affiche uniquement si isProcessing=true) -->
+                            <svg *ngIf="isProcessing" class="animate-spin h-6 w-6 text-white absolute"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Réassurance de sécurité -->
+                    <div class="mt-6 border-t border-gray-200 pt-6">
+                        <div class="flex items-center justify-center gap-2 text-sm text-gray-500">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                </path>
+                            </svg>
+                            <span class="font-medium">Paiement 100% crypté et sécurisé</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
