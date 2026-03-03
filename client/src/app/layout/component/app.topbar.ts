@@ -3,7 +3,8 @@ import { MenuItem } from 'primeng/api';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StyleClassModule } from 'primeng/styleclass';
-import { AppConfigurator } from './app.configurator';
+import { PopoverModule } from 'primeng/popover';
+import { ButtonModule } from 'primeng/button';
 import { LayoutService } from '../service/layout.service';
 import { StoreSwitcherComponent } from './store-switcher.component';
 import { NotificationService } from '../../core/services/notification.service';
@@ -11,7 +12,7 @@ import { NotificationService } from '../../core/services/notification.service';
 @Component({
     selector: 'app-topbar',
     standalone: true,
-    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator, StoreSwitcherComponent],
+    imports: [RouterModule, CommonModule, StyleClassModule, StoreSwitcherComponent, PopoverModule, ButtonModule],
     template: ` <div class="layout-topbar">
         <div class="layout-topbar-logo-container">
             <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
@@ -29,7 +30,6 @@ import { NotificationService } from '../../core/services/notification.service';
                         <path d="M27 18.3652C10.5114 19.1944 0 8.88892 0 8.88892C0 8.88892 16.5176 14.5866 27 14.5866C37.4824 14.5866 54 8.88892 54 8.88892 43.4886 17.5361 27 18.3652Z" fill="var(--primary-color)" />
                     </mask>
                     <g mask="url(#mask0_1413_1551)">
-                        <!-- Restored approx path to ensure validity -->
                         <rect width="54" height="40" fill="var(--primary-color)" />
                     </g>
                 </svg>
@@ -40,48 +40,58 @@ import { NotificationService } from '../../core/services/notification.service';
         <div class="layout-topbar-actions">
             <app-store-switcher></app-store-switcher>
 
-            <div class="layout-config-menu">
-                <button type="button" class="layout-topbar-action" (click)="toggleDarkMode()">
-                    <i [ngClass]="{ 'pi ': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
-                </button>
-                <div class="relative">
-                    <button
-                        class="layout-topbar-action layout-topbar-action-highlight"
-                        pStyleClass="@next"
-                        enterFromClass="hidden"
-                        enterActiveClass="animate-scalein"
-                        leaveToClass="hidden"
-                        leaveActiveClass="animate-fadeout"
-                        [hideOnOutsideClick]="true"
-                    >
-                        <i class="pi pi-palette"></i>
-                    </button>
-                    <app-configurator />
-                </div>
-            </div>
-
             <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next" enterFromClass="hidden" enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout" [hideOnOutsideClick]="true">
                 <i class="pi pi-ellipsis-v"></i>
             </button>
 
             <div class="layout-topbar-menu hidden lg:block">
                 <div class="layout-topbar-menu-content">
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-calendar"></i>
-                        <span>Calendar</span>
-                    </button>
                     <!-- Notification Bell with Tailwind Badge -->
-                    <button type="button" class="layout-topbar-action relative">
+                    <button type="button" class="layout-topbar-action relative" (click)="op.toggle($event)">
                         <i class="pi pi-bell"></i>
                         <div *ngIf="getUnreadCount() !== '0'" class="absolute top-[2px] right-[2px] w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-surface-0 border-solid shadow-sm">
                             {{ getUnreadCount() }}
                         </div>
                         <span>Notifications</span>
                     </button>
-                    <button type="button" class="layout-topbar-action">
-                        <i class="pi pi-user"></i>
-                        <span>Profile</span>
-                    </button>
+                    
+                    <p-popover #op styleClass="w-full sm:w-[25rem]">
+                        <div class="p-3">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xl font-bold">Notifications</span>
+                                <button *ngIf="notificationService.notifications().length > 0" pButton pRipple label="Tout marquer comme lu" class="p-button-text p-button-sm text-primary" (click)="markAllAsRead()"></button>
+                            </div>
+                            
+                            <div *ngIf="notificationService.notifications().length === 0" class="text-center p-4 text-surface-500">
+                                Aucune notification récente.
+                            </div>
+                            
+                            <div class="flex flex-col max-h-[25rem] overflow-y-auto">
+                                <div *ngFor="let notif of notificationService.notifications()" 
+                                     class="p-3 border-b border-surface-200 cursor-pointer hover:bg-surface-50 transition-colors"
+                                     [class.bg-blue-50]="!notif.isRead"
+                                     (click)="markAsRead(notif._id)">
+                                    <div class="flex items-start gap-3">
+                                        <i class="pi text-xl mt-1" 
+                                           [class.pi-info-circle]="notif.type === 'GENERAL'"
+                                           [class.pi-box]="notif.type === 'BOX_REQUEST'"
+                                           [class.pi-check-circle]="notif.type === 'STORE_VALIDATED'"
+                                           [class.pi-exclamation-triangle]="notif.type === 'PRE_NOTICE_ALERT'"
+                                           [class.text-blue-500]="notif.type === 'GENERAL'"
+                                           [class.text-orange-500]="notif.type === 'BOX_REQUEST'"
+                                           [class.text-green-500]="notif.type === 'STORE_VALIDATED'"
+                                           [class.text-red-500]="notif.type === 'PRE_NOTICE_ALERT'">
+                                        </i>
+                                        <div class="flex-1">
+                                            <p class="m-0 text-surface-900 leading-tight" [class.font-semibold]="!notif.isRead">{{ notif.message }}</p>
+                                            <span class="text-xs text-surface-500 mt-1 block">{{ notif.createdAt | date:'short' }}</span>
+                                        </div>
+                                        <div *ngIf="!notif.isRead" class="w-2 h-2 rounded-full bg-blue-500 mt-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </p-popover>
                 </div>
             </div>
         </div>
@@ -97,6 +107,14 @@ export class AppTopbar {
     getUnreadCount(): string {
         const count = this.notificationService.unreadCount();
         return count > 0 ? count.toString() : '0';
+    }
+
+    markAsRead(id: string) {
+        this.notificationService.markAsRead(id).subscribe();
+    }
+
+    markAllAsRead() {
+        this.notificationService.markAllAsRead().subscribe();
     }
 
     toggleDarkMode() {
