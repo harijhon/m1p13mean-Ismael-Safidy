@@ -47,7 +47,7 @@ if (!cached) {
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mean_app';
 
 if (!cached.promise) {
-  cached.promise = mongoose.connect(MONGODB_URI, { bufferCommands: false })
+  cached.promise = mongoose.connect(MONGODB_URI)
     .then((mongoose) => {
       console.log('Connected to MongoDB');
 
