@@ -117,7 +117,14 @@ export const getInvoices = async (req, res) => {
         if (status) filter.status = status;
 
         const invoices = await RentInvoice.find(filter)
-            .populate('store', 'name owner status rentContract')
+            .populate({
+                path: 'store',
+                select: 'name owner status rentContract',
+                populate: {
+                    path: 'rentContract.boxId',
+                    select: 'boxNumber'
+                }
+            })
             .sort({ createdAt: -1 });
 
         res.status(200).json(invoices);
