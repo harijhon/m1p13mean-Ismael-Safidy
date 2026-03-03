@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from '../../../environments/environment';
 
 export interface User {
   _id: string;
@@ -16,7 +17,7 @@ export interface User {
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  private baseUrl = 'http://localhost:3000/api/auth';
+  private baseUrl = `${environment.apiUrl}/auth`;
 
   private currentUserSig = signal<User | null>(null);
   private currentUserSubject = new BehaviorSubject<User | null>(null);
